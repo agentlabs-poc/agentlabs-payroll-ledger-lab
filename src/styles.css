@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap');
+
+:root { font-family: Manrope, sans-serif; color: #e8f2ed; background: #07100d; font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 1100px; min-height: 100vh; background: radial-gradient(circle at 85% 0%, #173c31 0, transparent 32%), #07100d; }
+button, input { font: inherit; }
+header { padding: 28px 34px 16px; border-bottom: 1px solid #244338; background: #081510cc; backdrop-filter: blur(14px); }
+.eyebrow { color: #71e6aa; font: 500 11px DM Mono, monospace; letter-spacing: .16em; }
+.title-row { display: flex; align-items: end; justify-content: space-between; gap: 24px; }
+h1 { margin: 8px 0 3px; font-size: 31px; letter-spacing: -.04em; }
+p { margin: 0; color: #9fb4aa; font-size: 14px; }
+.level { border: 1px solid #315c4b; padding: 9px 14px; border-radius: 10px; color: #9fb4aa; font: 500 12px DM Mono, monospace; }
+.level strong { color: #71e6aa; font-size: 20px; }
+.progress { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 16px; }
+.progress span { height: 4px; background: #1a3028; border-radius: 8px; }
+.progress span.done { background: linear-gradient(90deg, #34d58a, #a9ef6b); box-shadow: 0 0 14px #34d58a88; }
+.boundary { display: flex; align-items: center; justify-content: center; gap: 18px; padding: 14px 32px; border-bottom: 1px solid #1c342b; background: #0b1914; }
+.boundary div:not(.arrow) { display: flex; flex-direction: column; gap: 2px; padding: 8px 14px; border: 1px solid #25463a; border-radius: 9px; min-width: 220px; }
+.boundary b { font-size: 12px; color: #d9ece3; }
+.boundary span { font: 400 10px DM Mono, monospace; color: #789489; }
+.boundary .external { border-color: #775a22 !important; background: #261c0b; }
+.boundary .external b { color: #ffc85c; }
+.arrow { color: #507265; }
+.game-controls { display: flex; gap: 7px; padding: 12px 18px; overflow: auto; border-bottom: 1px solid #1c342b; background: #09130f; }
+button { border: 1px solid #2d5546; background: #132a21; color: #cfe6dc; padding: 8px 11px; border-radius: 7px; cursor: pointer; font-size: 11px; font-weight: 700; white-space: nowrap; }
+button:hover { border-color: #5fd79d; background: #1a392d; }
+.external-button { border-color: #8a6729; background: #32250e; color: #ffd47d; }
+.ghost { margin-left: auto; background: transparent; color: #879e94; }
+.reference-strip { display: flex; align-items: stretch; gap: 7px; padding: 10px 18px; overflow-x: auto; border-bottom: 1px solid #1c342b; background: #07100d; }
+.reference-title { display: flex; align-items: center; min-width: 108px; color: #779188; font-size: 10px; font-weight: 700; }
+.reference-card { display: flex; flex-direction: column; gap: 2px; min-width: 155px; padding: 7px 9px; border: 1px solid #2b5142; border-radius: 7px; background: #10231c; }
+.reference-card code { color: #7ee8b4; font: 500 10px DM Mono, monospace; }
+.reference-card span { color: #b9d2c7; font-size: 8px; text-transform: uppercase; }
+.reference-card small { color: #5f7c70; font: 400 7px DM Mono, monospace; }
+.reference-card.exception { border-color: #55512b; background: #201f10; }
+.reference-card.exception code { color: #e6d96e; }
+.reference-card.correction { border-color: #7b4b31; background: #29180f; }
+.reference-card.correction code { color: #ffad7d; }
+.reference-empty { display: flex; align-items: center; color: #506a5f; font: 400 9px DM Mono, monospace; }
+main { display: grid; grid-template-columns: minmax(370px, .72fr) 1.8fr; gap: 13px; padding: 14px; }
+.panel { background: #0c1814; border: 1px solid #1e392f; border-radius: 11px; overflow: hidden; box-shadow: 0 14px 40px #0005; }
+.panel-head { height: 43px; display: flex; align-items: center; justify-content: space-between; padding: 0 13px; border-bottom: 1px solid #1e392f; font-size: 12px; font-weight: 700; }
+.panel-head small { color: #718d81; font: 400 9px DM Mono, monospace; }
+.dot { display: inline-block; width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: #58e59f; box-shadow: 0 0 12px #58e59f; }
+.terminal { min-height: 650px; display: grid; grid-template-rows: 43px 1fr 47px; background: #060b09; }
+.terminal-output { padding: 13px; overflow: auto; font: 400 11px/1.65 DM Mono, monospace; color: #9fcbb8; max-height: 650px; }
+.terminal-output .command { color: #eefbf5; margin-top: 6px; }
+.terminal-output .error { color: #ff8e88; }
+#terminal-form { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-top: 1px solid #1d362c; background: #09120f; }
+#terminal-form span { color: #62e4a2; font: 500 20px DM Mono, monospace; }
+#terminal-input { flex: 1; border: 0; outline: 0; background: transparent; color: white; font: 400 11px DM Mono, monospace; }
+#terminal-form button { padding: 6px 10px; }
+.ledgers { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; align-content: start; }
+.wide { grid-column: 1 / -1; }
+.table { min-height: 90px; max-height: 220px; overflow: auto; }
+.ledger-row { display: grid; grid-template-columns: 38px minmax(110px, .8fr) minmax(110px, 1.4fr) 100px; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid #172b24; font-size: 10px; }
+.ledger-row code { color: #69dca3; font: 500 9px DM Mono, monospace; }
+.ledger-row b { font-size: 10px; }
+.ledger-row span { color: #8da69b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ledger-row strong { text-align: right; color: #8de7b9; font: 500 10px DM Mono, monospace; }
+.ledger-row small { grid-column: 2 / -1; color: #587267; font: 400 8px DM Mono, monospace; }
+.ledger-row .negative { color: #ff9d91; }
+.ledger-row.contra { background: #30200e99; }
+.status { width: fit-content; padding: 2px 5px; border-radius: 4px; background: #40231f; color: #ff9d91 !important; font-size: 8px; }
+.status.approved { background: #16382a; color: #70e1a7 !important; }
+.empty { color: #506a5f; padding: 28px 14px; text-align: center; font: 400 10px DM Mono, monospace; }
+.totals { display: flex; justify-content: flex-end; gap: 24px; padding: 10px 13px; background: #10231c; border-top: 1px solid #244338; color: #779188; font-size: 9px; }
+.totals b { display: block; margin-top: 2px; color: #e5f5ed; font: 500 12px DM Mono, monospace; }
+.posted { border-color: #2d5b47; }
+footer { padding: 2px 20px 18px; color: #516a60; text-align: center; font: 400 9px DM Mono, monospace; }
+@media (max-width: 1200px) { main { grid-template-columns: 390px 1fr; } .ledger-row { grid-template-columns: 32px 1fr 1fr 90px; } }
