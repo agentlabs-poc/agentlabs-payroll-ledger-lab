@@ -7,11 +7,16 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: conceptual edition 1 recorded; gap-resolution audit completed.**
+**Current: gap-closure work underway; PAY-Q-017 awaits an answer.**
+
+The [active worksheet](gap-closure-work.md) translates agreed behavior into
+acceptance cases for instruction application, draft reconciliation, correction,
+and full liability settlement. The partial-remittance question is the first
+new policy refinement in this pass. Code gaps remain open.
 
 The [audit](gap-resolution-audit.md) distinguishes agreed core behavior, deferred
-policies/specifications, and open code gaps. No named proposal awaits an answer;
-that does not mean every gap is resolved. PAY-CORE-015 already settles the
+policies/specifications, and open code gaps. It recorded no pending proposal
+at the audit checkpoint; PAY-Q-017 has since been opened. PAY-CORE-015 already settles the
 employee-month association without requiring a canonical ID generator.
 
 The [checkpoint review](handbook-review.md#edition-checkpoints) records completion
@@ -19,8 +24,9 @@ of the final walkthrough and documentation closure. This closes the conceptual
 edition, with explicit deferrals; it does not complete employer-specific operating
 procedures or implement the agreed model. The pinned broader charter is preserved.
 
-No further decision sequence is queued. Start from a concrete deferred work item
-or scenario; ask only if it exposes a material choice not resolved by the model.
+The active sequence is recorded in the worksheet. Ask only about concrete
+material choices left unresolved by the model; ordinary engineering choices
+do not automatically become new payroll questions.
 
 The [lifecycle chapter](payroll-lifecycle.md) brings together existing rules for
 fixed drafts, exact approval, stale-draft cancellation, commit, and retries.

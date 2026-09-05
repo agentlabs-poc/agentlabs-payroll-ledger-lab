@@ -37,6 +37,7 @@ separately below.
 | PAY-Q-014 | Answered with ownership clarification | Where do employer-liability and accounting records belong relative to payroll? | User clarified that accounting is outside and the employer-liability register is inside payroll. PAY-ARCH-004 replaces the earlier grouping; the Form 16 connection is supported with the qualifications in the chapter. |
 | PAY-Q-015 | Answered with scope exclusion | Should an exited employee remain eligible for a subsequent-month adjustment payroll without reactivating employment? | User directed that this is out of payroll scope and should be corrected in accounting. PAY-CORE-013 excludes the proposed after-exit adjustment payroll. |
 | PAY-Q-016 | Answered by correcting the premise | How do employer contributions enter payroll and the employer-liability register? | User clarified that the offer-letter CTC contribution is a payroll earning plus matching deduction. Gross includes it; net is unchanged by the pair. Payroll entries precede the corresponding liability. |
+| PAY-Q-017 | Open; awaiting answer | Should an actual partial employer remittance reduce the corresponding liability by its recorded amount, with only the remaining balance outstanding until final settlement? | GAP-007 retained partial-payment mechanics as deferred. [Proposal, example, and rationale](gap-closure-work.md#pay-q-017--representing-a-partial-employer-remittance); no statutory acceptability or allocation order is selected. |
 
 ## Domain decisions
 
@@ -72,7 +73,12 @@ statutory example as an adopted rule.
 
 ## Proposals awaiting confirmation
 
-No current proposal awaits confirmation. PAY-Q-009 was approved as PAY-CORE-007.
+PAY-Q-009 was approved as PAY-CORE-007. A later gap-closure pass opens the
+following material question.
+
+| ID | Status | Proposal | Rationale |
+|---|---|---|---|
+| PAY-CORE-016 | Proposed under PAY-Q-017; awaiting answer | Record a partial remittance with proof as settling that amount, retaining the remaining outstanding liability until fully settled | [Example and alternative](gap-closure-work.md#pay-q-017--representing-a-partial-employer-remittance). This is not yet an agreement. |
 
 ## Alternatives and history
 

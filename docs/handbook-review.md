@@ -19,8 +19,10 @@ is adopted by closing this edition.
 | CP-03: representative walkthrough | Complete for this edition | The final review below traces ordinary payroll, changed inputs, commit, correction, liability closure, and annual information; existing decisions determine the illustrated outcomes |
 | CP-04: documentation closure | Complete for this edition | Current explanations and diagram aligned with PAY-CORE-007; rationale/history retained, source gaps visible, and deferred work classified |
 
-**Named proposals awaiting a user answer: 0.** PAY-Q-009 was the last tracked
-proposal and is approved. The [gap-resolution audit](gap-resolution-audit.md)
+**At edition closure, no named proposal awaited an answer.** PAY-Q-009 is
+approved. The subsequent [gap-closure pass](gap-closure-work.md) now opens
+PAY-Q-017 on partial remittances; it is awaiting an answer. The
+[gap-resolution audit](gap-resolution-audit.md)
 clarifies the limit: six numbered gaps have agreed core behavior, one is
 superseded, and annual issuance is partly specified. Seven active implementation
 gaps/limitations remain; deferred policies have not become resolved decisions.
@@ -136,4 +138,5 @@ completed software behavior is claimed by this review.
 The conceptual edition is closed with the above deferrals. Full deployment,
 employer-specific operations, and period-specific compliance procedures remain
 outside what this review proves. This is the stopping point for the current
-conceptual discussion; no additional approval questionnaire is queued.
+conceptual edition. Subsequent refinements are tracked in the active gap-closure
+worksheet without treating the earlier edition as an implementation release.

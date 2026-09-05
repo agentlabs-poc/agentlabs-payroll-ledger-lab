@@ -97,7 +97,9 @@ Creating this handbook does not itself authorize payroll implementation changes.
 
 **Conceptual edition 1 — 2026-09-06.** The final walkthrough and documentation
 closure are recorded in the [checkpoint review](handbook-review.md#edition-checkpoints).
-No named proposal awaits an answer; [the gap audit](gap-resolution-audit.md)
+At edition closure no named proposal awaited an answer. The later
+[gap-closure work](gap-closure-work.md) now opens PAY-Q-017 on partial remittances.
+[The gap audit](gap-resolution-audit.md)
 distinguishes agreed concepts from unresolved details and implementation gaps. Employer-specific
 operations, implementation specifications, and complete statutory issuance are
 explicitly deferred there; the pinned charter above remains the broader goal.
@@ -411,6 +413,10 @@ examples. The rejected overlap-detection and mandatory-source-tracing questions,
 and the settled subsequent-month correction rule, are not open questions.
 
 ## Resume here
+
+**Active: [gap-closure work](gap-closure-work.md).** Existing rules now have
+acceptance cases; PAY-Q-017 asks how to represent a partial employer remittance.
+It remains proposed, and runtime implementation gaps remain open.
 
 The conceptual edition has passed the final walkthrough and documentation
 closure checkpoints. See [the checkpoint results](handbook-review.md#edition-checkpoints)

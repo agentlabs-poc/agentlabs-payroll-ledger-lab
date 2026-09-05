@@ -179,6 +179,19 @@ closure remains an editorial checkpoint with explicit deferrals. Seven active
 numbered gaps/limitations remain; none was implemented during documentation work.
 No implementation handoff or runtime change was made in the interrupted turn.
 
+## Gap-closure acceptance cases — 2026-09-06
+
+Following the user’s direction to work on the gaps, the
+[worksheet](gap-closure-work.md) consolidates twelve acceptance cases from
+existing agreements. These give later implementation reviews concrete outcomes
+without claiming tests ran or code gaps closed. ID generation and mandatory
+source tracing are not reopened.
+
+PAY-Q-017 / proposed PAY-CORE-016 asks how to represent a partial employer
+remittance, using INR 10,000 owed and INR 6,000 remitted with proof. This is a
+material refinement of the previously deferred partial-payment mechanics. It
+remains awaiting the user’s answer; navigation and proposal status reflect that.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

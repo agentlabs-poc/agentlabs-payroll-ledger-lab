@@ -1,0 +1,82 @@
+# Working through the remaining payroll gaps
+
+Started 2026-09-06 following the [gap-resolution audit](gap-resolution-audit.md)
+and the user's direction to work on the gaps. This pass develops handbook
+specifications and acceptance evidence. It does not implement runtime changes
+or mark a code gap fixed because its expected behavior is now explicit.
+
+## Work sequence and checkpoints
+
+| Work group | Current treatment | Checkpoint |
+|---|---|---|
+| GAP-001/002/003: instruction lifetime and application | Consolidate ordinary behavior below; keep exceptional installment/application policy separate | Existing rules explain the acceptance cases; representation remains engineering work |
+| GAP-005/006: draft, commit, and correction | Consolidate control outcomes below, including stale approved drafts | Acceptance cases preserve fixed reviewed money and final payroll; mechanism still needs implementation evidence |
+| GAP-007: liability settlement | Resolve the partial-remittance representation question PAY-Q-017 | Record the answer and rationale, then refine the register examples and acceptance cases |
+| GAP-008: annual reporting | Retain the known information dependencies and aggregation limitation | Specify the actual reporting scope before claiming a complete issuance design |
+
+GAP-004 is superseded history. Employee-month association is settled as
+PAY-CORE-015 and is not a new question in this sequence. Supplemental-run
+eligibility, exceptional installment behavior, role composition, and annual
+issuance remain explicitly deferred; they are not prerequisites for restating
+the ordinary rules below.
+
+## Acceptance cases from existing agreements
+
+These describe required outcomes for a later implementation review. They are
+not executed tests, new state names, API contracts, or newly approved rules.
+
+| Case | Given and action | Required observation | Basis |
+|---|---|---|---|
+| AC-01: finite lifetime | A recovery instruction applies September through January; prepare January and February payroll | January can include the instruction subject to the other controls; February cannot extend its lifetime automatically | GAP-001, PAY-CORE-002/005 |
+| AC-02: processing date | Process the eligible January payroll in February | Processing later does not remove January eligibility; prior applications still prevent reuse | GAP-001, PAY-CORE-005 |
+| AC-03: abandoned one-time proposal | Create then cancel an uncommitted draft containing a bonus | No posted bonus or consumption from that draft; any later use must still pass applicability and application checks | GAP-002, PAY-CORE-003 |
+| AC-04: competing one-time applications | Two drafts attempt to apply the same eligible bonus; the first commits | The second cannot consume it again or replace the first consumption record; repeating the successful commit does not duplicate it | GAP-002, PAY-CORE-003 |
+| AC-05: recurring application | Commit a monthly instruction in September, retry through another September draft, then prepare October within its lifetime | No second ordinary September application; October remains eligible | GAP-003, PAY-CORE-004 |
+| AC-06: complete creation and exact approval | Create a complete draft and approve it; attempt to append or alter its monetary content | Creation includes sealing; the reviewed proposal stays fixed. Different amounts require cancellation/rebuild and fresh approval | GAP-005, PAY-CORE-006-C/007, PAY-ARCH-002 |
+| AC-07: changed applicable basis | After approval, add or replace an applicable instruction, expire one, or commit a competing application | Protected reconciliation rejects the stale draft. Cancellation must work before commit even when that draft was approved | GAP-005, PAY-CORE-006-C |
+| AC-08: unchanged total or unrelated change | Compare a changed applicable set with equal totals, and a separate change confined to a future period | Equal totals do not prove an unchanged basis; a future-only change does not invalidate an otherwise applicable basis | GAP-005, PAY-CORE-005/006-C |
+| AC-09: protected posting and recovery | A competing write or lost response occurs around commit | Establish the commit outcome without duplicate money/applications or substitution of unreviewed amounts. Validation and posting must not admit an intervening conflicting write | GAP-002/003/005, existing commit invariants |
+| AC-10: later correction | Supply a correction after generation while employee remains in payroll scope | Original stays final; adjustment goes through a subsequent month's create/approve/commit flow. Same-month or earlier correction posting and direct-posting bypass do not meet the agreement | GAP-006, PAY-CORE-011, PAY-ARCH-001 |
+| AC-11: correction after exit | A correction arises after employee exit | External accounting handles it; payroll does not change the prior result or create the rejected former-employee adjustment flow | GAP-006, PAY-CORE-013 |
+| AC-12: corresponding full settlement | A liability has a corresponding full remittance with retained proof | Close that obligation while preserving history; unrelated or duplicate allocations cannot falsely close another liability or reuse the same remitted amount | GAP-007, PAY-CORE-012, PAY-ARCH-004 |
+
+Rationale: these cases make existing decisions reviewable without selecting a
+storage schema, identifier generator, database lock strategy, or source-origin
+trace graph. A source reference field or a same-draft early return alone is
+insufficient evidence of these outcomes. The [gap register](implementation-gaps.md)
+retains the exact inspected limitations.
+
+For a later implementation to close a gap, it must identify its representation
+and demonstrate the applicable cases against the actual implementation boundary.
+Browser-only demonstrations cannot establish durable concurrent enforcement.
+This does not require a new domain discussion for routine engineering choices.
+
+---
+
+## PAY-Q-017 — representing a partial employer remittance
+
+**Status: proposed as PAY-CORE-016; awaiting the user's answer.** The existing
+rule settles a corresponding liability through remittance and proof. The
+handbook has not selected how partial remittances are represented.
+
+Proposal: a INR 10,000 liability with a corresponding INR 6,000 remittance and
+proof records INR 6,000 settled and INR 4,000 outstanding. The obligation is
+fully closed only when its remaining balance is settled with corresponding
+proof. Keep each settlement and the original obligation as history.
+
+Rationale: the register would represent both money already remitted and money
+still owed. It would avoid showing either an entirely unpaid INR 10,000 balance
+or a fully closed obligation when only INR 6,000 has been remitted.
+
+Alternative: record settlement only once the full obligation is paid. That
+leaves the actual partial remittance outside the settlement balance until
+completion and needs another way to retain that information. This alternative
+has not been selected either.
+
+The question concerns internal representation of an actual remittance. It does
+not determine statutory acceptability, allocation across multiple liabilities,
+allocation ordering, excess deposits, accounting treatment, or proof-verification
+interfaces. Those are not silently decided by this example.
+
+**Question:** Should payroll record the INR 6,000 settlement and INR 4,000
+outstanding balance, closing the liability only when the balance is settled?

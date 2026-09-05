@@ -9,6 +9,11 @@ Documentation, agreement on core behavior, specification of detailed policy,
 and verified implementation are separate statuses. Deferral does not resolve a
 choice, and an assistant's source finding is not automatically a user decision.
 
+**Later work:** the user subsequently directed work on these gaps. The
+[active worksheet](gap-closure-work.md) records acceptance cases and opens
+PAY-Q-017 on partial remittances. The counts and no-pending-proposal statement
+below describe the audit checkpoint, not this later discussion state.
+
 ## Numbered gaps
 
 This audits all eight entries in the [gap register](implementation-gaps.md)
