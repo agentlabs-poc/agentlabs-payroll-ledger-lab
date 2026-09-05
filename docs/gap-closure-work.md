@@ -9,7 +9,6 @@ The [operation contracts](payroll-operation-contracts.md) now specify required
 information, preconditions, outcomes, rejection/recovery behavior, liability
 balances, and annual data-selection cases. PAY-Q-018 is approved as PAY-ARCH-005;
 the [annual package](annual-payroll-package.md) now specifies the selected scope.
-PAY-Q-019 still asks whether completion also includes runtime implementation.
 
 ## Work sequence and checkpoints
 

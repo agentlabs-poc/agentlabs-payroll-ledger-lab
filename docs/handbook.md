@@ -425,8 +425,8 @@ and the settled subsequent-month correction rule, are not open questions.
 [operation contracts](payroll-operation-contracts.md) and acceptance cases.
 PAY-Q-017 is approved as PAY-CORE-016: the unpaid remainder after a partial
 remittance stays a liability. PAY-Q-018 is approved as PAY-ARCH-005; the
-[annual package and handoff](annual-payroll-package.md) is specified. PAY-Q-019
-awaits the completion-scope answer. Runtime implementation gaps remain open.
+[annual package and handoff](annual-payroll-package.md) is specified. Runtime
+implementation gaps remain open.
 
 The conceptual edition has passed the final walkthrough and documentation
 closure checkpoints. See [the checkpoint results](handbook-review.md#edition-checkpoints)

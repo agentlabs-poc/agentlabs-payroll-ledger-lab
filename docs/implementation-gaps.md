@@ -18,7 +18,6 @@ The [operation contracts](payroll-operation-contracts.md) specify observable
 behavior against these gaps, including liability balances and annual selection
 cases. They do not close the code findings. PAY-Q-018 is approved as
 PAY-ARCH-005; [the annual package](annual-payroll-package.md) is specified.
-PAY-Q-019 still tracks whether this phase includes runtime implementation.
 
 Evidence revision: lab `737465d5e27888518018e9b1f28f75fcfcac0139`,
 [source](https://github.com/agentlabs-poc/agentlabs-payroll-ledger-lab/blob/737465d5e27888518018e9b1f28f75fcfcac0139/src/main.ts).

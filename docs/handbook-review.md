@@ -24,8 +24,7 @@ approved. The subsequent [gap-closure pass](gap-closure-work.md) now opens
 PAY-Q-017 on partial remittances; it is now approved as PAY-CORE-016. No named
 core-rule proposal currently awaits an answer. PAY-Q-018 is approved as
 PAY-ARCH-005, and the [annual package](annual-payroll-package.md) is specified.
-PAY-Q-019 remains open on completion scope. The
-[gap-resolution audit](gap-resolution-audit.md)
+The [gap-resolution audit](gap-resolution-audit.md)
 clarifies the limit: six numbered gaps have agreed core behavior, one is
 superseded, and the annual scope was then partly specified. PAY-ARCH-005 now
 selects the payroll package/handoff and separates statutory procedures. Seven

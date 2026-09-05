@@ -205,7 +205,7 @@ Current navigation reflects approval. Historical audit/proposal records remain
 labeled in time. GAP-007 stays open for implementation and further allocation/
 interface detail; approving this balance rule does not claim a delivered fix.
 
-## Operation contracts and completion scope — 2026-09-06
+## Operation contracts — 2026-09-06
 
 The user directed continued work until all gaps are complete. The
 [operation contracts](payroll-operation-contracts.md) develop the agreed rules
@@ -216,10 +216,9 @@ specifications do not introduce an allocation order, ID generator, or business
 source-tracing requirement.
 
 PAY-Q-018 asks whether annual coverage means the payroll package/handoff or
-complete issuance for a specified jurisdiction/year. PAY-Q-019 tracks whether
-completion includes implementing and verifying lab fixes as well as handbook
-work. Both are awaiting answers. Work independent of those answers has proceeded;
-no runtime behavior or gap-closure claim is inferred from silence.
+complete issuance for a specified jurisdiction/year. At this pass it awaits
+an answer; the following entry records its approval. The operation contracts
+specify behavior without claiming that runtime gaps are fixed.
 
 ## Annual package scope approved — 2026-09-06
 
@@ -233,7 +232,7 @@ GAP-008 retains its implementation finding but now has an approved output scope
 and concrete package closure criteria. A INR 12,000 liability with INR 10,000
 settled shows INR 2,000 outstanding, independent of the illustrative
 INR 600,000 payroll gross. Scope isolation and exact-once entry aggregation are
-explicit. PAY-Q-019 still awaits the implementation/completion-scope answer.
+explicit.
 
 ## Verification
 
