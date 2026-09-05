@@ -350,6 +350,10 @@ See the [full example and rationale](payroll-outputs.md#pay-core-014--employer-c
 
 ## Annual preparation and reconciliation
 
+PAY-Q-018 / PAY-ARCH-005 establishes the scope: the [payroll annual package](annual-payroll-package.md)
+and its issuance handoff belong in this handbook. Detailed statutory issuance
+procedures are a separate chapter for the applicable jurisdiction and year.
+
 The [reporting and reconciliation chapter](reporting-and-reconciliation.md)
 explains four distinct results: finalized employee payroll, settled employer
 liability, a prepared annual package, and an issued certificate. It traces the
@@ -420,8 +424,9 @@ and the settled subsequent-month correction rule, are not open questions.
 **Active: [gap-closure work](gap-closure-work.md).** Existing rules now have
 [operation contracts](payroll-operation-contracts.md) and acceptance cases.
 PAY-Q-017 is approved as PAY-CORE-016: the unpaid remainder after a partial
-remittance stays a liability. PAY-Q-018 and PAY-Q-019 await annual-output and
-completion-scope answers. Runtime implementation gaps remain open.
+remittance stays a liability. PAY-Q-018 is approved as PAY-ARCH-005; the
+[annual package and handoff](annual-payroll-package.md) is specified. PAY-Q-019
+awaits the completion-scope answer. Runtime implementation gaps remain open.
 
 The conceptual edition has passed the final walkthrough and documentation
 closure checkpoints. See [the checkpoint results](handbook-review.md#edition-checkpoints)

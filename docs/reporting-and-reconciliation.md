@@ -41,6 +41,10 @@ Concrete validation and record representation remain implementation work.
 
 ## Preparing the annual information
 
+PAY-Q-018 is now approved as PAY-ARCH-005. The [annual package specification](annual-payroll-package.md)
+expands this sequence into scope, contents, selection, settlement balances,
+missing inputs, and handoff. Detailed statutory procedures are a separate chapter.
+
 This is a reading/review sequence derived from already described information
 needs, not a newly mandated set of application states or APIs.
 

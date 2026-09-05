@@ -146,7 +146,7 @@ again. This example uses an explicit split; it does not select an automatic
 allocation policy. Excess deposits and external accounting treatment are not
 invented by the balance equation.
 
-## Annual package: established contract and open scope
+## Annual package: established contract and approved scope
 
 The current information contract identifies an employer, employee, and reporting
 period; assembles the relevant committed payroll and corresponding liability,
@@ -173,6 +173,8 @@ The following are review cases for the known aggregation limitation:
 
 These cases specify payroll data selection and truthful representation. Legal
 tax-year attribution, statutory calculations, and complete issuance require the
-applicable reporting process. PAY-Q-018 asks whether the next handbook scope is
-the payroll annual package/handoff or complete issuance for a specified
-jurisdiction and financial year. It remains awaiting the user's answer.
+applicable reporting process. PAY-Q-018 is approved as PAY-ARCH-005: this
+handbook specifies the payroll annual package and issuance handoff. Detailed
+statutory procedures are a separate jurisdiction/year chapter. See the
+[package specification](annual-payroll-package.md) for scope, coverage, balances,
+and acceptance evidence.

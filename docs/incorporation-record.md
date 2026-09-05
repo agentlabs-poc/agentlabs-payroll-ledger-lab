@@ -221,6 +221,20 @@ completion includes implementing and verifying lab fixes as well as handbook
 work. Both are awaiting answers. Work independent of those answers has proceeded;
 no runtime behavior or gap-closure claim is inferred from silence.
 
+## Annual package scope approved — 2026-09-06
+
+The user answered “yes” to PAY-Q-018. PAY-ARCH-005 selects the payroll annual
+package and issuance handoff, with detailed statutory procedures in a separate
+jurisdiction/year chapter. The [package specification](annual-payroll-package.md)
+now records contents, coverage, selection, balances, missing inputs, handoff,
+rationale, and acceptance evidence.
+
+GAP-008 retains its implementation finding but now has an approved output scope
+and concrete package closure criteria. A INR 12,000 liability with INR 10,000
+settled shows INR 2,000 outstanding, independent of the illustrative
+INR 600,000 payroll gross. Scope isolation and exact-once entry aggregation are
+explicit. PAY-Q-019 still awaits the implementation/completion-scope answer.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

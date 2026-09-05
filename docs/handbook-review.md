@@ -22,12 +22,14 @@ is adopted by closing this edition.
 **At edition closure, no named proposal awaited an answer.** PAY-Q-009 is
 approved. The subsequent [gap-closure pass](gap-closure-work.md) now opens
 PAY-Q-017 on partial remittances; it is now approved as PAY-CORE-016. No named
-core-rule proposal currently awaits an answer. PAY-Q-018 and PAY-Q-019 now
-request annual-output and completion scope respectively. The
+core-rule proposal currently awaits an answer. PAY-Q-018 is approved as
+PAY-ARCH-005, and the [annual package](annual-payroll-package.md) is specified.
+PAY-Q-019 remains open on completion scope. The
 [gap-resolution audit](gap-resolution-audit.md)
 clarifies the limit: six numbered gaps have agreed core behavior, one is
-superseded, and annual issuance is partly specified. Seven active implementation
-gaps/limitations remain; deferred policies have not become resolved decisions.
+superseded, and the annual scope was then partly specified. PAY-ARCH-005 now
+selects the payroll package/handoff and separates statutory procedures. Seven
+active code gaps/limitations remain; scope approval does not implement them.
 
 ## Final walkthrough results
 
@@ -120,7 +122,7 @@ formula, API, operational policy, or issuance integration is specified.
 | Exceptional installment/application behavior | Automatic extension, splitting, and restoration have not been adopted | Apply the supplied policy where it fits existing rules; ask if a core behavior change is proposed |
 | Concurrency, retries, and recovery | Durable storage and coordination are not implemented in the demo | Implement against the already stated invariants when authorized |
 | Detailed role assignments and integrations | Capabilities and system boundaries are settled, concrete mappings are not | Deployment/operating specification rather than invented job-title rules |
-| Complete annual issuance | The information flow is explained; applicable form/period mapping and integrated issuance are not delivered | Scope-specific statutory/integration work, using authoritative material for the applicable period |
+| Complete annual issuance | PAY-ARCH-005 selects the payroll annual package/handoff for this handbook; complete issuance is a separate chapter | Develop the statutory procedure for the applicable jurisdiction/year when that chapter is scoped; it does not block the approved package specification |
 | Detailed business calculations | Proration, contribution amounts, and annual tax formulas belong to higher-order policy | Do not turn them into new core ledger primitives or infer policy from demo arithmetic |
 
 These items should not all be presented as unanswered foundational questions.

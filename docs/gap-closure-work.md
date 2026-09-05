@@ -7,9 +7,9 @@ or mark a code gap fixed because its expected behavior is now explicit.
 
 The [operation contracts](payroll-operation-contracts.md) now specify required
 information, preconditions, outcomes, rejection/recovery behavior, liability
-balances, and annual data-selection cases. PAY-Q-018 asks the annual reporting
-scope; PAY-Q-019 asks whether completion also includes runtime implementation.
-Both await answers. Documentation proceeds within the established scope.
+balances, and annual data-selection cases. PAY-Q-018 is approved as PAY-ARCH-005;
+the [annual package](annual-payroll-package.md) now specifies the selected scope.
+PAY-Q-019 still asks whether completion also includes runtime implementation.
 
 ## Work sequence and checkpoints
 
@@ -18,7 +18,7 @@ Both await answers. Documentation proceeds within the established scope.
 | GAP-001/002/003: instruction lifetime and application | Eligibility/application contract and acceptance cases recorded | Ordinary expected outcomes specified; exact encoding and implementation proof remain |
 | GAP-005/006: draft, commit, and correction | Preconditions, protected commit sequence, recovery outcomes, and correction contract recorded | Observable behavior specified; storage/concurrency and authorization mapping still need implementation evidence |
 | GAP-007: liability settlement | PAY-Q-017 approved as PAY-CORE-016: the unpaid remainder stays a liability | Partial and final settlement example and acceptance case recorded; allocation/interfaces and implementation remain open |
-| GAP-008: annual reporting | Payroll-side data contract and employee/employer/year selection cases recorded | PAY-Q-018 awaits an answer on package/handoff versus complete scoped issuance |
+| GAP-008: annual reporting | PAY-Q-018 approved as PAY-ARCH-005; annual package contents, selection, balances, missing inputs, and issuance handoff specified | Selected handbook scope documented; aggregation implementation remains open. Statutory procedures are a separate chapter |
 
 GAP-004 is superseded history. Employee-month association is settled as
 PAY-CORE-015 and is not a new question in this sequence. Supplemental-run

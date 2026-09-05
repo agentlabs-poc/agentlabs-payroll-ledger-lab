@@ -16,8 +16,9 @@ This resolves that rule within GAP-007; the code gap remains open.
 
 The [operation contracts](payroll-operation-contracts.md) specify observable
 behavior against these gaps, including liability balances and annual selection
-cases. They do not close the code findings. PAY-Q-018 and PAY-Q-019 track the
-remaining annual-output and implementation-scope clarification.
+cases. They do not close the code findings. PAY-Q-018 is approved as
+PAY-ARCH-005; [the annual package](annual-payroll-package.md) is specified.
+PAY-Q-019 still tracks whether this phase includes runtime implementation.
 
 Evidence revision: lab `737465d5e27888518018e9b1f28f75fcfcac0139`,
 [source](https://github.com/agentlabs-poc/agentlabs-payroll-ledger-lab/blob/737465d5e27888518018e9b1f28f75fcfcac0139/src/main.ts).
@@ -234,9 +235,10 @@ multiple obligations remain open.
 
 ## PAY-GAP-008 — annual employee and period aggregation
 
-**Status: source-inspected limitation of the annual example.** The Form 16
-information basis is described in the output chapter; no complete production
-issuance design has been approved by the handbook discussion.
+**Status: open implementation gap; package scope approved as PAY-ARCH-005
+under PAY-Q-018.** The [annual package contract](annual-payroll-package.md)
+specifies aggregation, liability/remittance balances, missing information, and
+the issuance handoff. Detailed statutory procedures are a separate chapter.
 
 `createForm16` sums all stored TDS credits and matches, chooses the first credit's
 payroll reference, and uses that reference's payslip gross. It does not select
@@ -247,11 +249,13 @@ Consequence: this function demonstrates an information dependency, not complete
 annual reporting or certificate issuance. Full salary coverage and correctly
 scoped deduction/deposit information cannot be inferred from its global totals.
 
-When annual implementation is authorized, evidence must establish the correct
-reporting scope and complete relevant salary/deduction/deposit data, followed by
-the applicable statutory issuance process. Exact period/form applicability and
-interfaces require their own review; this register does not supply new legal
-rules or treat a balanced internal total as an official certificate.
+When annual-package implementation is authorized, evidence must establish
+employee/employer/reporting-period isolation, complete relevant payroll and
+liability data, exact-once entry aggregation, partial settlement balances,
+retained proof, and explicit missing-input/issuance handoff information. See the
+package acceptance cases. Complete statutory issuance is outside this selected
+package implementation scope; a balanced internal total remains distinct from
+an official certificate.
 
 ## Agreement-to-evidence coverage
 
@@ -268,7 +272,7 @@ conformance. Detailed open findings remain in the numbered entries above.
 | Scoped authority: PAY-ARCH-003 | Lifecycle-state gates exist; actor/scope authorization is not implemented in the browser lab |
 | Employer register and remittance closure: PAY-ARCH-004, PAY-CORE-012 | Register and synthetic matches exist; general matching and actual remittance evidence are not established (GAP-007) |
 | After-exit corrections excluded: PAY-CORE-013 | Lab has only an active employee demo and no exit-scope enforcement; after-exit payroll adjustment is not a requirement to implement |
-| Annual information basis | Readiness routine exists; complete annual selection/aggregation and issuance are not established (GAP-008) |
+| Annual package: PAY-ARCH-005 | Package/handoff specification is recorded; scoped aggregation and balances remain unimplemented (GAP-008). Complete statutory procedures are a separate chapter |
 | Employer contributions: PAY-CORE-014 | Generic earning/deduction heads and tagged-deduction liabilities can represent the clarified flow; the lab has no complete employer-contribution pair example or business pairing enforcement |
 | Separate sealing | PAY-CORE-007 includes sealing in complete draft creation; the lab still exposes empty creation, append, and a separate seal step |
 
