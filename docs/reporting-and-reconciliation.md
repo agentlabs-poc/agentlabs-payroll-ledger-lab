@@ -1,8 +1,8 @@
 # Reporting and reconciliation across payroll records
 
-Status: explanation of existing agreements and inspected code. The employer-only
-contribution question PAY-Q-016 is separately proposed in the
-[output chapter](payroll-outputs.md#pay-core-014--employer-only-contributions).
+Status: explanation of existing agreements and inspected code. The employer
+contribution earning/deduction flow, clarified under PAY-Q-016, is recorded in
+the [output chapter](payroll-outputs.md#pay-core-014--employer-contributions-through-payroll).
 No new statutory formulas, deadlines, or certificate formats are selected here.
 
 ## Four results that answer different questions

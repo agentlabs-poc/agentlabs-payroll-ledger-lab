@@ -101,9 +101,12 @@ agreements. The gap register now maps agreement groups to inspected support.
 Historical alternatives remain reconstructable; settled concepts are not
 reopened because code enforcement is missing.
 
-PAY-Q-016 / PAY-CORE-014 separately asks about employer-only contributions. The
-lab currently derives liabilities only from employee deductions. This scope
-question is a proposal, not a requirement inferred from the reporting examples.
+PAY-Q-016 initially asked about employer-only contributions with no effect on
+gross. The user subsequently corrected that premise: CTC contribution earning
+and matching deduction enter payroll first, followed by employer liability.
+PAY-CORE-014 now records that flow, with gross increasing and net unchanged by
+the pair. The earlier proposal is withdrawn; the revised material derives from
+the user’s clarification, not from the reporting examples.
 
 ## Verification
 

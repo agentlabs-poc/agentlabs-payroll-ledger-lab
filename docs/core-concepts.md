@@ -73,6 +73,12 @@ The five stores describe employee payroll. The employer-liability register is
 also part of payroll under PAY-ARCH-004; it records employer obligations rather
 than adding another source type to employee salary calculation.
 
+Employer contributions use the same model under PAY-CORE-014. The contribution
+included in CTC is recorded as an earning and a matching deduction in payroll;
+gross includes the earning, while the deduction balances its effect on net.
+The corresponding employer liability follows the committed payroll entries.
+See the [contribution example](payroll-outputs.md#pay-core-014--employer-contributions-through-payroll).
+
 ## The five central stores
 
 | Concept | Meaning in this model | Code representation |

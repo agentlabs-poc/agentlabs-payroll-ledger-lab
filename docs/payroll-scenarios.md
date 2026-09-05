@@ -26,6 +26,18 @@ PAY-CORE-013 places corrections after employee exit outside payroll, in
 accounting; the subsequent-month payroll adjustment row above does not override
 that boundary.
 
+## Employer contribution through payroll
+
+**Agreed under PAY-CORE-014.** An employer contribution included in CTC is an
+earning plus a matching deduction. With INR 50,000 other earnings and an
+INR 1,000 contribution, gross is INR 51,000 and total deductions are INR 1,000,
+leaving INR 50,000 net. Both entries pass through the governed Payroll Ledger;
+the corresponding INR 1,000 employer obligation follows in the liability
+register. Remittance with proof then closes that liability.
+
+This is not a direct liability entry that bypasses payroll or leaves gross
+unchanged. See [the rationale and code comparison](payroll-outputs.md#pay-core-014--employer-contributions-through-payroll).
+
 ## Worked change over three months
 
 This illustration concerns one salary component and one finite instruction;

@@ -36,7 +36,7 @@ separately below.
 | PAY-Q-013 | Approved | Should input maintenance, preparation, draft approval, and commit be distinct scoped capabilities, with policy deciding which may be held by the same person or role? | User answered "approved", then required core clarity before further broader questions. PAY-ARCH-003 is agreed; exact roles and separation-of-duty policy remain open. |
 | PAY-Q-014 | Answered with ownership clarification | Where do employer-liability and accounting records belong relative to payroll? | User clarified that accounting is outside and the employer-liability register is inside payroll. PAY-ARCH-004 replaces the earlier grouping; the Form 16 connection is supported with the qualifications in the chapter. |
 | PAY-Q-015 | Answered with scope exclusion | Should an exited employee remain eligible for a subsequent-month adjustment payroll without reactivating employment? | User directed that this is out of payroll scope and should be corrected in accounting. PAY-CORE-013 excludes the proposed after-exit adjustment payroll. |
-| PAY-Q-016 | Open | Should employer-only contributions enter the employer-liability register without changing employee gross or net payroll? | PAY-CORE-014; the lab currently creates liability credits only from tagged employee deductions. |
+| PAY-Q-016 | Answered by correcting the premise | How do employer contributions enter payroll and the employer-liability register? | User clarified that the offer-letter CTC contribution is a payroll earning plus matching deduction. Gross includes it; net is unchanged by the pair. Payroll entries precede the corresponding liability. |
 
 ## Domain decisions
 
@@ -61,6 +61,7 @@ separately below.
 | PAY-ARCH-004 | User-clarified ownership under PAY-Q-014 | Employer-liability register belongs inside payroll; general accounting is outside. | User explicitly corrected the earlier grouping. [Rationale, code evidence, and verified Form 16 relationship](payroll-outputs.md). The TDS register supports deduction/deposit reporting; complete Form 16 also needs annual salary/tax and official statement/certificate records. No complete issuance design is approved. |
 | PAY-CORE-012 | User-confirmed liability lifecycle | Track outstanding employer liability; record remittance to the government authority with proof such as the challan number; close the corresponding settled liability. | User explicitly described remittance and proof as the closure basis and subsequently confirmed "yes" on 2026-09-06. [Lifecycle, rationale, and example](payroll-outputs.md#pay-core-012--liability-remittance-proof-and-closure). Retain the liability/settlement history; allocation and proof interfaces remain later details. |
 | PAY-CORE-013 | User-confirmed scope under PAY-Q-015 | Corrections after employee exit are handled in external accounting, outside payroll; the generated payroll remains unchanged. | User: "this should be out of scope and should be currented in accounting". [Example, rationale, and withdrawn alternative](employee-and-annual-journeys.md#pay-core-013--a-correction-after-employment-has-ended). Narrows PAY-CORE-011 at the after-exit boundary; does not prescribe accounting mechanics. |
+| PAY-CORE-014 | User-confirmed contribution flow under PAY-Q-016 | Employer contribution in CTC enters payroll as an earning and matching deduction, then the employer-liability register; gross includes it while the pair leaves net unchanged. | [Rationale, worked amounts, code comparison, and withdrawn alternative](payroll-outputs.md#pay-core-014--employer-contributions-through-payroll). The earlier direct-to-liability/no-gross-effect proposal was incorrect. |
 
 The user identified the existing ledger and instruction concepts as the model
 to confirm and refine. The reconstruction in core-concepts.md preserves this
@@ -72,7 +73,6 @@ statutory example as an adopted rule.
 | ID | Status | Proposal | Rationale and remaining details |
 |---|---|---|---|
 | PAY-CORE-007 | Proposed under PAY-Q-009; parked | Complete and seal monetary content during draft creation; retain approval and commit as separate operations without a distinct user-visible seal step. | [Rationale and alternative](draft-source-freeze.md#pay-core-007--does-sealing-remain-a-separate-operation). Return after the horizontal pass. |
-| PAY-CORE-014 | Proposed under PAY-Q-016 | Represent employer-only contributions as employer liabilities while leaving employee pay unaffected. | [Code evidence, example, rationale, and alternative](payroll-outputs.md#pay-core-014--employer-only-contributions). Formula and ledger commit coupling are not selected. |
 
 ## Alternatives and history
 
@@ -134,3 +134,9 @@ former employee could receive subsequent-month adjustment payroll without
 employment reactivation. The user placed this case outside payroll and in
 accounting. PAY-CORE-013 records that exclusion; the proposed payroll eligibility
 exception is withdrawn. Existing generated payroll remains final.
+
+PAY-Q-016 incorrectly assumed an employer-only contribution would bypass
+payroll earnings and leave gross unchanged. The user clarified the offer-letter
+CTC model: an employer-contribution earning and matching deduction enter the
+Payroll Ledger first; the corresponding obligation then enters the employer
+register. PAY-CORE-014 records that flow; the prior proposal is withdrawn.

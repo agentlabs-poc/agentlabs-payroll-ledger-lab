@@ -125,30 +125,66 @@ both salary totals and TDS/liability data and explicitly produces an incomplete
 package. This supports the clarified module shape; it does not demonstrate a
 complete certificate-issuance implementation.
 
-## PAY-CORE-014 — employer-only contributions
+## PAY-CORE-014 — employer contributions through payroll
 
-**Proposed under PAY-Q-016; not approved.** The inspected
-`createStatutoryLiabilities` routine creates liabilities from tagged employee
-payroll deductions. An employer-only contribution has a different monetary
-meaning: it is an employer obligation without reducing the employee's pay.
+**User-confirmed clarification under PAY-Q-016.** The employer contribution
+mentioned in the offer-letter CTC first enters payroll as an earning and a
+matching deduction. The committed Payroll Ledger precedes the corresponding
+entry in the employer-liability register. It is not a direct-to-liability
+amount that bypasses employee payroll.
 
-Question: should the register also accept such employer-only payroll amounts,
-with their business calculation supplied by the appropriate producing layer,
-while employee gross and net remain unaffected?
+The earning increases gross. The matching deduction increases total deductions
+by the same amount, leaving net unchanged. The deduction represents the amount
+that goes toward the employer obligation instead of employee take-home pay.
 
-Example: employee gross/net remain as already calculated, and an additional
-INR 1,000 employer contribution produces INR 1,000 in employer liability. This
-is an illustrative component, not a claim about any mandatory contribution or
-statutory rate. Remittance/proof closure would follow PAY-CORE-012.
+Illustrative payroll with no other components:
 
-Rationale for the proposal: placing the amount in the employee deduction ledger
-would misstate take-home pay; omitting it from the employer register would leave
-that payroll-related obligation unrepresented. An alternative would be to keep
-such employer costs entirely in accounting, but that would narrow what the
-payroll liability register covers. The user has not selected this boundary.
+| Payroll component or total | Amount (INR) |
+|---|---:|
+| Other salary earnings | 50,000 |
+| Employer contribution earning | 1,000 |
+| Gross | 51,000 |
+| Matching employer contribution deduction | -1,000 |
+| Total deductions | 1,000 |
+| Net | 50,000 |
+| Corresponding employer liability | 1,000 |
 
-This question selects meaning and scope only. It does not select a direct-write
-API, bypass approval, choose commit coupling between ledgers, or adopt a formula.
+```mermaid
+flowchart LR
+    C[Employer contribution in offer-letter CTC] --> D[Draft: contribution earning plus matching deduction]
+    D --> P[Approve, reconcile, and commit Payroll Ledger]
+    P --> L[Corresponding employer-liability entry]
+    L --> R[Government remittance and proof]
+    R --> X[Liability closure]
+```
+
+The paired entries use the existing earning/deduction model and governed payroll
+flow. They represent one contribution and one corresponding obligation, not two
+liabilities simply because two payroll rows exist. After remittance with proof,
+the corresponding liability closes under PAY-CORE-012.
+
+Rationale: the payroll result presents the contribution included in the CTC
+while distinguishing gross earnings from cash paid to the employee. The
+employer register then tracks the obligation arising from that committed result.
+No extra ledger primitive or payroll-bypass path is needed for this concept.
+
+Gross here is the handbook's payroll total. Tax treatment and statutory-report
+classification remain responsibilities of the applicable calculation/reporting
+rules; inclusion in gross does not silently select those rules.
+
+**Code comparison:** the lab supports earning and deduction heads and derives
+liabilities from tagged committed deductions. That shape can represent this
+flow. It does not contain a complete employer-contribution earning/deduction
+example or enforce its business calculation/pairing. Production conformance
+must not be inferred solely from the generic primitives.
+
+**PAY-Q-016 — answered by correcting the premise.** The assistant had proposed
+an employer-only amount that would leave both gross and net unchanged and might
+enter the liability register directly. The user clarified the existing CTC
+model: contribution earning plus matching deduction, payroll first, liability
+second. Gross increases; net is balanced by the deduction. The earlier proposal
+is withdrawn. Exact head configuration, calculation, and commit coupling remain
+implementation details, not reopened scope questions.
 
 ## Decision history and remaining work
 

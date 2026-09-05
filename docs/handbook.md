@@ -303,6 +303,22 @@ This supports payroll ownership of the register; an internal balance alone is
 not the complete issued certificate. Employee payroll remains final while
 employer obligations are reconciled.
 
+## Employer contribution in CTC
+
+**Status: user-confirmed flow**, PAY-CORE-014. The employer contribution named
+in the offer-letter CTC enters payroll as an earning and a matching deduction.
+Both are included in the governed draft and committed Payroll Ledger. The
+corresponding obligation then enters the employer-liability register.
+
+For example, INR 50,000 other earnings plus an INR 1,000 employer-contribution
+earning give INR 51,000 gross. The matching INR 1,000 deduction leaves net at
+INR 50,000. The employer register records the INR 1,000 obligation, which closes
+when the corresponding remittance and proof are recorded.
+
+The contribution therefore increases gross and deductions equally; it does not
+change net. This uses the existing ledger flow rather than bypassing payroll.
+See the [full example and rationale](payroll-outputs.md#pay-core-014--employer-contributions-through-payroll).
+
 ## Annual preparation and reconciliation
 
 The [reporting and reconciliation chapter](reporting-and-reconciliation.md)
@@ -354,10 +370,9 @@ remain later work, rather than an unresolved ownership question.
 in external accounting. The [recorded rationale](employee-and-annual-journeys.md#pay-core-013--a-correction-after-employment-has-ended)
 withdraws the proposed former-employee adjustment payroll.
 
-**PAY-Q-016 / PAY-CORE-014 is open:** should employer-only contributions enter
-the employer-liability register without affecting employee gross or net? The
-[proposal](payroll-outputs.md#pay-core-014--employer-only-contributions) distinguishes
-this from the lab’s current deduction-derived liabilities.
+**PAY-Q-016 is answered by correcting the premise:** employer contributions
+enter the Payroll Ledger as an earning plus matching deduction before becoming
+employer liabilities. Gross includes them; the pair leaves net unchanged.
 
 **PAY-Q-009 / PAY-CORE-007 remains parked:** whether complete draft creation
 should include sealing rather than exposing a separate seal operation.
@@ -380,5 +395,5 @@ now records established outcomes. [Joining/exit and annual data flows](employee-
 are additionally explained, including the after-exit accounting boundary.
 Annual preparation and reconciliation are now explained in the
 [reporting chapter](reporting-and-reconciliation.md), with explicit gaps in the
-demo. Employer-only contribution scope under PAY-Q-016 remains a proposal;
-complete issuance integration and detailed exception policies remain further work.
+demo. PAY-Q-016 now records the contribution earning/deduction flow; complete
+issuance integration and detailed exception policies remain further work.

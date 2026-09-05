@@ -7,12 +7,13 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current question: PAY-Q-016 / PAY-CORE-014 — employer-only contributions.**
+**Current: incorporate PAY-CORE-014's clarified employer-contribution flow.**
 
-Should the employer-liability register include employer-only contributions
-without affecting employee gross or net payroll? The [proposal](payroll-outputs.md#pay-core-014--employer-only-contributions)
-is distinct from the lab's existing deduction-derived liabilities and remains
-unapproved.
+PAY-Q-016 is resolved: the contribution in offer-letter CTC is a payroll earning
+and matching deduction before it enters the employer-liability register. Gross
+includes the contribution; net is unchanged by the pair. The earlier direct-to-
+liability/no-gross-effect proposal is withdrawn. See the
+[worked example](payroll-outputs.md#pay-core-014--employer-contributions-through-payroll).
 
 ## Incorporated coverage
 
@@ -53,7 +54,7 @@ inside payroll and close on corresponding remittance with proof.
 | Payroll liabilities and external accounting | PAY-ARCH-004 ownership clarified under PAY-Q-014 | How do payslips, employee payment, employer/statutory liabilities, and accounting use posted payroll? |
 | Corrections | PAY-CORE-001/011/013 settle finality, subsequent-month adjustment, and after-exit accounting scope | Enforcement and specific external reporting treatment remain separate from the settled payroll rule. |
 | Reports and reconciliation | Annual preparation and closure meanings incorporated; GAP-007/008 recorded | Complete issuance integration and detailed validation remain later work. |
-| Employer-only contributions — current | PAY-CORE-014 proposed under PAY-Q-016 | Does the register include employer obligations that do not affect employee pay? |
+| Employer contributions | PAY-CORE-014 earning/deduction flow clarified under PAY-Q-016 | CTC contribution enters Payroll Ledger first and employer register next; gross includes it and matching deduction balances net. |
 
 ## Parked details and return points
 
@@ -104,7 +105,8 @@ flows, liability lifecycle, and annual information/review sequence are explained
 The code comparison includes matching and annual aggregation gaps. This is an
 expanded working edition, not a claim that those workflows are implemented.
 
-One active material domain question is PAY-Q-016. PAY-Q-009 remains parked.
+PAY-Q-016 is answered; there is no active unapproved domain question in this
+pass. PAY-Q-009 remains parked.
 Concrete expiry/validation representations, detailed exception policies, role
 assignments, and complete statutory issuance integration remain tracked work.
 A production compliance guide would also need the applicable period/form scope;

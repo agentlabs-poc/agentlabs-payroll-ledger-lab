@@ -249,7 +249,8 @@ conformance. Detailed open findings remain in the numbered entries above.
 | Employer register and remittance closure: PAY-ARCH-004, PAY-CORE-012 | Register and synthetic matches exist; general matching and actual remittance evidence are not established (GAP-007) |
 | After-exit corrections excluded: PAY-CORE-013 | Lab has only an active employee demo and no exit-scope enforcement; after-exit payroll adjustment is not a requirement to implement |
 | Annual information basis | Readiness routine exists; complete annual selection/aggregation and issuance are not established (GAP-008) |
-| Sealing and employer-only contributions | PAY-CORE-007/014 remain proposals. They are not adopted implementation requirements |
+| Employer contributions: PAY-CORE-014 | Generic earning/deduction heads and tagged-deduction liabilities can represent the clarified flow; the lab has no complete employer-contribution pair example or business pairing enforcement |
+| Separate sealing | PAY-CORE-007 remains a parked proposal, not an adopted implementation requirement |
 
 ## Coverage
 
