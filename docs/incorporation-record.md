@@ -74,6 +74,20 @@ allocation rules. Joining/exit, partial-period calculation, and full annual
 issuance remain incomplete. This adds worked scenario coverage but is not an
 implementation test or a claim that all handbook journeys are now complete.
 
+## Extended journeys — 2026-09-06
+
+[Joining, partial periods, exit, and annual reporting](employee-and-annual-journeys.md)
+now describe how supplied facts and calculation outputs use the agreed payroll
+lifecycle. Examples assume component amounts rather than choosing new formulas.
+The settlement source description is pinned to the previously inspected HRMS
+Core revision; the annual description retains the lab's incomplete status.
+
+PAY-Q-015 raised one new material question about a former employee’s later
+adjustment. The user answered during this pass: handle it in external accounting,
+outside payroll. PAY-CORE-013 records the boundary and withdraws the proposed
+payroll exception. This is a user decision, not inferred from incorporation.
+Complete annual issuance and exception/calculation policies remain further work.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

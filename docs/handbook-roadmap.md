@@ -7,13 +7,18 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: established scenario coverage incorporated under PAY-PROCESS-009.**
+**Current: extended journeys incorporated; PAY-Q-015 resolved by scope exclusion.**
+
+The [extended journeys](employee-and-annual-journeys.md) incorporate joining,
+partial-period outputs, exit components, and annual data flows from existing
+agreements/evidence. The user resolved PAY-Q-015: after-exit corrections are
+outside payroll and handled in accounting. The proposed former-employee
+adjustment-payroll exception is withdrawn under PAY-CORE-013.
 
 Read [payroll scenarios](payroll-scenarios.md) for the nine agreed-outcome cases
 and the separately labeled grouped-challan code example. No new policy approval
-is inferred from these examples. Joining/exit, partial-period situations, and
-complete annual workflows remain the next coverage areas; ask only when their
-explanation requires a material decision.
+is inferred from these examples. Complete calculation/exception policies and
+annual workflows still require further coverage.
 
 The user requested that established material be incorporated first, with a clear
 account of what changed. The existing handbook snapshot was committed and pushed
@@ -115,8 +120,9 @@ The charter is pinned, initial code findings and a conceptual reconstruction
 are recorded, and the manager's input handoff is established through the user's
 account. Established material is now incorporated into the handbook narrative;
 the employer-liability clarification and agreed scenario outcomes are recorded.
-Joining/exit, partial-period situations, and complete annual workflows remain
-later coverage.
+Joining/exit and partial-period ledger flows plus annual data preparation are
+now explained. PAY-Q-015 is settled; complete annual/exception workflows remain
+open.
 Further rules, complete scenario coverage, and an implementation gap register
 against agreed requirements remain ongoing work. The
 [initial gap register](implementation-gaps.md) records missing expiry enforcement;

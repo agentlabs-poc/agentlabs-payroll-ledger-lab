@@ -19,8 +19,12 @@ amounts; payroll does not detect business duplicates or require source tracing.
 | A draft containing a one-time bonus is abandoned | An uncommitted draft includes INR 5,000 bonus | Abandonment creates no posted bonus and consumes no instruction. A replacement draft can use it if still applicable | PAY-CORE-003 |
 | Applicable facts change during review | Reviewed draft includes INR 5,000 bonus; applicable facts change to INR 6,000 before commit | The old draft's amounts stay fixed. Reconciliation blocks its commit; cancellation/rebuild and fresh review produce the new proposal | PAY-CORE-006-C/009 |
 | One employee's draft is stale in a batch | A batch has 100 reviewed drafts and one fails reconciliation | The other 99 may commit if valid. The batch retains the outstanding result; a rebuilt draft requires fresh approval | PAY-ARCH-002/003 |
-| A correction arrives after payroll generation | September committed a bonus of INR 5,000; a subsequent correction requires INR 500 recovery | September stays final. A subsequent month's governed payroll includes INR -500; prior instruction consumption is not automatically undone | PAY-CORE-001/011 |
+| A correction arrives after payroll generation, while still within payroll scope | September committed a bonus of INR 5,000; a subsequent correction requires INR 500 recovery | September stays final. A subsequent month's governed payroll includes INR -500; prior instruction consumption is not automatically undone | PAY-CORE-001/011 |
 | Employer remits the government liability | Payroll's employer register has INR 1,000 outstanding; employer remits INR 1,000 with a challan reference | Record the remittance and proof against the corresponding liability, closing the settled obligation while retaining history | PAY-CORE-012, PAY-ARCH-004 |
+
+PAY-CORE-013 places corrections after employee exit outside payroll, in
+accounting; the subsequent-month payroll adjustment row above does not override
+that boundary.
 
 ## Worked change over three months
 
@@ -79,12 +83,11 @@ and proof are recorded.
 
 ## Coverage that remains to develop
 
-Joining, exit/final settlement, partial-period calculations, and annual issuance
-are not declared fully explained by these examples. Their business facts and
-calculations belong to the appropriate producing layer; the core flow remains
-the established one. Where supplied facts fit that flow, describe it directly.
-Where a scenario requires a material policy choice, identify it and ask instead
-of silently selecting a rule.
+The [extended journeys](employee-and-annual-journeys.md) now explain joining,
+supplied partial-period amounts, exit-related components, and annual data flows
+within the established model. PAY-CORE-013 places after-exit corrections in
+external accounting, resolving PAY-Q-015. Complete calculation policies and annual issuance
+remain further work, rather than behavior selected by these examples.
 
 The [implementation gaps](implementation-gaps.md) remain applicable: in
 particular the demo does not fully enforce effective selection, cross-draft

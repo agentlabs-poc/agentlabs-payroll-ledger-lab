@@ -220,6 +220,9 @@ recovery, the producing layer supplies an adjustment for a subsequent payroll
 month. For example, October's payroll includes INR -500 through October's
 governed draft and commit flow. September still records its INR 5,000 bonus.
 
+PAY-CORE-013 supplies the after-exit scope boundary: a later correction for a
+former employee is handled in external accounting, not subsequent-month payroll.
+
 This rule concerns generated/committed payroll. A preview or uncommitted draft
 remains a proposal. There is no additional employee-payment state to wait for
 before the core treats committed payroll as final. The adjustment does not
@@ -237,6 +240,23 @@ subsequent-month corrections, and government-liability settlement. It includes
 a three-month worked example and distinguishes pre-commit validation from
 liability reconciliation. A separate section describes the lab’s grouped
 challan behavior as code evidence only.
+
+## Joining, partial periods, exit, and annual work
+
+The [extended journeys](employee-and-annual-journeys.md) apply the established
+flow to a first payroll, supplied partial-month amounts, and exit-related
+components. Business calculations supply the amounts; the same draft,
+approval, reconciliation, and commit rules govern them. These examples do not
+select proration formulas or settlement entitlement rules.
+
+The annual workflow combines committed employee payroll, the employer-liability
+register and remittance proof, annual tax information, and applicable official
+records. The chapter separates this data flow from the lab's incomplete annual
+readiness generator.
+
+PAY-Q-015 is resolved by PAY-CORE-013: corrections after employee exit belong
+in external accounting, outside payroll. They do not create a later adjustment
+payroll or change the former employee’s generated payroll.
 
 ## Ownership, batches, and authority
 
@@ -317,6 +337,10 @@ the distinction from complete issuance are recorded in the
 [output chapter](payroll-outputs.md). Detailed register and annual workflows
 remain later work, rather than an unresolved ownership question.
 
+**PAY-Q-015 is answered with a scope exclusion:** after-exit corrections belong
+in external accounting. The [recorded rationale](employee-and-annual-journeys.md#pay-core-013--a-correction-after-employment-has-ended)
+withdraws the proposed former-employee adjustment payroll.
+
 **PAY-Q-009 / PAY-CORE-007 remains parked:** whether complete draft creation
 should include sealing rather than exposing a separate seal operation.
 
@@ -334,5 +358,6 @@ against the prior discussion snapshot before continuing new decisions.
 The incorporation originally left PAY-Q-014 open. The subsequent user
 clarification now settles employer-register/accounting ownership; the handbook
 is still a working edition. The [scenario incorporation](payroll-scenarios.md)
-now records established outcomes; joining/exit and annual workflows still need
-further coverage, and implementation gaps remain.
+now records established outcomes. [Joining/exit and annual data flows](employee-and-annual-journeys.md)
+are additionally explained, including the after-exit accounting boundary.
+Complete annual/exception workflows and implementation gaps remain.

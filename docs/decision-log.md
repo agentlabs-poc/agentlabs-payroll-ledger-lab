@@ -35,6 +35,7 @@ separately below.
 | PAY-Q-012 | Approved | Should one employee’s draft for a payroll period be the unit of approval and protected commit, with batches coordinating those drafts and retaining individual outcomes? | User answered "approved". PAY-ARCH-002 is agreed; batch-wide all-or-nothing posting was not selected. |
 | PAY-Q-013 | Approved | Should input maintenance, preparation, draft approval, and commit be distinct scoped capabilities, with policy deciding which may be held by the same person or role? | User answered "approved", then required core clarity before further broader questions. PAY-ARCH-003 is agreed; exact roles and separation-of-duty policy remain open. |
 | PAY-Q-014 | Answered with ownership clarification | Where do employer-liability and accounting records belong relative to payroll? | User clarified that accounting is outside and the employer-liability register is inside payroll. PAY-ARCH-004 replaces the earlier grouping; the Form 16 connection is supported with the qualifications in the chapter. |
+| PAY-Q-015 | Answered with scope exclusion | Should an exited employee remain eligible for a subsequent-month adjustment payroll without reactivating employment? | User directed that this is out of payroll scope and should be corrected in accounting. PAY-CORE-013 excludes the proposed after-exit adjustment payroll. |
 
 ## Domain decisions
 
@@ -58,6 +59,7 @@ separately below.
 | PAY-CORE-011 | User-confirmed clarification of PAY-CORE-001 | Generated/committed payroll is as good as paid for core finality; corrections are adjustments in a subsequent payroll month. | User: "we should adjust it in subsequent month, once payroll is generated its as good as paid". [Rationale, terminology, and example](core-coverage.md#pay-core-011--generated-payroll-is-final-adjust-a-subsequent-month). Preserve the earlier result; do not reopen it based on payment status. |
 | PAY-ARCH-004 | User-clarified ownership under PAY-Q-014 | Employer-liability register belongs inside payroll; general accounting is outside. | User explicitly corrected the earlier grouping. [Rationale, code evidence, and verified Form 16 relationship](payroll-outputs.md). The TDS register supports deduction/deposit reporting; complete Form 16 also needs annual salary/tax and official statement/certificate records. No complete issuance design is approved. |
 | PAY-CORE-012 | User-confirmed liability lifecycle | Track outstanding employer liability; record remittance to the government authority with proof such as the challan number; close the corresponding settled liability. | User explicitly described remittance and proof as the closure basis and subsequently confirmed "yes" on 2026-09-06. [Lifecycle, rationale, and example](payroll-outputs.md#pay-core-012--liability-remittance-proof-and-closure). Retain the liability/settlement history; allocation and proof interfaces remain later details. |
+| PAY-CORE-013 | User-confirmed scope under PAY-Q-015 | Corrections after employee exit are handled in external accounting, outside payroll; the generated payroll remains unchanged. | User: "this should be out of scope and should be currented in accounting". [Example, rationale, and withdrawn alternative](employee-and-annual-journeys.md#pay-core-013--a-correction-after-employment-has-ended). Narrows PAY-CORE-011 at the after-exit boundary; does not prescribe accounting mechanics. |
 
 The user identified the existing ledger and instruction concepts as the model
 to confirm and refine. The reconstruction in core-concepts.md preserves this
@@ -124,3 +126,9 @@ employer-liability register belongs in payroll. The user asked whether its Form
 basis alongside annual salary/tax and processed statement/certificate records.
 The assistant’s earlier external-liability framing is superseded; detailed
 issuance and accounting interfaces remain open.
+
+During incorporation of joining/exit scenarios, PAY-Q-015 asked whether a
+former employee could receive subsequent-month adjustment payroll without
+employment reactivation. The user placed this case outside payroll and in
+accounting. PAY-CORE-013 records that exclusion; the proposed payroll eligibility
+exception is withdrawn. Existing generated payroll remains final.

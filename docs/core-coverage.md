@@ -83,6 +83,11 @@ September-to-October recovery. It directly posts and does not enforce that the
 provided date is in a later month, so it only partially demonstrates the agreed
 behavior. These are implementation gaps, not reasons to reopen the concept.
 
+Later clarification PAY-CORE-013: corrections after employee exit belong in
+external accounting. They do not create a later payroll adjustment for the
+former employee. The generated result stays final; see the
+[exit boundary](employee-and-annual-journeys.md#pay-core-013--a-correction-after-employment-has-ended).
+
 ## Current flow and return point
 
 ```mermaid

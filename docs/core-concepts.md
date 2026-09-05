@@ -38,7 +38,8 @@ This section consolidates existing agreements; it introduces no new rule.
    against the payroll period.
 6. Generated/committed payroll is final and as good as paid for the core. A
    correction is an adjustment in a subsequent payroll month; the original
-   result stays unchanged.
+   result stays unchanged. PAY-CORE-013 places after-exit corrections in external
+   accounting instead of creating later adjustment payroll for former employees.
 
 ```mermaid
 flowchart LR
