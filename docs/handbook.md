@@ -93,121 +93,213 @@ period, and authoritative sources when that branch is examined.
 
 Creating this handbook does not itself authorize payroll implementation changes.
 
-## Resume here
+## Reading path
 
-Supporting material:
+Start with the five ledgers below, then follow one monthly payroll through
+preparation, commit, and a subsequent-month adjustment. The agreed model is
+written as handbook content; its discussion history remains in the
+[decision log](decision-log.md) and linked rationale chapters.
 
-- [Agreed core model](core-concepts.md#agreed-core-model): the consolidated
-  concepts, flow, and ordinary-payroll example.
-- [Calculation and the payroll core](calculation-boundary.md): the agreed
-  responsibility boundary, with its rationale and examples.
-- [Committed payroll and downstream records](payroll-outputs.md): the current
-  unapproved boundary for payslips, reports, liabilities, and accounting.
-- [Core concepts — start here](core-concepts.md): the existing ledger model,
-  complete conceptual flow, supporting concepts, and refinement candidates.
-- [Payroll inputs](payroll-input-flow.md): the user-confirmed source-to-manager
-  handoff and submission into payroll through APIs.
-- [Operating baseline](operating-baseline.md): inspected source behavior, a
-  demo workflow and worked example, and the limits of that evidence.
-- [Discussion roadmap](handbook-roadmap.md): coverage, dependencies, and the
-  current return point.
-- [Decision log](decision-log.md): user directions, open questions, and history.
-- [Implementation gaps](implementation-gaps.md): source-backed differences
-  from agreed concepts, starting with standing-instruction expiry.
+[The incorporation record](incorporation-record.md) identifies which material
+came from agreements and which came from clearly described code. This edition
+incorporates established material; it does not approve pending proposals.
 
-**Current stage:** Horizontal pass through major core concepts and responsibilities.
+## The five ledgers
 
-**Agreed: PAY-Q-003 / PAY-CORE-001.** Draft entries hold proposed payroll money;
-commit fixes the recorded result; later corrections add linked entries while
-preserving the original. The
-[worked example](core-concepts.md#pay-core-001--draft-and-posted-payroll-boundary)
-preserves the rationale. PAY-CORE-011 settles subsequent-month corrections;
-detailed draft and implementation mechanics remain open.
+**Status: agreed concepts**, based on PAY-CORE-001 through 005 and later
+clarifications. Detailed definitions and alternatives are in
+[core concepts](core-concepts.md#the-five-central-stores).
 
-**Agreed with expiry amendment: PAY-Q-004 / PAY-CORE-002.** Salary earnings
-record entitlement; monthly instructions express recurring payroll directions
-with an effective lifetime and expiry. The user's five-month loan example,
-rationale, and remaining mechanics are preserved in
-[salary earnings and monthly instructions](core-concepts.md#pay-core-002--salary-earnings-and-monthly-instructions).
-Loan servicing remains outside the core. Expiry enforcement is an open code gap.
+| Ledger | What it records | How it contributes to payroll |
+|---|---|---|
+| Salary Earning Ledger | Employee salary entitlement, broken into earning components | Supplies the applicable salary facts to calculation |
+| Monthly standing-instruction ledger | Recurring earning or deduction directions, with an effective lifetime and expiry | Contributes in eligible payroll months; one ordinary committed application per employee/month |
+| One-time instruction ledger | A direction intended for a single payroll application | Remains available until applied by a commit; retains its consumption record |
+| Draft ledger | A complete, fixed monetary proposal for an employee and payroll period | Holds the amounts to review and approve before posting |
+| Payroll Ledger | The committed earning and deduction entries | Records the final result; subsequent corrections affect a later month's payroll |
 
-**Agreed: PAY-Q-005 / PAY-CORE-003.** A one-time instruction is consumed at
-commit, remains available after an abandoned draft, and cannot be reused in
-another ordinary payroll once consumed. The
-[rationale and example](core-concepts.md#pay-core-003--when-a-one-time-instruction-is-consumed)
-are preserved; cross-draft enforcement is tracked as PAY-GAP-002.
+Salary entitlement and a committed salary earning are different records. The
+first describes what calculation can use; the second is the resulting amount
+recorded for a particular payroll. Similarly, monthly versus one-time describes
+an instruction's recurrence, while earning versus deduction describes its
+monetary effect. Both instruction types can produce either effect.
 
-**Agreed: PAY-Q-006 / PAY-CORE-004.** A monthly instruction has one ordinary
-committed application per employee and applicable payroll month, retaining
-eligibility for later months until expiry. The
-[rationale and example](core-concepts.md#pay-core-004--monthly-application-versus-instruction-lifetime)
-are preserved; enforcement is tracked as PAY-GAP-003.
+**Why the separation exists:** salary entitlement and temporary payroll
+directions have different business meanings. A finite loan recovery can be a
+monthly deduction instruction without changing salary entitlement or making
+loan servicing part of payroll core. Draft and committed entries then separate
+what is proposed from what has become final.
 
-**Agreed: PAY-Q-007 / PAY-CORE-005.** Evaluate expiry against the payroll period
-being processed, subject to the other payroll controls. A processing delay
-alone does not change an earlier period's applicability. The
-[rationale and examples](core-concepts.md#pay-core-005--applicability-period-and-processing-time)
-are preserved; PAY-GAP-001 includes this requirement.
+## From manager inputs to generated payroll
 
-**Historical checkpoint: PAY-Q-008 / PAY-CORE-006-B.** The long-lived source
-freeze is superseded by PAY-CORE-006-C. [The freeze chapter](draft-source-freeze.md)
-preserves its rationale and earlier approval. Draft monetary immutability and
-cancel/rebuild remain part of the current model. PAY-GAP-004 is historical.
+**Status: agreed flow.** PAY-INTAKE-001 establishes the manager handoff;
+PAY-ARCH-001/002/003 and PAY-CORE-006-C establish the responsibility, unit of
+work, authority, and commit boundaries.
 
-**Source clarification: PAY-SOURCE-001.** Source records are immutable; changes
-expire old records and create replacements. Their history remains available
-even when the applicable source set changes. Full code conformance is unverified.
+```mermaid
+flowchart TD
+    E[Attendance and other source information] --> M[HR or payroll manager consolidates inputs]
+    M --> I[Payroll APIs: salary facts and instructions]
+    I --> C[Calculation using applicable facts]
+    C --> D[Complete fixed employee-period draft]
+    D --> A[Approve the exact draft]
+    A --> R[Protected reconciliation at commit]
+    R -->|unchanged and valid| P[Final Payroll Ledger entries and instruction applications]
+    R -->|relevant change| B[Cancel and rebuild for fresh review]
+    B --> D
+```
 
-**Agreed: PAY-Q-010 / PAY-CORE-006-C.**
-[Immutable sources and reconciliation before commit](source-reconciliation.md)
-replace the long-lived source freeze. A fixed draft captures its basis; protected
-reconciliation checks the full applicable input set and instruction use before
-posting. Relevant changes require rebuilding and fresh review. PAY-GAP-005
-records the current implementation gap.
+The manager submits consolidated inputs through payroll APIs. The source-to-
+manager delivery mechanism is not prescribed. Information being present in
+attendance does not itself mean that it has entered payroll.
 
-**Agreed: PAY-Q-011 / PAY-ARCH-001.**
-[Calculation logic produces business amounts; the payroll core governs their
-monetary lifecycle](calculation-boundary.md). Rationale and examples are recorded;
-calculator interfaces and rule details remain parked.
+Calculation uses the applicable facts for the period when payroll runs. The
+producing layer determines whether business inputs represent additional money,
+replacement intent, or a duplicate request. Payroll does not infer those
+relationships from equal amounts or matching component names. This is separate
+from preventing repeated application of the same instruction.
 
-**Agreed: PAY-Q-012 / PAY-ARCH-002.**
-[Employee-period drafts are the approval and commit units](ledger-ownership.md).
-Batches coordinate exact drafts and retain individual outcomes, including
-partial completion. Rationale and the batch-wide alternative are preserved.
+Calculation logic produces business amounts. Payroll core accepts the proposed
+entries through its governed lifecycle. A calculator cannot bypass approval or
+commit controls. Mandatory tracing of each monetary entry back to its upstream
+sources is outside the agreed core scope.
 
-**Agreed: PAY-Q-013 / PAY-ARCH-003.**
-[Input maintenance, preparation, draft approval, and commit have distinct
-scoped authority](authority-and-review.md); policy determines role composition.
+A complete draft fixes the employee-period proposal. Sources remain immutable
+historical records: changes expire old records and create replacements. Source
+maintenance can continue while a draft is reviewed. Before posting, protected
+reconciliation checks that the applicable basis and instruction availability
+still permit the reviewed result. Relevant changes require rebuilding and
+fresh review. Validation, posting, and application recording are protected
+together; the exact mechanism remains an implementation choice.
+
+**Why:** reviewed amounts remain stable without a day-long source freeze. Payroll
+can accept maintained facts while preventing a stale draft from being posted.
+See [source reconciliation](source-reconciliation.md) for the full rationale.
+
+## Instruction lifetime and application
+
+**Status: agreed rules**, PAY-CORE-002 through 005, with PAY-CORE-009's
+applicable-facts clarification.
+
+| Situation | Established outcome |
+|---|---|
+| A preview is prepared or a draft is reviewed | No instruction is consumed merely by preparation or review |
+| An uncommitted draft is abandoned | Its one-time instructions remain available, subject to current applicability |
+| Payroll applying a one-time instruction commits | Record consumption with the committed result; another ordinary payroll cannot apply that instruction again |
+| Payroll applying a monthly instruction commits | Record that employee/month's application; later eligible months remain available until expiry |
+| An instruction covers September through January and January payroll runs in February | January can still use its eligible application, subject to other controls; February does not acquire an application outside the instruction's lifetime |
+
+The user's five-month loan example is accommodated by a finite monthly
+instruction. The core respects its expiry; the producing layer determines the
+loan arrangement. A five-calendar-month schedule and five successful recoveries
+can differ if payroll is skipped. Automatic extension or catch-up was not
+adopted and is not implied by this example.
+
+## One monthly payroll, then a correction
+
+**Status: illustration of agreed rules**, PAY-CORE-001/003/004/011. These amounts
+illustrate ledger behavior, not recommended payroll formulas.
+
+| September component | Amount (INR) |
+|---|---:|
+| Salary earning | 50,000.00 |
+| Monthly allowance | 1,500.00 |
+| One-time bonus | 5,000.00 |
+| Monthly deduction | -1,000.00 |
+| Gross | 56,500.00 |
+| Total deductions | 1,000.00 |
+| Net | 55,500.00 |
+
+The fixed draft contains the proposed components. Once approved and committed,
+those amounts form September's generated payroll. The bonus is consumed and
+the monthly instructions have their September applications recorded.
+
+Generated/committed payroll is **as good as paid for payroll-core finality**.
+The original result remains unchanged. If the bonus later requires INR 500
+recovery, the producing layer supplies an adjustment for a subsequent payroll
+month. For example, October's payroll includes INR -500 through October's
+governed draft and commit flow. September still records its INR 5,000 bonus.
+
+This rule concerns generated/committed payroll. A preview or uncommitted draft
+remains a proposal. There is no additional employee-payment state to wait for
+before the core treats committed payroll as final. The adjustment does not
+reopen the original payroll or automatically restore a consumed instruction.
+
+**Why:** subsequent-month adjustments preserve a stable historical result.
+The [correction rationale](core-coverage.md#pay-core-011--generated-payroll-is-final-adjust-a-subsequent-month)
+records the user's clarification and distinguishes it from the demo shortcut.
+
+## Ownership, batches, and authority
+
+**Status: agreed boundaries**, PAY-ARCH-002/003.
+
+Each draft describes one employee's payroll for one period within the relevant
+employer/tenant context. The manager operates under authority; preparing payroll
+does not make the manager the ledger owner. Ownership here describes whose
+payroll is recorded, rather than automatically granting access to the employee.
+
+A batch coordinates exact employee drafts and retains each outcome. If 99
+employee drafts pass reconciliation and one is stale, the 99 may commit while
+the remaining draft is rebuilt and reviewed. Batch status must reflect that
+partial completion. Replacement drafts do not inherit approval merely by being
+members of the same batch.
+
+Input maintenance, preparation, draft approval, and commit are distinct scoped
+capabilities. Policy determines which a person or role may hold. Accepting an
+instruction does not approve the entire payroll, and commit authority cannot
+bypass reconciliation or exact-draft approval. No requirement for four separate
+people has been adopted.
+
+See [ownership and batch rationale](ledger-ownership.md) and
+[authority rationale](authority-and-review.md) for examples and alternatives.
+
+## What the existing lab additionally describes
+
+**Status: inspected code behavior, not new agreed requirements.** The following
+material is clearly described in lab revision
+`737465d5e27888518018e9b1f28f75fcfcac0139`, [main.ts](../src/main.ts).
+It is incorporated as evidence so the reader need not rediscover the demo.
+
+| Existing concept | What the lab does | Limit of this description |
+|---|---|---|
+| Preparation preview | Produces a query ID, rows, and checksum; reviewing the preview changes local workflow state | The preview has no payroll business reference and is not a committed result or canonical draft approval |
+| Component/head | Identifies an earning or deduction; demo producers supply signed amounts, and totals aggregate them | Demo sign/rounding and formula choices are not a complete adopted calculation policy |
+| Proof attachment | Stores a file; simulated HR acceptance can produce an instruction | The attachment itself is not a monetary entry; actual evidence evaluation is not demonstrated |
+| Payroll reference | Groups a draft and its posted entries under one payroll reference | Upstream source-reference fields in the demo are not mandatory core tracing requirements |
+| Payslip snapshot and PDF | Records posted entry IDs and totals for a payroll reference; renders them as a PDF | This describes the lab's snapshot representation; it does not select a production format or delivery mechanism |
+| Employer-liability records | Creates legal-entity-owned credits from tagged deductions and separate simulated settlement/match records | This demonstrates separate records, not an approved payroll-core ownership boundary or verified settlement integration |
+| Annual readiness package | Builds a package explicitly marked incomplete, using available payroll/liability records | It does not demonstrate completed annual issuance or establish applicable legal rules |
+
+The [operating baseline](operating-baseline.md) contains the source revision,
+full demo arithmetic, and limitations. The lab's mutable open drafts, weak
+validation, missing expiry/application enforcement, direct-posting correction,
+and absent actor authorization are documented in the
+[implementation gap register](implementation-gaps.md). No implementation change
+is implied by incorporating these descriptions.
 
 ---
 
-**Core consolidation recorded.** The [agreed model](core-concepts.md#agreed-core-model)
-incorporates PAY-CORE-008/009/010/011: source intent belongs upstream, payroll
-uses applicable facts, source tracing is not required, and finalized payroll
-is adjusted only in a subsequent month. Prior rationale and alternatives remain
-in the [checkpoint](core-coverage.md) and decision log.
+## Decisions still requiring discussion
 
-**Current proposal: PAY-Q-014 / PAY-ARCH-004.**
-[Committed payroll and downstream records](payroll-outputs.md): payslips and
-reports present committed payroll; employer-liability/accounting processes
-consume it and maintain their own records. This boundary is not yet approved.
+**PAY-Q-014 / PAY-ARCH-004 remains open:** Should payslips/reports present
+committed payroll while employer-liability and accounting processes consume it
+and maintain their own records? The [output proposal](payroll-outputs.md) records
+the rationale. Describing the lab's existing behavior above does not approve
+this boundary.
 
-**Parked: PAY-Q-009 / PAY-CORE-007.** The proposal to include sealing in complete
-draft creation remains unapproved. Return after the horizontal pass under
-PAY-PROCESS-006, together with other detailed mechanics.
+**PAY-Q-009 / PAY-CORE-007 remains parked:** whether complete draft creation
+should include sealing rather than exposing a separate seal operation.
 
-**PAY-Q-001 is answered at handoff level:** source information, potentially
-including attendance, goes to an HR/payroll manager, who consolidates it and
-submits payroll inputs through APIs. A role will normally support this work;
-exact permissions remain open. The user described no automatic internal
-source-service transition into payroll (PAY-INTAKE-001).
+Exact expiry representation, exceptional recovery policies, API and concurrency
+mechanics, detailed role assignments, and wider journeys remain in the
+[roadmap](handbook-roadmap.md). They are not silently selected by the ordinary
+examples. The rejected overlap-detection and mandatory-source-tracing questions,
+and the settled subsequent-month correction rule, are not open questions.
 
-**PAY-Q-002 — withdrawn from the current sequence:** The attendance-payload
-question was premature. The user directed us to start with the core model that
-already produces the flow (PAY-PROCESS-004).
+## Resume here
 
-Start at the five stores in [core concepts](core-concepts.md): salary earnings,
-monthly standing instructions, one-time inputs, draft transactions, and posted
-payroll. Explain how preparation, references, approval, commit, snapshots, and
-corrections connect them before proposing refinements. Further employer-specific
-operating details are not a prerequisite for this work.
+This edition has incorporated agreed concepts and clearly described lab
+behavior into the reading path above. Review [what was incorporated](incorporation-record.md)
+against the prior discussion snapshot before continuing new decisions.
+The pending domain question remains PAY-Q-014; this incorporation does not
+advance its approval status or declare the whole handbook complete.

@@ -7,7 +7,15 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: PAY-Q-014 / PAY-ARCH-004 — committed payroll and downstream records.**
+**Current: review the first incorporation pass under PAY-PROCESS-009.**
+
+The user requested that established material be incorporated first, with a clear
+account of what changed. The existing handbook snapshot was committed and pushed
+as `6a30db5`; the [incorporation record](incorporation-record.md) maps the
+subsequent editorial changes to their existing basis. Read the
+[handbook narrative](handbook.md#reading-path) to see the incorporated result.
+PAY-Q-014 / PAY-ARCH-004 remains the pending domain question, not an approval
+inferred from this incorporation request.
 
 The user approved PAY-ARCH-003, then clarified that broader questions are
 relevant once the core concepts are clear. PAY-PROCESS-006 still calls for
@@ -45,7 +53,7 @@ proposal. It starts from committed finality and does not reopen it.
 | Calculation versus core | PAY-ARCH-001 agreed under PAY-Q-011; mechanics open | Who produces business amounts and who controls their monetary lifecycle? |
 | Ownership and unit of work | PAY-ARCH-002 agreed under PAY-Q-012; mechanics open | Whose ledger is this, and what employee/period or batch does an approval and commit cover? |
 | Authority and review | PAY-ARCH-003 agreed under PAY-Q-013; further detail deferred | Which responsibilities can prepare, approve, commit, correct, and record payment? |
-| Posted payroll and downstream obligations — current | PAY-ARCH-004 proposed under PAY-Q-014 | How do payslips, employee payment, employer/statutory liabilities, and accounting use posted payroll? |
+| Posted payroll and downstream obligations — pending | PAY-ARCH-004 proposed under PAY-Q-014; unchanged during incorporation | How do payslips, employee payment, employer/statutory liabilities, and accounting use posted payroll? |
 | Corrections | PAY-CORE-001/011 establish preserved history and subsequent-month adjustment | Implementation and downstream projections remain later work; correction timing is settled. |
 | Reports and reconciliation | Pre-commit consistency agreed; other meanings open | Which outputs are projections, which are authoritative records, and what closes a settlement? |
 
@@ -95,8 +103,9 @@ reason. It must not disappear when the conversation changes direction.
 
 The charter is pinned, initial code findings and a conceptual reconstruction
 are recorded, and the manager's input handoff is established through the user's
-account. The core agreements are consolidated; the current discussion concerns
-the downstream boundary.
+account. Established material is now incorporated into the handbook narrative;
+reviewing that incorporation is current work, with the downstream boundary
+still awaiting discussion.
 Further rules, complete scenario coverage, and an implementation gap register
 against agreed requirements remain ongoing work. The
 [initial gap register](implementation-gaps.md) records missing expiry enforcement;
