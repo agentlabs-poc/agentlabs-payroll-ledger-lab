@@ -93,6 +93,102 @@ Those details are not adopted by incorporating this description. The user-
 confirmed rule remains closure of the corresponding liability when remittance
 and proof are recorded.
 
+## End-to-end payroll and liability walkthrough
+
+**Illustration of existing agreements**, including PAY-CORE-014. Assume the
+producing layer supplies all amounts below for one employee's September
+payroll. The employer contribution and tax deduction in this example are both
+payable to their respective government authorities. No contribution/tax rate
+or offer-letter parsing rule is being selected.
+
+| Proposed payroll component | Kind | Amount (INR) |
+|---|---|---:|
+| Other salary entitlement components | Earning | 50,000 |
+| Employer contribution included in CTC | Earning | 1,000 |
+| Monthly allowance instruction | Earning | 1,500 |
+| One-time bonus instruction | Earning | 5,000 |
+| Monthly recovery instruction | Deduction | -1,000 |
+| Matching employer-contribution deduction | Deduction | -1,000 |
+| Supplied tax deduction | Deduction | -2,000 |
+| Gross | Summary of earnings | 57,500 |
+| Total deductions | Summary of deductions | 4,000 |
+| Net | Gross less deductions | 53,500 |
+
+All seven components belong to the same employee-month payroll association
+under PAY-CORE-015. No canonical ID format is required by this walkthrough;
+the grouping remains distinct from individual draft and entry identifiers.
+
+### Preparation and review
+
+The manager consolidates the applicable facts/instructions through the payroll
+APIs. Calculation produces these amounts. The fixed employee-period draft
+contains the seven monetary components; summary rows are not extra monetary
+entries. The contribution appears in both gross and deductions, so it is
+represented without changing net by itself.
+
+Approval accepts the exact draft. If the applicable basis changes before
+commit, protected reconciliation blocks that draft and it is rebuilt for fresh
+review. For this walkthrough, assume reconciliation succeeds.
+
+### Commit and employee result
+
+Commit records the seven components in the Payroll Ledger and records the
+instruction applications. The one-time bonus is consumed; the applicable
+monthly instructions record their September applications. Their future
+eligibility follows their existing expiry and application rules.
+
+September's payroll is generated and final, with INR 53,500 net. The payroll
+result and its payslip presentation retain the INR 57,500 gross, including the
+employer-contribution earning. No new employee-payment confirmation gate is
+introduced by the rest of this walkthrough.
+
+### Employer register and remittance
+
+The corresponding employer liabilities follow the committed payroll entries.
+The contribution's earning and matching deduction represent a single INR 1,000
+obligation. They do not create two INR 1,000 liabilities.
+
+| Liability represented in this example | Amount (INR) | Recorded settlement |
+|---|---:|---|
+| Employer contribution to its authority | 1,000 | INR 1,000 remittance with the corresponding contribution challan/proof |
+| Tax deduction to its authority | 2,000 | INR 2,000 remittance with the corresponding tax challan/proof |
+| Combined illustrated obligations | 3,000 | Separate proof/allocation retained for each corresponding obligation |
+
+Each liability closes when its corresponding remittance and proof are recorded.
+The different obligations do not substitute for one another merely because the
+combined remittance total is INR 3,000. The ordinary recovery line does not
+become a government liability merely because it is a payroll deduction.
+
+This example specifies complete corresponding remittances; it does not choose
+a partial-payment allocation policy or a bank-integration mechanism. Proof
+references are illustrative record descriptions, not actual challans.
+
+### Later correction and annual use
+
+If the employee remains within payroll scope and the September bonus requires
+INR 500 recovery, a subsequent month's governed payroll includes INR -500.
+September stays unchanged. If the correction arises after exit, external
+accounting handles it under PAY-CORE-013.
+
+For annual work, use the relevant committed monthly information and the employer
+register's corresponding remittance/proof records, together with the required
+annual calculation and official records. Do not reconstruct September from
+current salary sources or treat this one month as a complete annual record.
+The [reporting chapter](reporting-and-reconciliation.md) separates those inputs
+from certificate issuance and records the inspected lab's aggregation limits.
+
+### Why this walkthrough closes the conceptual loop
+
+The offer-letter contribution, employee gross/deductions/net, employer
+obligation, and remittance closure are successive uses of the same monetary
+model. They require no direct-to-liability contribution bypass and no reopening
+of generated payroll. General accounting remains outside payroll; the
+employer-liability register remains inside it.
+
+This is a handbook walkthrough, not an executed end-to-end software test. The
+[implementation gaps](implementation-gaps.md) identify where the lab only
+illustrates or fails to enforce the agreed behavior.
+
 ## Coverage that remains to develop
 
 The [extended journeys](employee-and-annual-journeys.md) now explain joining,

@@ -22,6 +22,43 @@ depends on what the ledger records. It does not establish a complete employer,
 tenant, or employment identity model. The inspected flow does not implement a
 multi-employee batch lifecycle.
 
+## PAY-CORE-015 — all payroll for an employee and month is tied together
+
+**User-confirmed association.** All payroll for the same employee and payroll
+month belongs together within the relevant employer/tenant context. Its
+identifier represents that association. There is no established canonical
+method for generating the identifier.
+
+For example, an employee's September salary, allowance, bonus, employer-
+contribution earning and matching deduction all belong to that employee's
+September payroll. Another employee's September payroll and the same employee's
+October payroll are different associations. A subsequent-month adjustment
+belongs with the subsequent month's payroll while leaving the prior result final.
+
+The association is distinct from identifying a particular draft or monetary
+row. Rebuilding a draft still requires fresh approval of that exact proposal;
+association with the same employee/month does not transfer approval. Likewise,
+the grouping does not authorize duplicate instruction applications or changing
+already generated payroll. A multi-employee batch remains a separate coordination
+concept under PAY-ARCH-002.
+
+No required prefix, UUID scheme, employee/date concatenation, or generator is
+adopted here. There is also no requirement to add a new ledger/store just to
+express the association. Preserve the meaning independently of the chosen
+identifier representation.
+
+**Code comparison:** `LedgerReference` contains an owner and period, and the
+ordinary draft and its posted rows share a payroll reference. `createReference`
+generates `PAY-` plus an in-memory counter for payroll references. Each call
+creates a new number; this is demo behavior, not a canonical employee-month
+ID-generation contract. Any production mapping must preserve the clarified
+association and exact-draft identity; this chapter does not select its schema.
+
+Rationale: the employee and payroll month determine which payroll items belong
+together. A numbering convention is an implementation choice rather than the
+business meaning of the group. Optional source-origin tracing is unrelated to
+this payroll association and remains outside the mandatory core requirements.
+
 ## Agreed boundary
 
 - An employee's payroll records belong to that employee within the appropriate

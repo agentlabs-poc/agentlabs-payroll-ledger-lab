@@ -7,13 +7,18 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: incorporate PAY-CORE-014's clarified employer-contribution flow.**
+**Current: integrated walkthrough and working-edition review recorded.**
 
-PAY-Q-016 is resolved: the contribution in offer-letter CTC is a payroll earning
-and matching deduction before it enters the employer-liability register. Gross
-includes the contribution; net is unchanged by the pair. The earlier direct-to-
-liability/no-gross-effect proposal is withdrawn. See the
-[worked example](payroll-outputs.md#pay-core-014--employer-contributions-through-payroll).
+The [continuous example](payroll-scenarios.md#end-to-end-payroll-and-liability-walkthrough)
+connects employer-contribution earning/deduction, employee payroll, liability,
+and remittance/proof closure. The [review record](handbook-review.md) distinguishes
+incorporated coverage from remaining implementation and policy work.
+
+The latest user clarification, PAY-CORE-015, ties all payroll for an employee
+and month together, without selecting a canonical ID-generation method. See
+[the association explanation](ledger-ownership.md#pay-core-015--all-payroll-for-an-employee-and-month-is-tied-together).
+PAY-Q-016's employer-contribution flow is already settled. No new domain question
+is opened by this review pass.
 
 ## Incorporated coverage
 
@@ -49,7 +54,7 @@ inside payroll and close on corresponding remittance with proof.
 |---|---|---|
 | Core semantics | Agreements consolidated, including PAY-CORE-008/009/010/011 | Applicable facts, source-scope limits, fixed drafts, committed finality, and subsequent-month adjustments. |
 | Calculation versus core | PAY-ARCH-001 agreed under PAY-Q-011; mechanics open | Who produces business amounts and who controls their monetary lifecycle? |
-| Ownership and unit of work | PAY-ARCH-002 agreed under PAY-Q-012; mechanics open | Whose ledger is this, and what employee/period or batch does an approval and commit cover? |
+| Ownership and unit of work | PAY-ARCH-002 and PAY-CORE-015 establish employee-month association, draft/commit unit, and batch coordination | Identifier generation is not canonical; implementation mapping remains open. |
 | Authority and review | PAY-ARCH-003 agreed under PAY-Q-013; further detail deferred | Which responsibilities can prepare, approve, commit, correct, and record payment? |
 | Payroll liabilities and external accounting | PAY-ARCH-004 ownership clarified under PAY-Q-014 | How do payslips, employee payment, employer/statutory liabilities, and accounting use posted payroll? |
 | Corrections | PAY-CORE-001/011/013 settle finality, subsequent-month adjustment, and after-exit accounting scope | Enforcement and specific external reporting treatment remain separate from the settled payroll rule. |
@@ -105,8 +110,10 @@ flows, liability lifecycle, and annual information/review sequence are explained
 The code comparison includes matching and annual aggregation gaps. This is an
 expanded working edition, not a claim that those workflows are implemented.
 
-PAY-Q-016 is answered; there is no active unapproved domain question in this
-pass. PAY-Q-009 remains parked.
+The [working-edition review](handbook-review.md) records the scope actually
+covered and the continuous example. PAY-Q-016 is answered, and PAY-CORE-015 is
+incorporated; there is no active unapproved domain question in this pass.
+PAY-Q-009 remains parked.
 Concrete expiry/validation representations, detailed exception policies, role
 assignments, and complete statutory issuance integration remain tracked work.
 A production compliance guide would also need the applicable period/form scope;

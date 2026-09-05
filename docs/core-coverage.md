@@ -104,9 +104,10 @@ The four-item checkpoint is resolved at the intended concept level by
 PAY-CORE-008/009/010/011. Do not restart the rejected overlap-detection and
 mandatory-source-tracing questions or ask again when corrections apply.
 The [agreed core model](core-concepts.md#agreed-core-model) is now consolidated.
-The user instructed us to proceed; the next horizontal proposal is
-[committed payroll and downstream records](payroll-outputs.md). Detailed role
-and integration mechanics remain parked.
+Later decisions establish [payroll outputs and employer liabilities](payroll-outputs.md),
+including payroll-first employer contributions. The [review record](handbook-review.md)
+tracks incorporated coverage and remaining details. These are settled boundaries,
+not the next unapproved proposal.
 
 ## Earlier checklist and its disposition
 

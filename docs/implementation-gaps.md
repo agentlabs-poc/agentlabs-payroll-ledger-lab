@@ -244,7 +244,7 @@ conformance. Detailed open findings remain in the numbered entries above.
 | Source history, applicability, fixed drafts, protected reconciliation: PAY-SOURCE-001, PAY-CORE-005/006-C/009 | Fields and references exist; general effective selection, immutable-source workflow, fixed creation, and protected validation are missing (GAP-001/005) |
 | One-time and monthly applications: PAY-CORE-003/004 | One-time marking and same-draft early return exist; cross-draft guards are absent (GAP-002/003) |
 | Calculation/source scope: PAY-ARCH-001, PAY-CORE-008/010 | Higher-order demo calculation exists; business duplicate inference and mandatory source provenance are not adopted requirements |
-| Employee draft and batch: PAY-ARCH-002 | Individual draft owner/period exists; multi-employee batch coordination is not implemented |
+| Employee-month association, draft, and batch: PAY-CORE-015, PAY-ARCH-002 | Reference owner/period and shared draft/posted reference exist; counter-generated numbers are demo behavior, not a prescribed generator. Exact production association mapping and multi-employee batch coordination are not established |
 | Scoped authority: PAY-ARCH-003 | Lifecycle-state gates exist; actor/scope authorization is not implemented in the browser lab |
 | Employer register and remittance closure: PAY-ARCH-004, PAY-CORE-012 | Register and synthetic matches exist; general matching and actual remittance evidence are not established (GAP-007) |
 | After-exit corrections excluded: PAY-CORE-013 | Lab has only an active employee demo and no exit-scope enforcement; after-exit payroll adjustment is not a requirement to implement |

@@ -1,4 +1,4 @@
-# Payroll core concepts — existing model for confirmation
+# Payroll core concepts — agreed model and source evidence
 
 This is the starting chapter for the [handbook](handbook.md), following the
 user's direction to begin with the concepts already expressed in code and
@@ -28,7 +28,8 @@ This section consolidates existing agreements; it introduces no new rule.
    and their lifecycle. Mandatory tracing back to input origins is out of scope.
 3. Calculation produces a complete fixed draft for an employee and payroll
    period. Previewing is not posting. A batch coordinates exact employee drafts
-   and retains individual outcomes.
+   and retains individual outcomes. PAY-CORE-015 ties all payroll for the same
+   employee/month together without prescribing an ID-generation method.
 4. The approved draft is reconciled against the applicable basis at protected
    commit. Relevant changes require rebuilding and fresh review. Source
    maintenance continues during review; there is no day-long source freeze.

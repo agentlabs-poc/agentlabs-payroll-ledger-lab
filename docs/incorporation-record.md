@@ -108,6 +108,21 @@ PAY-CORE-014 now records that flow, with gross increasing and net unchanged by
 the pair. The earlier proposal is withdrawn; the revised material derives from
 the user’s clarification, not from the reporting examples.
 
+## Integrated walkthrough and review — 2026-09-06
+
+The [continuous payroll/liability walkthrough](payroll-scenarios.md#end-to-end-payroll-and-liability-walkthrough)
+combines the established contribution earning/deduction pair with salary,
+monthly/one-time instructions, commit, and corresponding remittances with proof.
+The [review record](handbook-review.md) maps coverage and classifies remaining
+implementation details separately from policy questions. This consolidates
+existing concepts; it does not claim runtime implementation or complete statutory
+issuance procedures.
+
+During this pass, the user clarified PAY-CORE-015: all payroll for an employee
+and month is tied together, and no canonical ID-generation method is established.
+The ownership chapter and handbook now state this association without inventing
+an identifier format, new ledger, or automatic transfer of draft approval.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

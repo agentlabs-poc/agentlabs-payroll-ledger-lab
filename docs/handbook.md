@@ -241,6 +241,13 @@ a three-month worked example and distinguishes pre-commit validation from
 liability reconciliation. A separate section describes the lab’s grouped
 challan behavior as code evidence only.
 
+For a single continuous example, follow the [end-to-end payroll and liability
+walkthrough](payroll-scenarios.md#end-to-end-payroll-and-liability-walkthrough).
+Its seven payroll components produce INR 57,500 gross, INR 4,000 deductions,
+and INR 53,500 net, followed by the corresponding employer liabilities and
+remittances with proof. It includes the CTC contribution earning/deduction pair
+and keeps later corrections and annual use within the established boundaries.
+
 ## Joining, partial periods, exit, and annual work
 
 The [extended journeys](employee-and-annual-journeys.md) apply the established
@@ -266,6 +273,13 @@ Each draft describes one employee's payroll for one period within the relevant
 employer/tenant context. The manager operates under authority; preparing payroll
 does not make the manager the ledger owner. Ownership here describes whose
 payroll is recorded, rather than automatically granting access to the employee.
+
+**Employee-month association — PAY-CORE-015:** all payroll for one employee and
+month is tied together. Its identifier expresses that association; no canonical
+format or method for generating it is established. Individual draft and entry
+IDs serve their own purposes. Rebuilding a draft does not transfer approval
+merely because it belongs to the same employee-month payroll. See the
+[association rationale](ledger-ownership.md#pay-core-015--all-payroll-for-an-employee-and-month-is-tied-together).
 
 A batch coordinates exact employee drafts and retains each outcome. If 99
 employee drafts pass reconciliation and one is stale, the 99 may commit while
@@ -385,15 +399,13 @@ and the settled subsequent-month correction rule, are not open questions.
 
 ## Resume here
 
-This edition has incorporated agreed concepts and clearly described lab
-behavior into the reading path above. Review [what was incorporated](incorporation-record.md)
-against the prior discussion snapshot before continuing new decisions.
-The incorporation originally left PAY-Q-014 open. The subsequent user
-clarification now settles employer-register/accounting ownership; the handbook
-is still a working edition. The [scenario incorporation](payroll-scenarios.md)
-now records established outcomes. [Joining/exit and annual data flows](employee-and-annual-journeys.md)
-are additionally explained, including the after-exit accounting boundary.
-Annual preparation and reconciliation are now explained in the
-[reporting chapter](reporting-and-reconciliation.md), with explicit gaps in the
-demo. PAY-Q-016 now records the contribution earning/deduction flow; complete
-issuance integration and detailed exception policies remain further work.
+The [review record](handbook-review.md) maps incorporated coverage, consistency
+checks, and remaining work. The [continuous walkthrough](payroll-scenarios.md#end-to-end-payroll-and-liability-walkthrough)
+now includes employer-contribution entries, employee-month association,
+commit/application, employer liabilities, and remittance/proof closure.
+
+The latest clarification is PAY-CORE-015: all payroll for an employee and month
+is tied together, without a prescribed ID-generation method. There is no new
+unanswered domain question in this pass. PAY-Q-009 remains parked; implementation
+representations, detailed exception policies, and complete statutory issuance
+integration remain tracked separately from the settled conceptual model.
