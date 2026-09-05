@@ -17,7 +17,7 @@ protected reconciliation remain distinct controls.
 | Preserve source records and identity, with the agreed applicability and instruction-use semantics | Payroll core |
 | Apply business calculation rules to those sources and produce proposed earning/deduction amounts | Higher-order calculation logic |
 | Create a complete fixed draft with sufficient basis for the agreed reconciliation | Payroll core, accepting the calculation result through its governed boundary |
-| Review and accept the proposed result | Authorized review/approval workflow; exact role separation remains a later horizontal topic |
+| Review and accept the proposed result | Scoped approval authority under PAY-ARCH-003; exact role assignments remain open |
 | Enforce lifecycle, reconcile the draft's basis, prevent duplicate applications, and commit monetary entries | Payroll core |
 | Preserve posted history and expose entries and their summaries for downstream use | Payroll core |
 

@@ -138,6 +138,10 @@ data checks and missing-requirements list are source behavior, not a complete
 production issuance workflow. See [main.ts](../src/main.ts) at lab revision
 `737465d5e27888518018e9b1f28f75fcfcac0139`.
 
+The [reporting and reconciliation chapter](reporting-and-reconciliation.md)
+extends this data flow into a review sequence and worked examples, with the
+matching/annual aggregation limitations recorded as PAY-GAP-007/008.
+
 ## Remaining coverage
 
 PAY-Q-015 is resolved: after-exit corrections are handled in external accounting.

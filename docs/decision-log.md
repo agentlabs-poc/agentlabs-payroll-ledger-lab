@@ -36,6 +36,7 @@ separately below.
 | PAY-Q-013 | Approved | Should input maintenance, preparation, draft approval, and commit be distinct scoped capabilities, with policy deciding which may be held by the same person or role? | User answered "approved", then required core clarity before further broader questions. PAY-ARCH-003 is agreed; exact roles and separation-of-duty policy remain open. |
 | PAY-Q-014 | Answered with ownership clarification | Where do employer-liability and accounting records belong relative to payroll? | User clarified that accounting is outside and the employer-liability register is inside payroll. PAY-ARCH-004 replaces the earlier grouping; the Form 16 connection is supported with the qualifications in the chapter. |
 | PAY-Q-015 | Answered with scope exclusion | Should an exited employee remain eligible for a subsequent-month adjustment payroll without reactivating employment? | User directed that this is out of payroll scope and should be corrected in accounting. PAY-CORE-013 excludes the proposed after-exit adjustment payroll. |
+| PAY-Q-016 | Open | Should employer-only contributions enter the employer-liability register without changing employee gross or net payroll? | PAY-CORE-014; the lab currently creates liability credits only from tagged employee deductions. |
 
 ## Domain decisions
 
@@ -71,6 +72,7 @@ statutory example as an adopted rule.
 | ID | Status | Proposal | Rationale and remaining details |
 |---|---|---|---|
 | PAY-CORE-007 | Proposed under PAY-Q-009; parked | Complete and seal monetary content during draft creation; retain approval and commit as separate operations without a distinct user-visible seal step. | [Rationale and alternative](draft-source-freeze.md#pay-core-007--does-sealing-remain-a-separate-operation). Return after the horizontal pass. |
+| PAY-CORE-014 | Proposed under PAY-Q-016 | Represent employer-only contributions as employer liabilities while leaving employee pay unaffected. | [Code evidence, example, rationale, and alternative](payroll-outputs.md#pay-core-014--employer-only-contributions). Formula and ledger commit coupling are not selected. |
 
 ## Alternatives and history
 

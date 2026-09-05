@@ -125,6 +125,31 @@ both salary totals and TDS/liability data and explicitly produces an incomplete
 package. This supports the clarified module shape; it does not demonstrate a
 complete certificate-issuance implementation.
 
+## PAY-CORE-014 — employer-only contributions
+
+**Proposed under PAY-Q-016; not approved.** The inspected
+`createStatutoryLiabilities` routine creates liabilities from tagged employee
+payroll deductions. An employer-only contribution has a different monetary
+meaning: it is an employer obligation without reducing the employee's pay.
+
+Question: should the register also accept such employer-only payroll amounts,
+with their business calculation supplied by the appropriate producing layer,
+while employee gross and net remain unaffected?
+
+Example: employee gross/net remain as already calculated, and an additional
+INR 1,000 employer contribution produces INR 1,000 in employer liability. This
+is an illustrative component, not a claim about any mandatory contribution or
+statutory rate. Remittance/proof closure would follow PAY-CORE-012.
+
+Rationale for the proposal: placing the amount in the employee deduction ledger
+would misstate take-home pay; omitting it from the employer register would leave
+that payroll-related obligation unrepresented. An alternative would be to keep
+such employer costs entirely in accounting, but that would narrow what the
+payroll liability register covers. The user has not selected this boundary.
+
+This question selects meaning and scope only. It does not select a direct-write
+API, bypass approval, choose commit coupling between ledgers, or adopt a formula.
+
 ## Decision history and remaining work
 
 The earlier PAY-Q-014 proposal grouped employer-liability and accounting

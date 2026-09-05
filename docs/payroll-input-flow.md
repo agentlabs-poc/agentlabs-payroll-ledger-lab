@@ -53,9 +53,10 @@ manager, who consolidates the relevant payroll input and submits it through
 the payroll APIs.
 
 What the submitted input contains remains open. It might carry the number of
-days, a monetary deduction, or another representation. We have not decided who
-converts attendance information into money, what validation occurs, or what
-approval is needed.
+days, a monetary deduction, or another representation. PAY-ARCH-001 subsequently
+places business amount calculation in higher-order logic, and PAY-ARCH-003
+distinguishes input acceptance from draft approval. Exact payload and role
+assignment remain open; these responsibility boundaries are settled.
 
 Counterexample to the stated flow: an attendance service automatically creates
 a payroll deduction without the manager handoff. That would omit the manager's

@@ -88,6 +88,23 @@ outside payroll. PAY-CORE-013 records the boundary and withdraws the proposed
 payroll exception. This is a user decision, not inferred from incorporation.
 Complete annual issuance and exception/calculation policies remain further work.
 
+## Reconciliation and consistency pass — 2026-09-06
+
+[Reporting and reconciliation](reporting-and-reconciliation.md) now distinguishes
+employee payroll finality, liability closure, annual readiness, and issuance.
+It adds supplied-allocation and annual-data examples, while GAP-007/008 record
+missing matching validation and annual aggregation in the inspected code.
+
+The consistency pass updates earlier wording in the source-input, calculation,
+core-concept, ownership, and operating-baseline chapters to reflect later
+agreements. The gap register now maps agreement groups to inspected support.
+Historical alternatives remain reconstructable; settled concepts are not
+reopened because code enforcement is missing.
+
+PAY-Q-016 / PAY-CORE-014 separately asks about employer-only contributions. The
+lab currently derives liabilities only from employee deductions. This scope
+question is a proposal, not a requirement inferred from the reporting examples.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

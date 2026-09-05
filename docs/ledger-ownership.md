@@ -39,9 +39,10 @@ multi-employee batch lifecycle.
 
 This does not impose one payroll reference per employee forever or settle
 supplementary-run mechanics. PAY-CORE-011 settles that corrections to a generated
-result belong to a subsequent payroll month. Existing instruction-use controls still
-apply across drafts. Separate employer liabilities and downstream settlement
-boundaries remain the subject of a later horizontal branch.
+result belong to a subsequent payroll month while within payroll scope;
+PAY-CORE-013 places after-exit corrections in accounting. Existing instruction-use
+controls still apply across drafts. PAY-ARCH-004 and PAY-CORE-012 establish the employer
+register inside payroll and closure on remittance with proof.
 
 ## Rationale and example
 

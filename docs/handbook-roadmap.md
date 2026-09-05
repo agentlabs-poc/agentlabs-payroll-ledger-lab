@@ -7,58 +7,40 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: extended journeys incorporated; PAY-Q-015 resolved by scope exclusion.**
+**Current question: PAY-Q-016 / PAY-CORE-014 — employer-only contributions.**
 
-The [extended journeys](employee-and-annual-journeys.md) incorporate joining,
-partial-period outputs, exit components, and annual data flows from existing
-agreements/evidence. The user resolved PAY-Q-015: after-exit corrections are
-outside payroll and handled in accounting. The proposed former-employee
-adjustment-payroll exception is withdrawn under PAY-CORE-013.
+Should the employer-liability register include employer-only contributions
+without affecting employee gross or net payroll? The [proposal](payroll-outputs.md#pay-core-014--employer-only-contributions)
+is distinct from the lab's existing deduction-derived liabilities and remains
+unapproved.
 
-Read [payroll scenarios](payroll-scenarios.md) for the nine agreed-outcome cases
-and the separately labeled grouped-challan code example. No new policy approval
-is inferred from these examples. Complete calculation/exception policies and
-annual workflows still require further coverage.
+## Incorporated coverage
 
-The user requested that established material be incorporated first, with a clear
-account of what changed. The existing handbook snapshot was committed and pushed
-as `6a30db5`; the [incorporation record](incorporation-record.md) maps the
-subsequent editorial changes to their existing basis. Read the
-[handbook narrative](handbook.md#reading-path) to see the incorporated result.
-The user later clarified PAY-Q-014 / PAY-ARCH-004: employer liabilities belong
-in payroll; accounting is external. The [updated output chapter](payroll-outputs.md)
-records that boundary and the verified, partial basis for Form 16. PAY-CORE-012
-also establishes closure on the employer’s government remittance with proof
-such as the challan number.
+- [Main handbook](handbook.md#reading-path): five ledgers, manager handoff,
+  calculation, fixed drafts, protected commit, authority, finality, and corrections.
+- [Payroll scenarios](payroll-scenarios.md): nine existing-agreement cases,
+  salary/expiry across months, and a labeled grouped-challan code example.
+- [Extended journeys](employee-and-annual-journeys.md): joining, supplied
+  partial-period amounts, exit components, and annual information flow.
+- [Payroll outputs](payroll-outputs.md): employer register inside payroll,
+  accounting outside, remittance/proof closure, and the Form 16 information basis.
+- [Reporting and reconciliation](reporting-and-reconciliation.md): annual
+  preparation, the distinct closure meanings, and scoped data examples.
+- [Implementation gaps](implementation-gaps.md#agreement-to-evidence-coverage):
+  current agreements mapped to inspected support and limitations.
 
-The user approved PAY-ARCH-003, then clarified that broader questions are
-relevant once the core concepts are clear. PAY-PROCESS-006 still calls for
-horizontal breadth: apply it to unresolved core semantics before further role,
-payment, and downstream design.
-
-PAY-CORE-001 through PAY-CORE-005 and PAY-CORE-006-C remain agreed, together with
-PAY-ARCH-001 (calculation boundary), PAY-ARCH-002 (employee draft/batch scope),
-and PAY-ARCH-003 (distinct scoped capabilities). Approval of these boundaries
-is not a claim that the core model or implementation is complete.
+The [incorporation record](incorporation-record.md) shows each pass and its basis.
+Source descriptions are not automatically adopted requirements. The latest
+consistency pass removes older wording that still presented settled boundaries
+as open; superseded alternatives remain labeled in the decision history.
 
 ---
 
-Read the [updated core checkpoint](core-coverage.md). PAY-CORE-008 places
-business source-overlap detection outside payroll core; PAY-CORE-009 uses the
-applicable facts when payroll runs; PAY-CORE-010 removes mandatory source tracing.
-PAY-CORE-011 settles corrections: generated/committed payroll is as good as
-paid; adjustments belong to a subsequent payroll month. The four-item core
-checkpoint is resolved at the intended scope. Do not reopen these concepts as
-questions; preserve the distinction between agreements and implementation gaps.
-
-The [core model is consolidated](core-concepts.md#agreed-core-model), including
-the ordinary-payroll example and subsequent-month correction.
-
----
-
-The [output boundary](payroll-outputs.md) is now clarified. Detailed liability
-and annual reporting workflows remain later work; employee payroll finality
-is unchanged.
+Settled boundaries are not new questions: payroll uses applicable facts; business
+source intent belongs upstream; source tracing is not mandatory; generated
+payroll is final; corrections are subsequent-month adjustments within payroll
+scope; after-exit corrections belong in accounting; employer liabilities remain
+inside payroll and close on corresponding remittance with proof.
 
 ## Horizontal coverage map
 
@@ -69,8 +51,9 @@ is unchanged.
 | Ownership and unit of work | PAY-ARCH-002 agreed under PAY-Q-012; mechanics open | Whose ledger is this, and what employee/period or batch does an approval and commit cover? |
 | Authority and review | PAY-ARCH-003 agreed under PAY-Q-013; further detail deferred | Which responsibilities can prepare, approve, commit, correct, and record payment? |
 | Payroll liabilities and external accounting | PAY-ARCH-004 ownership clarified under PAY-Q-014 | How do payslips, employee payment, employer/statutory liabilities, and accounting use posted payroll? |
-| Corrections | PAY-CORE-001/011 establish preserved history and subsequent-month adjustment; scenario incorporated | Implementation and downstream projections remain later work; correction timing is settled. |
-| Reports and reconciliation | Pre-commit consistency agreed; PAY-CORE-012 establishes liability closure with remittance proof | Which outputs are projections, which are authoritative records, and what closes a settlement? |
+| Corrections | PAY-CORE-001/011/013 settle finality, subsequent-month adjustment, and after-exit accounting scope | Enforcement and specific external reporting treatment remain separate from the settled payroll rule. |
+| Reports and reconciliation | Annual preparation and closure meanings incorporated; GAP-007/008 recorded | Complete issuance integration and detailed validation remain later work. |
+| Employer-only contributions — current | PAY-CORE-014 proposed under PAY-Q-016 | Does the register include employer obligations that do not affect employee pay? |
 
 ## Parked details and return points
 
@@ -94,7 +77,7 @@ supporting context, not a prerequisite interview for the horizontal pass.
 
 | Stage | Branches to examine | Evidence needed to close the stage |
 |---|---|---|
-| 1. Existing core model — current | Salary earnings; monthly and one-time instructions; draft and posted ledgers; relationships and operations. | A source-backed explanation of the model and resulting flow, followed by discussion confirming its meaning. |
+| 1. Existing core model — incorporated | Salary earnings; monthly and one-time instructions; draft and posted ledgers; relationships and operations. | A source-backed explanation of the model and resulting flow, followed by discussion confirming its meaning. |
 | 2. Confirm and refine | Applicability; recurrence and consumption; owner and dates; references; amount semantics; draft lifecycle; correction lineage. | Definitions and rules tested with examples and counterexamples; improvements discussed explicitly. |
 | 3. Journeys and exceptions | Preparation; approval; posting; payslips; liabilities; corrections; joining, changes, exit, and annual work within the model. | Worked scenarios tracing records, responsibility, failures, and recovery; scope-specific exclusions made explicit. |
 | 4. Rules and controls | Authority; validation; approvals; change over time; duplicate processing; traceability; reconciliation. | Discussed and agreed rules with rationale and unresolved dependencies preserved. |
@@ -116,14 +99,14 @@ reason. It must not disappear when the conversation changes direction.
 
 ## Completion status
 
-The charter is pinned, initial code findings and a conceptual reconstruction
-are recorded, and the manager's input handoff is established through the user's
-account. Established material is now incorporated into the handbook narrative;
-the employer-liability clarification and agreed scenario outcomes are recorded.
-Joining/exit and partial-period ledger flows plus annual data preparation are
-now explained. PAY-Q-015 is settled; complete annual/exception workflows remain
-open.
-Further rules, complete scenario coverage, and an implementation gap register
-against agreed requirements remain ongoing work. The
-[initial gap register](implementation-gaps.md) records missing expiry enforcement;
-it is not a complete implementation audit.
+The core model, ordinary changes/exceptions, joining/partial-period/exit ledger
+flows, liability lifecycle, and annual information/review sequence are explained.
+The code comparison includes matching and annual aggregation gaps. This is an
+expanded working edition, not a claim that those workflows are implemented.
+
+One active material domain question is PAY-Q-016. PAY-Q-009 remains parked.
+Concrete expiry/validation representations, detailed exception policies, role
+assignments, and complete statutory issuance integration remain tracked work.
+A production compliance guide would also need the applicable period/form scope;
+this conceptual handbook does not adopt the demo's dated statutory examples as
+universal rules.

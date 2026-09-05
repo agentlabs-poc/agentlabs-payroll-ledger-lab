@@ -303,6 +303,19 @@ This supports payroll ownership of the register; an internal balance alone is
 not the complete issued certificate. Employee payroll remains final while
 employer obligations are reconciled.
 
+## Annual preparation and reconciliation
+
+The [reporting and reconciliation chapter](reporting-and-reconciliation.md)
+explains four distinct results: finalized employee payroll, settled employer
+liability, a prepared annual package, and an issued certificate. It traces the
+annual information and shows why matching totals alone do not establish correct
+employee/year coverage or complete issuance.
+
+The liability example uses a supplied allocation of one remittance across two
+obligations. It does not select automatic allocation or partial-payment rules.
+The annual example is illustrative data, not a tax formula. Source limitations
+are separately recorded as PAY-GAP-007/008.
+
 ## What the existing lab additionally describes
 
 **Status: inspected code behavior, not new agreed requirements.** The following
@@ -341,6 +354,11 @@ remain later work, rather than an unresolved ownership question.
 in external accounting. The [recorded rationale](employee-and-annual-journeys.md#pay-core-013--a-correction-after-employment-has-ended)
 withdraws the proposed former-employee adjustment payroll.
 
+**PAY-Q-016 / PAY-CORE-014 is open:** should employer-only contributions enter
+the employer-liability register without affecting employee gross or net? The
+[proposal](payroll-outputs.md#pay-core-014--employer-only-contributions) distinguishes
+this from the lab’s current deduction-derived liabilities.
+
 **PAY-Q-009 / PAY-CORE-007 remains parked:** whether complete draft creation
 should include sealing rather than exposing a separate seal operation.
 
@@ -360,4 +378,7 @@ clarification now settles employer-register/accounting ownership; the handbook
 is still a working edition. The [scenario incorporation](payroll-scenarios.md)
 now records established outcomes. [Joining/exit and annual data flows](employee-and-annual-journeys.md)
 are additionally explained, including the after-exit accounting boundary.
-Complete annual/exception workflows and implementation gaps remain.
+Annual preparation and reconciliation are now explained in the
+[reporting chapter](reporting-and-reconciliation.md), with explicit gaps in the
+demo. Employer-only contribution scope under PAY-Q-016 remains a proposal;
+complete issuance integration and detailed exception policies remain further work.

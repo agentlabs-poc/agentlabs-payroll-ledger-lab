@@ -180,9 +180,10 @@ posted entry and appends a recovery under another reference. It directly marks
 the correction committed, uses a synthetic draft ID, and does not validate that
 the supplied ledger date belongs to a subsequent payroll month.
 
-Required behavior: the prior generated payroll stays final. The supplied
-adjustment is included in a subsequent month's governed draft/approval/commit
-flow. The function's name and default October date do not enforce that rule.
+Required behavior: the prior generated payroll stays final. Within payroll
+scope, the supplied adjustment is included in a subsequent month's governed draft/approval/commit
+flow. PAY-CORE-013 excludes after-exit corrections, which belong in accounting.
+The function's name and default October date do not enforce these boundaries.
 
 Closure evidence when implementation is authorized: a correction cannot change
 the original committed amount or be committed as an earlier/same-month correction;
@@ -190,12 +191,73 @@ it must pass the subsequent payroll's governed lifecycle. A retry must not
 post the adjustment twice. No automatic source reuse or mandatory source tracing
 is implied. Exact adjustment representation remains an implementation choice.
 
+## PAY-GAP-007 — liability matching and remittance evidence
+
+**Status: open, source-inspected. Basis: PAY-CORE-012 and PAY-ARCH-004.**
+
+`matchReconciliation` rejects a match exceeding the payroll credit's remaining
+amount. It does not generally validate positive match amounts, available
+settlement-debit balance, or matching employer/tag/period on the two records.
+`payAndReconcileChallans` supplies compatible synthetic data in the guided demo,
+but its generated reference strings are not recorded real remittance evidence.
+
+Consequence: the demo illustrates liability closure but does not establish a
+general boundary for closing the corresponding obligation against a remittance
+with proof. A company-wide sum cannot substitute for correspondence.
+
+Closure evidence when implementation is authorized: the corresponding liability
+is reduced only by a valid recorded settlement allocation backed by retained
+proof; the same deposit amount cannot discharge unrelated obligations or be
+reused beyond its available amount. Wrong-scope, invalid-amount, and duplicate
+allocations must not create false closure. This expresses the agreed closure
+meaning; exact record formats and partial-allocation policy remain open.
+
+## PAY-GAP-008 — annual employee and period aggregation
+
+**Status: source-inspected limitation of the annual example.** The Form 16
+information basis is described in the output chapter; no complete production
+issuance design has been approved by the handbook discussion.
+
+`createForm16` sums all stored TDS credits and matches, chooses the first credit's
+payroll reference, and uses that reference's payslip gross. It does not select
+and aggregate the complete annual payroll for an employee/employer/year. It
+explicitly returns an incomplete package and synthetic references.
+
+Consequence: this function demonstrates an information dependency, not complete
+annual reporting or certificate issuance. Full salary coverage and correctly
+scoped deduction/deposit information cannot be inferred from its global totals.
+
+When annual implementation is authorized, evidence must establish the correct
+reporting scope and complete relevant salary/deduction/deposit data, followed by
+the applicable statutory issuance process. Exact period/form applicability and
+interfaces require their own review; this register does not supply new legal
+rules or treat a balanced internal total as an official certificate.
+
+## Agreement-to-evidence coverage
+
+This map records the scope of the source review, not test results or production
+conformance. Detailed open findings remain in the numbered entries above.
+
+| Current agreement | Inspected support and remaining limitation |
+|---|---|
+| Five stores, final posted history, subsequent-month correction: PAY-CORE-001/002/011 | Types and ordinary flow exist; correction direct-posting/later-date checks are incomplete (GAP-006) |
+| Source history, applicability, fixed drafts, protected reconciliation: PAY-SOURCE-001, PAY-CORE-005/006-C/009 | Fields and references exist; general effective selection, immutable-source workflow, fixed creation, and protected validation are missing (GAP-001/005) |
+| One-time and monthly applications: PAY-CORE-003/004 | One-time marking and same-draft early return exist; cross-draft guards are absent (GAP-002/003) |
+| Calculation/source scope: PAY-ARCH-001, PAY-CORE-008/010 | Higher-order demo calculation exists; business duplicate inference and mandatory source provenance are not adopted requirements |
+| Employee draft and batch: PAY-ARCH-002 | Individual draft owner/period exists; multi-employee batch coordination is not implemented |
+| Scoped authority: PAY-ARCH-003 | Lifecycle-state gates exist; actor/scope authorization is not implemented in the browser lab |
+| Employer register and remittance closure: PAY-ARCH-004, PAY-CORE-012 | Register and synthetic matches exist; general matching and actual remittance evidence are not established (GAP-007) |
+| After-exit corrections excluded: PAY-CORE-013 | Lab has only an active employee demo and no exit-scope enforcement; after-exit payroll adjustment is not a requirement to implement |
+| Annual information basis | Readiness routine exists; complete annual selection/aggregation and issuance are not established (GAP-008) |
+| Sealing and employer-only contributions | PAY-CORE-007/014 remain proposals. They are not adopted implementation requirements |
+
 ## Coverage
 
 Current entries cover expiry (PAY-GAP-001), one-time and monthly applications
 (PAY-GAP-002/003), and immutable sources with fixed drafts and reconciliation
 (PAY-GAP-005), plus subsequent-month correction enforcement (PAY-GAP-006).
-PAY-GAP-004 is superseded history. The broader source baseline
+PAY-GAP-007 adds matching/remittance integrity findings; PAY-GAP-008 identifies
+the annual aggregation limitation. PAY-GAP-004 is superseded history. The broader source baseline
 retains additional limitations; the register is not a complete audit.
 PAY-ARCH-001's calculation boundary is agreed. Its source evidence is recorded
 in [the calculation chapter](calculation-boundary.md); a full conformance audit

@@ -269,8 +269,9 @@ populate it and `preparePayrollReport` does not evaluate it. This is tracked as
 [PAY-GAP-001](implementation-gaps.md#pay-gap-001--standing-instruction-expiry).
 
 **PAY-Q-004 — approved with expiry amendment.** Source purpose and expiry are
-settled at concept level. Overlap, replacement, and exact lifetime mechanics
-remain dependent questions.
+settled at concept level. PAY-CORE-008/009 subsequently place business overlap
+intent upstream and use applicable facts; exact lifetime representation remains
+implementation work.
 
 ## PAY-CORE-003 — when a one-time instruction is consumed
 
@@ -310,8 +311,9 @@ or whether a later linked reversal changes an instruction's availability.
 remain available after an abandoned draft, and are unavailable for another
 ordinary payroll once consumed.
 
-Return points: standing-instruction expiry mechanics; salary/instruction
-overlap and replacement; correction effects on consumed inputs.
+Return points: expiry representation and any explicitly proposed changes to
+application semantics. Business overlap inference is outside core scope; no
+automatic restoration of consumed inputs is adopted.
 
 ## PAY-CORE-004 — monthly application versus instruction lifetime
 
@@ -354,8 +356,9 @@ committed application per employee and applicable payroll month. Commit records
 that month's application while leaving later eligible months available until
 expiry.
 
-Return points remain expiry representation and skipped-month behavior, source
-overlap/replacement, and correction effects on instruction applications.
+Return points remain expiry representation and supplied skipped-month policy.
+PAY-CORE-008 places business overlap inference upstream; PAY-CORE-011/013 settle
+correction timing and the after-exit accounting boundary.
 
 ## PAY-CORE-005 — applicability period and processing time
 
@@ -402,8 +405,9 @@ includes the agreed time basis in its required closure evidence.
 processed. A still-unapplied eligible earlier period may be processed later,
 subject to the other payroll controls.
 
-Return points: expiry representation and skipped-month recovery; source
-overlap/replacement; changes to source instructions; correction behavior.
+Return points: expiry representation and supplied skipped-month recovery rules.
+PAY-CORE-008/009 and PAY-CORE-011/013 subsequently clarify source scope and
+correction treatment; those boundaries are not still-open core questions.
 
 ## PAY-CORE-006 — source changes and an existing draft
 

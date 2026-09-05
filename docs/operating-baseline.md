@@ -114,7 +114,7 @@ automatic internal source-service transition into payroll. See
 This is a user-supplied operating fact, not a conclusion inferred from the demo.
 The source findings above retain their original revision and evidence limits.
 
-## Operating facts still to establish
+## Original operating inventory and later scope clarifications
 
 | Area | Missing operating evidence |
 |---|---|
@@ -124,6 +124,14 @@ The source findings above retain their original revision and evidence limits.
 | Review | Who prepares, checks, approves, releases payments, and investigates discrepancies. |
 | Exceptions | Actual examples of joins, exits, retroactive changes, attendance corrections, missing details, and failed payments. |
 | Closing the cycle | What proves employee payment, authority settlement, accounting handoff, and completion. |
+
+This inventory records the initial investigation, not a list of still-unanswered
+core questions. Subsequent decisions establish the manager handoff, scoped
+capabilities, payroll finality, employer-liability closure, and the after-exit
+accounting boundary. In particular, proof of employee bank receipt is not a new
+payroll-finality gate (PAY-CORE-011); government-liability closure uses remittance
+proof (PAY-CORE-012). Detailed payloads and external operating policies are later
+context rather than prerequisites for the agreed model.
 
 Current direction (PAY-PROCESS-004) is to start with the [core concepts](core-concepts.md)
 and the flow they already produce. **PAY-Q-002** was withdrawn from the current
