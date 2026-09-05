@@ -97,7 +97,8 @@ Creating this handbook does not itself authorize payroll implementation changes.
 
 **Conceptual edition 1 — 2026-09-06.** The final walkthrough and documentation
 closure are recorded in the [checkpoint review](handbook-review.md#edition-checkpoints).
-There are no known unanswered core decisions in this edition. Employer-specific
+No named proposal awaits an answer; [the gap audit](gap-resolution-audit.md)
+distinguishes agreed concepts from unresolved details and implementation gaps. Employer-specific
 operations, implementation specifications, and complete statutory issuance are
 explicitly deferred there; the pinned charter above remains the broader goal.
 

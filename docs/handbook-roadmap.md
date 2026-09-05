@@ -7,7 +7,12 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: conceptual edition 1 closed; zero known unanswered core decisions.**
+**Current: conceptual edition 1 recorded; gap-resolution audit completed.**
+
+The [audit](gap-resolution-audit.md) distinguishes agreed core behavior, deferred
+policies/specifications, and open code gaps. No named proposal awaits an answer;
+that does not mean every gap is resolved. PAY-CORE-015 already settles the
+employee-month association without requiring a canonical ID generator.
 
 The [checkpoint review](handbook-review.md#edition-checkpoints) records completion
 of the final walkthrough and documentation closure. This closes the conceptual

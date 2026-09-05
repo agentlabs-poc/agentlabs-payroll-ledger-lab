@@ -6,8 +6,10 @@ its opening page records the intended outcome, completion criteria, and current
 discussion point. See [what was incorporated](docs/incorporation-record.md) for
 the mapping from existing agreements and code descriptions into the handbook.
 The [conceptual edition checkpoint review](docs/handbook-review.md#edition-checkpoints)
-records the completed walkthrough, zero known unanswered core decisions, and
-explicitly deferred work. Future proposals require discussion and agreement.
+records the completed walkthrough and explicitly deferred work. The
+[gap-resolution audit](docs/gap-resolution-audit.md) distinguishes agreed concepts
+from unresolved specifications and code gaps. Future proposals require discussion
+and agreement.
 
 ## Existing browser lab
 

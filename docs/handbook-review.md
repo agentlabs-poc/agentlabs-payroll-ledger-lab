@@ -19,9 +19,11 @@ is adopted by closing this edition.
 | CP-03: representative walkthrough | Complete for this edition | The final review below traces ordinary payroll, changed inputs, commit, correction, liability closure, and annual information; existing decisions determine the illustrated outcomes |
 | CP-04: documentation closure | Complete for this edition | Current explanations and diagram aligned with PAY-CORE-007; rationale/history retained, source gaps visible, and deferred work classified |
 
-**Known unanswered core decisions: 0.** PAY-Q-009 was the last tracked proposal
-and is approved. This count concerns the current conceptual scope; it is not a
-claim that every future scenario or implementation choice is predetermined.
+**Named proposals awaiting a user answer: 0.** PAY-Q-009 was the last tracked
+proposal and is approved. The [gap-resolution audit](gap-resolution-audit.md)
+clarifies the limit: six numbered gaps have agreed core behavior, one is
+superseded, and annual issuance is partly specified. Seven active implementation
+gaps/limitations remain; deferred policies have not become resolved decisions.
 
 ## Final walkthrough results
 

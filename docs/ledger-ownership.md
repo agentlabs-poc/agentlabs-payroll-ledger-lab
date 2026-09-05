@@ -54,6 +54,12 @@ creates a new number; this is demo behavior, not a canonical employee-month
 ID-generation contract. Any production mapping must preserve the clarified
 association and exact-draft identity; this chapter does not select its schema.
 
+**Resolution status:** the employee-month association and absence of a canonical
+ID-generation requirement are already agreed. The user reiterated this during
+the [gap audit](gap-resolution-audit.md#employee-month-association-is-already-resolved).
+Implementation mapping remains work; it is not another handbook decision about
+which ID generator to adopt.
+
 Rationale: the employee and payroll month determine which payroll items belong
 together. A numbering convention is an implementation choice rather than the
 business meaning of the group. Optional source-origin tracing is unrelated to

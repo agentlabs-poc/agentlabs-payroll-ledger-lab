@@ -5,6 +5,10 @@ It does not claim a complete implementation audit or authorize code changes.
 See [core concepts](core-concepts.md) for definitions and rationale, and
 [the decision log](decision-log.md) for agreement status.
 
+The [discussion and resolution audit](gap-resolution-audit.md) classifies all
+eight entries and the additional coverage findings. An agreed rule does not
+close its implementation gap; deferred policies remain deferred.
+
 Evidence revision: lab `737465d5e27888518018e9b1f28f75fcfcac0139`,
 [source](https://github.com/agentlabs-poc/agentlabs-payroll-ledger-lab/blob/737465d5e27888518018e9b1f28f75fcfcac0139/src/main.ts).
 

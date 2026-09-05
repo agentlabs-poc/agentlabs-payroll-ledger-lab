@@ -165,6 +165,20 @@ handbook from the original browser demo. Employer-specific operations and wider
 exception policies are explicitly deferred alongside implementation and issuance
 work; the original pinned charter remains intact.
 
+## Gap-resolution audit and association confirmation — 2026-09-06
+
+The user requested an audit of whether every gap was discussed and resolved,
+and reiterated the employee-month association without a canonical ID generator.
+The [audit](gap-resolution-audit.md) maps all eight numbered gaps and additional
+coverage findings to conceptual, deferred, and implementation status. PAY-CORE-015
+remains resolved; generator selection is not a further core question.
+
+Current checkpoint wording now says no named proposal awaits an answer, rather
+than suggesting all remaining decisions or gaps are closed. The prior edition
+closure remains an editorial checkpoint with explicit deferrals. Seven active
+numbered gaps/limitations remain; none was implemented during documentation work.
+No implementation handoff or runtime change was made in the interrupted turn.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local
