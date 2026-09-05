@@ -10,6 +10,7 @@ statutory certification, or a new set of approved payroll rules.
 |---|---|---|
 | Five employee payroll stores | Definitions, relationships, and agreed core flow incorporated | [Core concepts](core-concepts.md#agreed-core-model) |
 | Intake and calculation | Manager/API handoff; business calculation and source intent outside the core ledger responsibility | [Handbook flow](handbook.md#from-manager-inputs-to-generated-payroll) |
+| Lifecycle operations and outcomes | Preparation, fixed draft, exact approval, stale-draft cancellation, commit, and retry guarantees consolidated | [Lifecycle](payroll-lifecycle.md) |
 | Source changes and draft finality | Immutable source history, fixed draft, protected reconciliation, cancel/rebuild/fresh review | [Reconciliation model](source-reconciliation.md) |
 | Instruction lifetime/application | Expiry, once-per-period monthly applications, one-time consumption on commit, and late processing | [Instruction rules](handbook.md#instruction-lifetime-and-application) |
 | Ownership and authority | Employee-month association without a canonical ID generator, employee-period draft/commit unit, batch outcomes, and distinct scoped capabilities | [Ownership](ledger-ownership.md), [authority](authority-and-review.md) |
@@ -42,7 +43,7 @@ formula, API, operational policy, or issuance integration is specified.
 - Monthly application, one-time consumption, and expiry remain distinct. The
   examples do not silently restore instructions or extend repayment schedules.
 - Old freeze and direct-contribution alternatives remain history, rather than
-  active requirements. The separate-sealing proposal remains explicitly parked.
+  active requirements. The separate-sealing proposal has been reopened and remains unapproved.
 - Annual readiness is not issuance; a global TDS total plus one payslip does
   not establish a complete employee/year result. Code limitations are recorded.
 
@@ -50,7 +51,7 @@ formula, API, operational policy, or issuance integration is specified.
 
 | Remaining item | Why it remains | Next treatment |
 |---|---|---|
-| PAY-Q-009: separate sealing | The lab exposes a seal step, while the agreed draft is fixed from complete creation | Revisit when specifying the draft API/UI; keep the current semantic rule without inventing a selected operation |
+| PAY-Q-009: separate sealing | The lab exposes a seal step, while the agreed draft is fixed from complete creation | Question reopened after the horizontal pass; keep the fixed-draft rule while awaiting the answer |
 | Expiry and validation representation | Dates/period encoding, immutable-source lifecycle metadata, and validation evidence are not selected | Implementation specification; no reopening of applicability or source-tracing decisions |
 | Exceptional installment/application behavior | Automatic extension, splitting, and restoration have not been adopted | Apply the supplied policy where it fits existing rules; ask if a core behavior change is proposed |
 | Concurrency, retries, and recovery | Durable storage and coordination are not implemented in the demo | Implement against the already stated invariants when authorized |
@@ -60,7 +61,7 @@ formula, API, operational policy, or issuance integration is specified.
 
 These items should not all be presented as unanswered foundational questions.
 Some are implementation choices, some belong to the producing/consuming layer,
-and the named proposal remains parked. If a future scenario exposes a material
+and the named proposal is awaiting an answer. If a future scenario exposes a material
 choice within payroll scope, identify that choice and ask before adopting it.
 
 ## Review checks

@@ -7,7 +7,12 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: integrated walkthrough and working-edition review recorded.**
+**Current: lifecycle outcomes consolidated; PAY-Q-009 reopened, awaiting answer.**
+
+The [lifecycle chapter](payroll-lifecycle.md) brings together existing rules for
+fixed drafts, exact approval, stale-draft cancellation, commit, and retries.
+Its code comparison records the missing cancellation path for approved stale
+drafts. It does not select recovery algorithms or additional roles.
 
 The [continuous example](payroll-scenarios.md#end-to-end-payroll-and-liability-walkthrough)
 connects employer-contribution earning/deduction, employee payroll, liability,
@@ -17,8 +22,9 @@ incorporated coverage from remaining implementation and policy work.
 The latest user clarification, PAY-CORE-015, ties all payroll for an employee
 and month together, without selecting a canonical ID-generation method. See
 [the association explanation](ledger-ownership.md#pay-core-015--all-payroll-for-an-employee-and-month-is-tied-together).
-PAY-Q-016's employer-contribution flow is already settled. No new domain question
-is opened by this review pass.
+PAY-Q-016's employer-contribution flow is already settled. The previously
+parked PAY-Q-009 now asks whether sealing remains a separate operation;
+fixed draft content from complete creation is already agreed.
 
 ## Incorporated coverage
 
@@ -63,7 +69,8 @@ inside payroll and close on corresponding remittance with proof.
 
 ## Parked details and return points
 
-- PAY-Q-009 / PAY-CORE-007: whether sealing is included in complete draft creation.
+- PAY-Q-009 / PAY-CORE-007: reopened and awaiting answer on whether sealing is
+  included in complete draft creation; [current proposal](payroll-lifecycle.md#pay-q-009--separate-sealing-remains-a-proposal).
 - Expiry encoding, installment counts, skipped-period recovery, and applicability history.
 - Reconciliation/application validation representation; mandatory source tracing
   and business overlap inference were removed from core scope.
@@ -112,8 +119,8 @@ expanded working edition, not a claim that those workflows are implemented.
 
 The [working-edition review](handbook-review.md) records the scope actually
 covered and the continuous example. PAY-Q-016 is answered, and PAY-CORE-015 is
-incorporated; there is no active unapproved domain question in this pass.
-PAY-Q-009 remains parked.
+incorporated. Lifecycle outcomes are consolidated; PAY-Q-009 has been reopened
+and remains unapproved while awaiting the user’s answer.
 Concrete expiry/validation representations, detailed exception policies, role
 assignments, and complete statutory issuance integration remain tracked work.
 A production compliance guide would also need the applicable period/form scope;

@@ -123,6 +123,23 @@ and month is tied together, and no canonical ID-generation method is established
 The ownership chapter and handbook now state this association without inventing
 an identifier format, new ledger, or automatic transfer of draft approval.
 
+## Lifecycle consolidation — 2026-09-06
+
+The [lifecycle chapter](payroll-lifecycle.md) consolidates preparation, complete
+fixed drafts, exact approval, protected reconciliation, cancellation/rebuild,
+commit, retry guarantees, and subsequent-month correction. These derive from
+existing decisions rather than newly proposed core responsibilities.
+
+Source inspection identifies an explicit PAY-GAP-005 case: `abandonDraft`
+rejects approved drafts, so the lab cannot cancel an approved stale draft
+through that operation. The implementation gap is recorded without selecting
+a new authorization policy.
+
+PAY-Q-009 was returned to the user after horizontal coverage. Its separate-seal
+proposal remains unapproved; the historical source freeze remains superseded.
+Navigation and current-status tables now distinguish the pending answer from
+the agreed fixed-draft invariant. No runtime code is changed.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

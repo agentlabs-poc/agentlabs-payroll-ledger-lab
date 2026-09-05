@@ -104,6 +104,10 @@ written as handbook content; its discussion history remains in the
 came from agreements and which came from clearly described code. This edition
 incorporates established material; it does not approve pending proposals.
 
+The [lifecycle chapter](payroll-lifecycle.md) consolidates operation outcomes,
+stale-draft cancellation, and retry guarantees, with code limitations separated
+from the pending seal-operation proposal.
+
 ## The five ledgers
 
 **Status: agreed concepts**, based on PAY-CORE-001 through 005 and later
@@ -388,8 +392,9 @@ withdraws the proposed former-employee adjustment payroll.
 enter the Payroll Ledger as an earning plus matching deduction before becoming
 employer liabilities. Gross includes them; the pair leaves net unchanged.
 
-**PAY-Q-009 / PAY-CORE-007 remains parked:** whether complete draft creation
-should include sealing rather than exposing a separate seal operation.
+**PAY-Q-009 / PAY-CORE-007 has been reopened and awaits an answer:** whether
+complete draft creation should include sealing rather than exposing a separate
+seal operation. See [the proposal](payroll-lifecycle.md#pay-q-009--separate-sealing-remains-a-proposal).
 
 Exact expiry representation, exceptional recovery policies, API and concurrency
 mechanics, detailed role assignments, and wider journeys remain in the
@@ -405,7 +410,8 @@ now includes employer-contribution entries, employee-month association,
 commit/application, employer liabilities, and remittance/proof closure.
 
 The latest clarification is PAY-CORE-015: all payroll for an employee and month
-is tied together, without a prescribed ID-generation method. There is no new
-unanswered domain question in this pass. PAY-Q-009 remains parked; implementation
-representations, detailed exception policies, and complete statutory issuance
-integration remain tracked separately from the settled conceptual model.
+is tied together, without a prescribed ID-generation method. The
+[lifecycle consolidation](payroll-lifecycle.md) now explains operation outcomes
+and the approved-stale-draft cancellation gap. PAY-Q-009 is reopened and awaits
+an answer; implementation representations, detailed exception policies, and
+complete statutory issuance remain tracked separately.

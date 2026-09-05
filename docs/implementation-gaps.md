@@ -156,6 +156,9 @@ Observed lab behavior at the evidence revision above:
 - `commitDraft` checks status and posts entries without reconciling additions,
   expiry/replacement, or competing instruction applications. Its in-memory
   procedure does not provide the required durable concurrent commit boundary.
+- `abandonDraft` accepts only open/sealed drafts, so an approved but uncommitted
+  stale draft cannot be cancelled through this operation. The agreed rebuild
+  path also needs to cover that case; cancellation authority remains unspecified.
 
 Consequence: immutable-source history, complete fixed-draft creation, and
 protected reconciliation are not established end to end by this lab. Existing
@@ -250,7 +253,7 @@ conformance. Detailed open findings remain in the numbered entries above.
 | After-exit corrections excluded: PAY-CORE-013 | Lab has only an active employee demo and no exit-scope enforcement; after-exit payroll adjustment is not a requirement to implement |
 | Annual information basis | Readiness routine exists; complete annual selection/aggregation and issuance are not established (GAP-008) |
 | Employer contributions: PAY-CORE-014 | Generic earning/deduction heads and tagged-deduction liabilities can represent the clarified flow; the lab has no complete employer-contribution pair example or business pairing enforcement |
-| Separate sealing | PAY-CORE-007 remains a parked proposal, not an adopted implementation requirement |
+| Separate sealing | PAY-CORE-007 has been reopened and awaits an answer; it is not an adopted implementation requirement |
 
 ## Coverage
 

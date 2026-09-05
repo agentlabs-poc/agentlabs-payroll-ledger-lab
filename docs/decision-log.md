@@ -29,7 +29,7 @@ separately below.
 | PAY-Q-006 | Approved | Should a monthly standing instruction have one ordinary committed application per employee and applicable payroll month, while remaining available in later eligible months until expiry? | User answered "approved". PAY-CORE-004 separates period-specific application from overall lifetime; no implementation schema is adopted. |
 | PAY-Q-007 | Approved | Should expiry be evaluated against the payroll period being processed, allowing an eligible earlier period to be processed later subject to the other payroll controls? | User answered "approved". PAY-CORE-005 separates applicability from processing time without adopting reopening, catch-up, or automatic extension rules. |
 | PAY-Q-008 | Approved as PAY-CORE-006-B | How should sources and draft values remain stable through review and commit? | User answered "approved" to the source-freeze shape and explicit question freezing draft monetary entries from creation. Corrections require cancellation and rebuilding. PAY-CORE-006 is superseded; exact implementation and recovery mechanics remain open. |
-| PAY-Q-009 | Parked during horizontal pass; not approved | Should complete draft creation include sealing, leaving approval and commit as the subsequent distinct operations? | Return after high-impact boundaries under PAY-PROCESS-006. |
+| PAY-Q-009 | Reopened after horizontal pass; awaiting answer | Should complete draft creation include sealing, leaving approval and commit as the subsequent distinct operations? | Returned after high-impact coverage; [current lifecycle and proposal](payroll-lifecycle.md#pay-q-009--separate-sealing-remains-a-proposal). No approval recorded. |
 | PAY-Q-010 | Approved | Should immutable source history and protected reconciliation at commit replace the long-lived source freeze? | User answered "approved". PAY-CORE-006-C replaces source freezing throughout review while retaining fixed draft monetary content. |
 | PAY-Q-011 | Approved | Should higher-order calculation logic produce business amounts while the payroll core governs source/ledger integrity, draft/approval lifecycle, reconciliation, and commit? | User answered "approved". PAY-ARCH-001 is agreed; interfaces and rule details remain parked. |
 | PAY-Q-012 | Approved | Should one employee’s draft for a payroll period be the unit of approval and protected commit, with batches coordinating those drafts and retaining individual outcomes? | User answered "approved". PAY-ARCH-002 is agreed; batch-wide all-or-nothing posting was not selected. |
@@ -73,7 +73,7 @@ statutory example as an adopted rule.
 
 | ID | Status | Proposal | Rationale and remaining details |
 |---|---|---|---|
-| PAY-CORE-007 | Proposed under PAY-Q-009; parked | Complete and seal monetary content during draft creation; retain approval and commit as separate operations without a distinct user-visible seal step. | [Rationale and alternative](draft-source-freeze.md#pay-core-007--does-sealing-remain-a-separate-operation). Return after the horizontal pass. |
+| PAY-CORE-007 | Proposed under PAY-Q-009; awaiting answer | Complete and seal monetary content during draft creation; retain approval and commit as separate operations without a distinct user-visible seal step. | [Rationale and alternative](draft-source-freeze.md#pay-core-007--does-sealing-remain-a-separate-operation). Reopened after the horizontal pass in [the lifecycle chapter](payroll-lifecycle.md); not adopted. |
 
 ## Alternatives and history
 
