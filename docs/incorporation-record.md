@@ -140,6 +140,16 @@ proposal remains unapproved; the historical source freeze remains superseded.
 Navigation and current-status tables now distinguish the pending answer from
 the agreed fixed-draft invariant. No runtime code is changed.
 
+## Sealing decision recorded — 2026-09-06
+
+The user answered “agreed” to PAY-Q-009. PAY-CORE-007 now includes sealing in
+complete draft creation, leaving create → approve → commit as the visible
+operations, with cancellation before commit. The lifecycle chapter records
+the rationale and alternative; the decision log moves this from proposal to
+agreement. Current navigation, core concepts, and gap coverage reflect approval.
+The earlier pending status above is retained as the history of the previous pass.
+Runtime changes remain outside this documentation update.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

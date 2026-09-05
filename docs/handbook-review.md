@@ -43,7 +43,7 @@ formula, API, operational policy, or issuance integration is specified.
 - Monthly application, one-time consumption, and expiry remain distinct. The
   examples do not silently restore instructions or extend repayment schedules.
 - Old freeze and direct-contribution alternatives remain history, rather than
-  active requirements. The separate-sealing proposal has been reopened and remains unapproved.
+  active requirements. PAY-CORE-007 now includes sealing in complete draft creation.
 - Annual readiness is not issuance; a global TDS total plus one payslip does
   not establish a complete employee/year result. Code limitations are recorded.
 
@@ -51,7 +51,6 @@ formula, API, operational policy, or issuance integration is specified.
 
 | Remaining item | Why it remains | Next treatment |
 |---|---|---|
-| PAY-Q-009: separate sealing | The lab exposes a seal step, while the agreed draft is fixed from complete creation | Question reopened after the horizontal pass; keep the fixed-draft rule while awaiting the answer |
 | Expiry and validation representation | Dates/period encoding, immutable-source lifecycle metadata, and validation evidence are not selected | Implementation specification; no reopening of applicability or source-tracing decisions |
 | Exceptional installment/application behavior | Automatic extension, splitting, and restoration have not been adopted | Apply the supplied policy where it fits existing rules; ask if a core behavior change is proposed |
 | Concurrency, retries, and recovery | Durable storage and coordination are not implemented in the demo | Implement against the already stated invariants when authorized |
@@ -60,8 +59,8 @@ formula, API, operational policy, or issuance integration is specified.
 | Detailed business calculations | Proration, contribution amounts, and annual tax formulas belong to higher-order policy | Do not turn them into new core ledger primitives or infer policy from demo arithmetic |
 
 These items should not all be presented as unanswered foundational questions.
-Some are implementation choices, some belong to the producing/consuming layer,
-and the named proposal is awaiting an answer. If a future scenario exposes a material
+Some are implementation choices; others belong to the producing/consuming layer.
+PAY-Q-009 is now settled as PAY-CORE-007. If a future scenario exposes a material
 choice within payroll scope, identify that choice and ask before adopting it.
 
 ## Review checks

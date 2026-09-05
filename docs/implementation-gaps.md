@@ -129,8 +129,8 @@ records precede release; cancellation prevents any later commit; retries,
 competing writers, and recovery cannot unlock an active committable stale draft.
 Verify unaffected scope remains usable where isolation is claimed. Define
 shared dependencies, cancellation/recovery authority, and overlapping ownership
-before claiming full coverage. PAY-Q-009 separately reviews whether seal remains
-a distinct operation; no simplification is assumed by this gap.
+before claiming full coverage. This historical gap predates PAY-CORE-007, which
+now includes sealing in complete creation; the source freeze remains superseded.
 
 ## PAY-GAP-005 — immutable-source capture and protected reconciliation
 
@@ -253,7 +253,7 @@ conformance. Detailed open findings remain in the numbered entries above.
 | After-exit corrections excluded: PAY-CORE-013 | Lab has only an active employee demo and no exit-scope enforcement; after-exit payroll adjustment is not a requirement to implement |
 | Annual information basis | Readiness routine exists; complete annual selection/aggregation and issuance are not established (GAP-008) |
 | Employer contributions: PAY-CORE-014 | Generic earning/deduction heads and tagged-deduction liabilities can represent the clarified flow; the lab has no complete employer-contribution pair example or business pairing enforcement |
-| Separate sealing | PAY-CORE-007 has been reopened and awaits an answer; it is not an adopted implementation requirement |
+| Separate sealing | PAY-CORE-007 includes sealing in complete draft creation; the lab still exposes empty creation, append, and a separate seal step |
 
 ## Coverage
 
@@ -270,8 +270,8 @@ drafts exist, but the inspected lab does not implement batch coordination or
 durable protected commit. See [ownership evidence](ledger-ownership.md).
 PAY-ARCH-003's authority boundary is agreed. The [authority chapter](authority-and-review.md)
 records lifecycle checks but no authenticated actor/scope enforcement in the lab;
-a complete authorization conformance audit remains open. PAY-CORE-007's sealing
-simplification remains unapproved. The [core checkpoint](core-coverage.md)
+a complete authorization conformance audit remains open. PAY-CORE-007's inclusion of sealing in
+complete creation is agreed but not implemented in the lab. The [core checkpoint](core-coverage.md)
 records resolved scope clarifications. PAY-ARCH-004 now places the employer
 register inside payroll and accounting outside. Existing liability/readiness
 code supports that shape but does not demonstrate complete settlement or annual

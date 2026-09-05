@@ -481,8 +481,9 @@ The diagram below records the inspected lab implementation. The
 [current agreed lifecycle](source-reconciliation.md#agreed-flow) requires a
 complete fixed draft over immutable sources, followed by protected reconciliation
 at commit. Relevant changes block commit and require rebuilding and fresh review.
-The earlier long-lived source freeze is superseded. Separate sealing remains
-parked under PAY-Q-009 during the horizontal pass.
+The earlier long-lived source freeze is superseded. PAY-CORE-007 now includes
+sealing in complete draft creation: the agreed visible operations are create,
+approve, and commit. See [the lifecycle rationale](payroll-lifecycle.md#pay-core-007--creation-includes-sealing).
 
 ```mermaid
 flowchart TD
@@ -594,7 +595,7 @@ The original refinement checklist is resolved or narrowed by later decisions:
 |---|---|
 | Source applicability and reuse | PAY-CORE-002 through 005 establish expiry and application rules; PAY-CORE-009 uses applicable facts. Exact representation remains open; PAY-GAP-001/002/003 track enforcement. |
 | Source-to-draft lineage | PAY-CORE-010 removes mandatory source tracing. PAY-CORE-006-C still requires validation of the applicable basis; validation representation remains open. |
-| Draft change lifecycle | PAY-CORE-006-C establishes a fixed draft and cancel/rebuild/fresh review on relevant changes. PAY-GAP-005 tracks implementation; separate sealing is parked under PAY-Q-009. |
+| Draft change lifecycle | PAY-CORE-006-C establishes a fixed draft and cancel/rebuild/fresh review on relevant changes. PAY-GAP-005 tracks implementation; PAY-CORE-007 includes sealing in complete creation. |
 | Corrections | PAY-CORE-011 establishes finality and subsequent-month adjustments. PAY-GAP-006 records the direct-posting/date-enforcement shortcut. |
 | Amount representation | Head kinds and producer-supplied signs describe current code. Exact encoding and rounding choices remain implementation/calculation topics, not mandatory source-provenance work. |
 

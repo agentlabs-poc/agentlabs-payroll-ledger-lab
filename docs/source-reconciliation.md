@@ -147,8 +147,8 @@ must therefore remain distinct from verified implementation behavior.
 Open decisions: validation evidence and expiry/supersession representation,
 captured calculation dependencies, validation scope, transaction/concurrency
 mechanism, cancellation authority, and the treatment of changed applicability
-history. These details and the separate-seal discussion PAY-Q-009 remain parked
-during the horizontal pass through major responsibility boundaries.
+history. These implementation details remain deferred. PAY-Q-009 is now
+approved as PAY-CORE-007: [complete draft creation includes sealing](payroll-lifecycle.md#pay-core-007--creation-includes-sealing).
 
 **PAY-Q-010 — approved:** Immutable source history plus a fixed draft and
 protected reconciliation at commit replaces the long-lived source freeze.

@@ -139,9 +139,9 @@ preserved as superseded history. No source-code changes have been made.
 
 ## PAY-CORE-007 — does sealing remain a separate operation?
 
-**Historical proposal, still unapproved.** PAY-Q-009 was parked during the
-horizontal pass and has now been reopened in the
-[current lifecycle chapter](payroll-lifecycle.md#pay-q-009--separate-sealing-remains-a-proposal).
+**Historical proposal, subsequently approved as PAY-CORE-007.** PAY-Q-009 was
+parked during the horizontal pass, then returned and approved. See the
+[current lifecycle chapter](payroll-lifecycle.md#pay-core-007--creation-includes-sealing).
 The original explanation below does not restore the superseded source freeze.
 
 In the existing code, an open draft accepts rows. `sealDraft` requires a

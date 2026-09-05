@@ -29,7 +29,7 @@ separately below.
 | PAY-Q-006 | Approved | Should a monthly standing instruction have one ordinary committed application per employee and applicable payroll month, while remaining available in later eligible months until expiry? | User answered "approved". PAY-CORE-004 separates period-specific application from overall lifetime; no implementation schema is adopted. |
 | PAY-Q-007 | Approved | Should expiry be evaluated against the payroll period being processed, allowing an eligible earlier period to be processed later subject to the other payroll controls? | User answered "approved". PAY-CORE-005 separates applicability from processing time without adopting reopening, catch-up, or automatic extension rules. |
 | PAY-Q-008 | Approved as PAY-CORE-006-B | How should sources and draft values remain stable through review and commit? | User answered "approved" to the source-freeze shape and explicit question freezing draft monetary entries from creation. Corrections require cancellation and rebuilding. PAY-CORE-006 is superseded; exact implementation and recovery mechanics remain open. |
-| PAY-Q-009 | Reopened after horizontal pass; awaiting answer | Should complete draft creation include sealing, leaving approval and commit as the subsequent distinct operations? | Returned after high-impact coverage; [current lifecycle and proposal](payroll-lifecycle.md#pay-q-009--separate-sealing-remains-a-proposal). No approval recorded. |
+| PAY-Q-009 | Approved | Should complete draft creation include sealing, leaving approval and commit as the subsequent distinct operations? | User answered “agreed” after the horizontal pass. PAY-CORE-007 includes sealing in complete creation; [agreed lifecycle and rationale](payroll-lifecycle.md#pay-core-007--creation-includes-sealing). |
 | PAY-Q-010 | Approved | Should immutable source history and protected reconciliation at commit replace the long-lived source freeze? | User answered "approved". PAY-CORE-006-C replaces source freezing throughout review while retaining fixed draft monetary content. |
 | PAY-Q-011 | Approved | Should higher-order calculation logic produce business amounts while the payroll core governs source/ledger integrity, draft/approval lifecycle, reconciliation, and commit? | User answered "approved". PAY-ARCH-001 is agreed; interfaces and rule details remain parked. |
 | PAY-Q-012 | Approved | Should one employee’s draft for a payroll period be the unit of approval and protected commit, with batches coordinating those drafts and retaining individual outcomes? | User answered "approved". PAY-ARCH-002 is agreed; batch-wide all-or-nothing posting was not selected. |
@@ -63,6 +63,7 @@ separately below.
 | PAY-CORE-013 | User-confirmed scope under PAY-Q-015 | Corrections after employee exit are handled in external accounting, outside payroll; the generated payroll remains unchanged. | User: "this should be out of scope and should be currented in accounting". [Example, rationale, and withdrawn alternative](employee-and-annual-journeys.md#pay-core-013--a-correction-after-employment-has-ended). Narrows PAY-CORE-011 at the after-exit boundary; does not prescribe accounting mechanics. |
 | PAY-CORE-014 | User-confirmed contribution flow under PAY-Q-016 | Employer contribution in CTC enters payroll as an earning and matching deduction, then the employer-liability register; gross includes it while the pair leaves net unchanged. | [Rationale, worked amounts, code comparison, and withdrawn alternative](payroll-outputs.md#pay-core-014--employer-contributions-through-payroll). The earlier direct-to-liability/no-gross-effect proposal was incorrect. |
 | PAY-CORE-015 | User-confirmed employee-month association | All payroll for an employee and month is tied together; no canonical ID-generation method is established. | User explicitly described the association and absence of a canonical generator. [Rationale, example, and code comparison](ledger-ownership.md#pay-core-015--all-payroll-for-an-employee-and-month-is-tied-together). Draft/entry identities and batch coordination remain distinct; no identifier format or schema is selected. |
+| PAY-CORE-007 | Approved under PAY-Q-009 | Complete draft creation includes sealing; visible operations are create, approve, and commit, with cancellation before commit. | User answered “agreed”. [Rationale and alternative](payroll-lifecycle.md#pay-core-007--creation-includes-sealing); fixed monetary content, exact approval, and protected reconciliation remain in force. |
 
 The user identified the existing ledger and instruction concepts as the model
 to confirm and refine. The reconstruction in core-concepts.md preserves this
@@ -71,9 +72,7 @@ statutory example as an adopted rule.
 
 ## Proposals awaiting confirmation
 
-| ID | Status | Proposal | Rationale and remaining details |
-|---|---|---|---|
-| PAY-CORE-007 | Proposed under PAY-Q-009; awaiting answer | Complete and seal monetary content during draft creation; retain approval and commit as separate operations without a distinct user-visible seal step. | [Rationale and alternative](draft-source-freeze.md#pay-core-007--does-sealing-remain-a-separate-operation). Reopened after the horizontal pass in [the lifecycle chapter](payroll-lifecycle.md); not adopted. |
+No current proposal awaits confirmation. PAY-Q-009 was approved as PAY-CORE-007.
 
 ## Alternatives and history
 
@@ -100,14 +99,16 @@ with a draft-to-commit mutation freeze, then approved the explained shape and
 freezing draft monetary entries from creation. **PAY-CORE-006 is superseded by
 PAY-CORE-006-B.** The [earlier rationale](core-concepts.md#pay-core-006--source-changes-and-an-existing-draft)
 is preserved as history, not an active proposal. Exact implementation and
-recovery authority remain open; PAY-CORE-007 is a subsequent unapproved proposal.
+recovery authority remained open. PAY-CORE-007 was subsequently proposed and,
+after the horizontal pass, approved under PAY-Q-009.
 
 The user then clarified immutable source records with expiry/replacement and
 asked whether reconciliation before commit would be simpler. PAY-Q-010 reopened
 the freeze decision, and the user approved PAY-CORE-006-C. It supersedes the
 long-lived source freeze while retaining draft immutability and cancel/rebuild
 on a changed basis. The user then directed horizontal high-impact coverage;
-sealing and other mechanics remain parked rather than becoming the next topic.
+sealing and other mechanics were parked at that point. PAY-Q-009 later returned
+and was approved; the original sequencing direction is retained as history.
 
 After approving PAY-ARCH-003, the user asked whether the core concepts had
 actually been reviewed and made clear. The source review exists, but known

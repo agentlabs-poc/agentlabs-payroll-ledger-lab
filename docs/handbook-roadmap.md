@@ -7,7 +7,7 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: lifecycle outcomes consolidated; PAY-Q-009 reopened, awaiting answer.**
+**Current: PAY-Q-009 approved; complete draft creation includes sealing.**
 
 The [lifecycle chapter](payroll-lifecycle.md) brings together existing rules for
 fixed drafts, exact approval, stale-draft cancellation, commit, and retries.
@@ -23,8 +23,8 @@ The latest user clarification, PAY-CORE-015, ties all payroll for an employee
 and month together, without selecting a canonical ID-generation method. See
 [the association explanation](ledger-ownership.md#pay-core-015--all-payroll-for-an-employee-and-month-is-tied-together).
 PAY-Q-016's employer-contribution flow is already settled. The previously
-parked PAY-Q-009 now asks whether sealing remains a separate operation;
-fixed draft content from complete creation is already agreed.
+parked PAY-Q-009 is now approved: creation includes sealing, followed by
+separate approval and commit operations.
 
 ## Incorporated coverage
 
@@ -69,8 +69,6 @@ inside payroll and close on corresponding remittance with proof.
 
 ## Parked details and return points
 
-- PAY-Q-009 / PAY-CORE-007: reopened and awaiting answer on whether sealing is
-  included in complete draft creation; [current proposal](payroll-lifecycle.md#pay-q-009--separate-sealing-remains-a-proposal).
 - Expiry encoding, installment counts, skipped-period recovery, and applicability history.
 - Reconciliation/application validation representation; mandatory source tracing
   and business overlap inference were removed from core scope.
@@ -119,8 +117,8 @@ expanded working edition, not a claim that those workflows are implemented.
 
 The [working-edition review](handbook-review.md) records the scope actually
 covered and the continuous example. PAY-Q-016 is answered, and PAY-CORE-015 is
-incorporated. Lifecycle outcomes are consolidated; PAY-Q-009 has been reopened
-and remains unapproved while awaiting the user’s answer.
+incorporated. Lifecycle outcomes are consolidated; PAY-Q-009 is approved as
+PAY-CORE-007, including sealing in complete draft creation.
 Concrete expiry/validation representations, detailed exception policies, role
 assignments, and complete statutory issuance integration remain tracked work.
 A production compliance guide would also need the applicable period/form scope;
