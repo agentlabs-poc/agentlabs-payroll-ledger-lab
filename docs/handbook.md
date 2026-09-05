@@ -229,6 +229,15 @@ reopen the original payroll or automatically restore a consumed instruction.
 The [correction rationale](core-coverage.md#pay-core-011--generated-payroll-is-final-adjust-a-subsequent-month)
 records the user's clarification and distinguishes it from the demo shortcut.
 
+## Applying the model across scenarios
+
+The [scenario chapter](payroll-scenarios.md) applies existing agreements to salary
+changes, expiry, late processing, abandoned/stale drafts, batch exceptions,
+subsequent-month corrections, and government-liability settlement. It includes
+a three-month worked example and distinguishes pre-commit validation from
+liability reconciliation. A separate section describes the lab’s grouped
+challan behavior as code evidence only.
+
 ## Ownership, batches, and authority
 
 **Status: agreed boundaries**, PAY-ARCH-002/003.
@@ -324,4 +333,6 @@ behavior into the reading path above. Review [what was incorporated](incorporati
 against the prior discussion snapshot before continuing new decisions.
 The incorporation originally left PAY-Q-014 open. The subsequent user
 clarification now settles employer-register/accounting ownership; the handbook
-is still a working edition with wider scenarios and implementation gaps.
+is still a working edition. The [scenario incorporation](payroll-scenarios.md)
+now records established outcomes; joining/exit and annual workflows still need
+further coverage, and implementation gaps remain.

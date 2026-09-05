@@ -60,6 +60,20 @@ boundary: employer liabilities inside payroll, accounting outside. See the
 [updated chapter](payroll-outputs.md). This was a separate user clarification,
 not an approval inferred during the incorporation pass.
 
+## Scenario incorporation — 2026-09-06
+
+After confirming the liability lifecycle, the next pass added
+[payroll scenarios](payroll-scenarios.md): nine outcome cases derived from prior
+agreements, a three-month salary/expiry illustration, and an explanation of the
+two reconciliation purposes. Each case identifies its established decision
+basis; none introduces a new domain decision.
+
+The grouped-challan example is explicitly source-described behavior from
+`payAndReconcileChallans` and `matchReconciliation`, not adoption of production
+allocation rules. Joining/exit, partial-period calculation, and full annual
+issuance remain incomplete. This adds worked scenario coverage but is not an
+implementation test or a claim that all handbook journeys are now complete.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

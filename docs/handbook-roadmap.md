@@ -7,7 +7,13 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: incorporate the employer-liability boundary clarified under PAY-Q-014.**
+**Current: established scenario coverage incorporated under PAY-PROCESS-009.**
+
+Read [payroll scenarios](payroll-scenarios.md) for the nine agreed-outcome cases
+and the separately labeled grouped-challan code example. No new policy approval
+is inferred from these examples. Joining/exit, partial-period situations, and
+complete annual workflows remain the next coverage areas; ask only when their
+explanation requires a material decision.
 
 The user requested that established material be incorporated first, with a clear
 account of what changed. The existing handbook snapshot was committed and pushed
@@ -58,7 +64,7 @@ is unchanged.
 | Ownership and unit of work | PAY-ARCH-002 agreed under PAY-Q-012; mechanics open | Whose ledger is this, and what employee/period or batch does an approval and commit cover? |
 | Authority and review | PAY-ARCH-003 agreed under PAY-Q-013; further detail deferred | Which responsibilities can prepare, approve, commit, correct, and record payment? |
 | Payroll liabilities and external accounting | PAY-ARCH-004 ownership clarified under PAY-Q-014 | How do payslips, employee payment, employer/statutory liabilities, and accounting use posted payroll? |
-| Corrections | PAY-CORE-001/011 establish preserved history and subsequent-month adjustment | Implementation and downstream projections remain later work; correction timing is settled. |
+| Corrections | PAY-CORE-001/011 establish preserved history and subsequent-month adjustment; scenario incorporated | Implementation and downstream projections remain later work; correction timing is settled. |
 | Reports and reconciliation | Pre-commit consistency agreed; PAY-CORE-012 establishes liability closure with remittance proof | Which outputs are projections, which are authoritative records, and what closes a settlement? |
 
 ## Parked details and return points
@@ -108,8 +114,9 @@ reason. It must not disappear when the conversation changes direction.
 The charter is pinned, initial code findings and a conceptual reconstruction
 are recorded, and the manager's input handoff is established through the user's
 account. Established material is now incorporated into the handbook narrative;
-the subsequent employer-liability clarification is now recorded, while detailed
-register/annual workflows remain later work.
+the employer-liability clarification and agreed scenario outcomes are recorded.
+Joining/exit, partial-period situations, and complete annual workflows remain
+later coverage.
 Further rules, complete scenario coverage, and an implementation gap register
 against agreed requirements remain ongoing work. The
 [initial gap register](implementation-gaps.md) records missing expiry enforcement;
