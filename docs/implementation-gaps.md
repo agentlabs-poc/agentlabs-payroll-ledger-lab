@@ -206,5 +206,9 @@ PAY-ARCH-003's authority boundary is agreed. The [authority chapter](authority-a
 records lifecycle checks but no authenticated actor/scope enforcement in the lab;
 a complete authorization conformance audit remains open. PAY-CORE-007's sealing
 simplification remains unapproved. The [core checkpoint](core-coverage.md)
-records resolved scope clarifications. PAY-ARCH-004 is a proposal and is not
-yet an additional adopted implementation requirement.
+records resolved scope clarifications. PAY-ARCH-004 now places the employer
+register inside payroll and accounting outside. Existing liability/readiness
+code supports that shape but does not demonstrate complete settlement or annual
+issuance. PAY-CORE-012 establishes remittance-with-proof closure; the lab creates
+synthetic challan references and matches, which are not observed remittance
+evidence. The [output chapter](payroll-outputs.md) records the limits.

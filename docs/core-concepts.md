@@ -65,7 +65,12 @@ The [coverage checkpoint](core-coverage.md) preserves the user's scope
 clarifications and their rationale. Code findings below remain evidence; source
 references, demo formulas, and mutable open-draft operations are not silently
 adopted requirements. Known implementation gaps remain separate from conceptual
-agreement. The [next output boundary](payroll-outputs.md) is still proposed.
+agreement. The [output boundary](payroll-outputs.md) now records the user clarification:
+employer liabilities are inside payroll; general accounting is outside.
+
+The five stores describe employee payroll. The employer-liability register is
+also part of payroll under PAY-ARCH-004; it records employer obligations rather
+than adding another source type to employee salary calculation.
 
 ## The five central stores
 

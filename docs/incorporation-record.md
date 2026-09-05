@@ -43,7 +43,7 @@ Evidence: lab revision `737465d5e27888518018e9b1f28f75fcfcac0139`,
 and [core-concept chapter](core-concepts.md). Each row includes its limitation.
 Code descriptions do not become approved requirements merely by being included.
 
-## What remains undecided
+## What remained undecided at this incorporation
 
 - PAY-Q-014 / PAY-ARCH-004: the proposed downstream responsibility boundary.
 - PAY-Q-009 / PAY-CORE-007: the parked separate-sealing question.
@@ -54,6 +54,11 @@ No new payroll rules, source-tracing requirement, automatic instruction reuse,
 or same-month correction policy is introduced. No runtime code is changed.
 The handbook's coverage estimate is not automatically increased by reorganizing
 existing content; complete scenario coverage and publication review remain work.
+
+Later update: the user subsequently answered PAY-Q-014 with a corrected
+boundary: employer liabilities inside payroll, accounting outside. See the
+[updated chapter](payroll-outputs.md). This was a separate user clarification,
+not an approval inferred during the incorporation pass.
 
 ## Verification
 

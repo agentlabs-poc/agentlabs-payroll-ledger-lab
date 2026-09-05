@@ -34,7 +34,7 @@ separately below.
 | PAY-Q-011 | Approved | Should higher-order calculation logic produce business amounts while the payroll core governs source/ledger integrity, draft/approval lifecycle, reconciliation, and commit? | User answered "approved". PAY-ARCH-001 is agreed; interfaces and rule details remain parked. |
 | PAY-Q-012 | Approved | Should one employee’s draft for a payroll period be the unit of approval and protected commit, with batches coordinating those drafts and retaining individual outcomes? | User answered "approved". PAY-ARCH-002 is agreed; batch-wide all-or-nothing posting was not selected. |
 | PAY-Q-013 | Approved | Should input maintenance, preparation, draft approval, and commit be distinct scoped capabilities, with policy deciding which may be held by the same person or role? | User answered "approved", then required core clarity before further broader questions. PAY-ARCH-003 is agreed; exact roles and separation-of-duty policy remain open. |
-| PAY-Q-014 | Open | Should payslips/reports present committed payroll while employer-liability and accounting processes consume it and maintain their own records without changing finalized payroll? | PAY-ARCH-004; follows consolidation of the core and PAY-CORE-011 finality. |
+| PAY-Q-014 | Answered with ownership clarification | Where do employer-liability and accounting records belong relative to payroll? | User clarified that accounting is outside and the employer-liability register is inside payroll. PAY-ARCH-004 replaces the earlier grouping; the Form 16 connection is supported with the qualifications in the chapter. |
 
 ## Domain decisions
 
@@ -56,6 +56,8 @@ separately below.
 | PAY-CORE-009 | User-confirmed principle | Payroll uses the applicable reality/facts when it runs. | User: "what matters is the reality/fact when your run payroll". [Scope and retained agreements](core-coverage.md). No new cross-version business-intent inference or automatic reuse policy is adopted. |
 | PAY-CORE-010 | User-confirmed simplification; amends earlier provenance requirements | Source tracing is not a mandatory payroll-core responsibility. | User: "we dont even need to trace the source". [Rationale and reconciliation distinction](core-coverage.md). Earlier mandatory monetary-entry-to-source lineage wording is superseded; demo reference fields remain source evidence. |
 | PAY-CORE-011 | User-confirmed clarification of PAY-CORE-001 | Generated/committed payroll is as good as paid for core finality; corrections are adjustments in a subsequent payroll month. | User: "we should adjust it in subsequent month, once payroll is generated its as good as paid". [Rationale, terminology, and example](core-coverage.md#pay-core-011--generated-payroll-is-final-adjust-a-subsequent-month). Preserve the earlier result; do not reopen it based on payment status. |
+| PAY-ARCH-004 | User-clarified ownership under PAY-Q-014 | Employer-liability register belongs inside payroll; general accounting is outside. | User explicitly corrected the earlier grouping. [Rationale, code evidence, and verified Form 16 relationship](payroll-outputs.md). The TDS register supports deduction/deposit reporting; complete Form 16 also needs annual salary/tax and official statement/certificate records. No complete issuance design is approved. |
+| PAY-CORE-012 | User-confirmed liability lifecycle | Track outstanding employer liability; record remittance to the government authority with proof such as the challan number; close the corresponding settled liability. | User explicitly described remittance and proof as the closure basis. [Lifecycle, rationale, and example](payroll-outputs.md#pay-core-012--liability-remittance-proof-and-closure). Retain the liability/settlement history; allocation and proof interfaces remain later details. |
 
 The user identified the existing ledger and instruction concepts as the model
 to confirm and refine. The reconstruction in core-concepts.md preserves this
@@ -67,7 +69,6 @@ statutory example as an adopted rule.
 | ID | Status | Proposal | Rationale and remaining details |
 |---|---|---|---|
 | PAY-CORE-007 | Proposed under PAY-Q-009; parked | Complete and seal monetary content during draft creation; retain approval and commit as separate operations without a distinct user-visible seal step. | [Rationale and alternative](draft-source-freeze.md#pay-core-007--does-sealing-remain-a-separate-operation). Return after the horizontal pass. |
-| PAY-ARCH-004 | Proposed under PAY-Q-014 | Committed payroll is authoritative for payslips/reports; employer-liability and accounting consumers maintain their own records and lifecycle. | [Code evidence, rationale, example, and scope](payroll-outputs.md). No additional payroll-finality gate or mandatory upstream-source tracing. |
 
 ## Alternatives and history
 
@@ -116,3 +117,10 @@ At that point, the fourth item required explanation and had no new decision.
 The user subsequently clarified that corrections belong in a subsequent month
 and generated payroll is as good as paid. PAY-CORE-011 records this finality
 rule and closes that question. No automatic instruction restoration is adopted.
+
+PAY-Q-014 was answered by clarifying that accounting is external but the
+employer-liability register belongs in payroll. The user asked whether its Form
+16 role supports this shape. Official material supports a TDS deduction/deposit
+basis alongside annual salary/tax and processed statement/certificate records.
+The assistant’s earlier external-liability framing is superseded; detailed
+issuance and accounting interfaces remain open.

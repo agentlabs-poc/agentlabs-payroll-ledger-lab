@@ -253,6 +253,27 @@ people has been adopted.
 See [ownership and batch rationale](ledger-ownership.md) and
 [authority rationale](authority-and-review.md) for examples and alternatives.
 
+## Employer liabilities belong in payroll
+
+**Status: user-clarified boundary**, PAY-ARCH-004. The five ledgers above describe
+employee payroll. The employer-liability register also belongs within payroll,
+recording the employer side of applicable payroll obligations and settlement.
+General accounting is outside payroll and consumes the relevant information.
+
+**Liability lifecycle — PAY-CORE-012:** the register tracks what the employer
+owes. When the employer remits money to the government authority, the remittance
+is recorded with proof such as the challan number, and the corresponding
+liability closes. The history remains available. For example, an INR 1,000 TDS
+liability is settled by the recorded INR 1,000 remittance and challan reference.
+See the [liability lifecycle and rationale](payroll-outputs.md#pay-core-012--liability-remittance-proof-and-closure).
+
+The TDS part of the register supports Form 16 deduction/deposit reporting.
+Complete Form 16 also uses annual salary/tax information and official processed
+statement/certificate records. See the [verified relationship and rationale](payroll-outputs.md#form-16-a-supporting-basis-not-the-only-basis).
+This supports payroll ownership of the register; an internal balance alone is
+not the complete issued certificate. Employee payroll remains final while
+employer obligations are reconciled.
+
 ## What the existing lab additionally describes
 
 **Status: inspected code behavior, not new agreed requirements.** The following
@@ -267,7 +288,7 @@ It is incorporated as evidence so the reader need not rediscover the demo.
 | Proof attachment | Stores a file; simulated HR acceptance can produce an instruction | The attachment itself is not a monetary entry; actual evidence evaluation is not demonstrated |
 | Payroll reference | Groups a draft and its posted entries under one payroll reference | Upstream source-reference fields in the demo are not mandatory core tracing requirements |
 | Payslip snapshot and PDF | Records posted entry IDs and totals for a payroll reference; renders them as a PDF | This describes the lab's snapshot representation; it does not select a production format or delivery mechanism |
-| Employer-liability records | Creates legal-entity-owned credits from tagged deductions and separate simulated settlement/match records | This demonstrates separate records, not an approved payroll-core ownership boundary or verified settlement integration |
+| Employer-liability records | Creates legal-entity-owned credits from tagged deductions and separate simulated settlement/match records | Ownership inside payroll is now clarified under PAY-ARCH-004; the demo does not verify settlement integration |
 | Annual readiness package | Builds a package explicitly marked incomplete, using available payroll/liability records | It does not demonstrate completed annual issuance or establish applicable legal rules |
 
 The [operating baseline](operating-baseline.md) contains the source revision,
@@ -281,11 +302,11 @@ is implied by incorporating these descriptions.
 
 ## Decisions still requiring discussion
 
-**PAY-Q-014 / PAY-ARCH-004 remains open:** Should payslips/reports present
-committed payroll while employer-liability and accounting processes consume it
-and maintain their own records? The [output proposal](payroll-outputs.md) records
-the rationale. Describing the lab's existing behavior above does not approve
-this boundary.
+**PAY-Q-014 is answered with a corrected boundary:** the employer-liability
+register is inside payroll; accounting is outside. Its Form 16 contribution and
+the distinction from complete issuance are recorded in the
+[output chapter](payroll-outputs.md). Detailed register and annual workflows
+remain later work, rather than an unresolved ownership question.
 
 **PAY-Q-009 / PAY-CORE-007 remains parked:** whether complete draft creation
 should include sealing rather than exposing a separate seal operation.
@@ -301,5 +322,6 @@ and the settled subsequent-month correction rule, are not open questions.
 This edition has incorporated agreed concepts and clearly described lab
 behavior into the reading path above. Review [what was incorporated](incorporation-record.md)
 against the prior discussion snapshot before continuing new decisions.
-The pending domain question remains PAY-Q-014; this incorporation does not
-advance its approval status or declare the whole handbook complete.
+The incorporation originally left PAY-Q-014 open. The subsequent user
+clarification now settles employer-register/accounting ownership; the handbook
+is still a working edition with wider scenarios and implementation gaps.

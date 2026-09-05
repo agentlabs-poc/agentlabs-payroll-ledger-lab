@@ -1,80 +1,141 @@
-# Committed payroll and downstream records
+# Payroll outputs, employer liabilities, and external accounting
 
-**PAY-ARCH-004 / PAY-Q-014 — proposed; not approved.** This horizontal branch
-starts from the consolidated [core model](core-concepts.md#agreed-core-model).
-Generated/committed payroll is already final and as good as paid under
-PAY-CORE-011. This proposal does not add another payroll-finality gate.
+**PAY-ARCH-004 / PAY-Q-014 — ownership clarified by the user.** Accounting is
+outside payroll; the employer-liability register is inside payroll. This
+corrects the assistant's earlier grouping of liability management with external
+accounting. Detailed interfaces and statutory calculation rules are not selected.
 
-## Existing code
+## Responsibility boundary
 
-Source: lab revision `737465d5e27888518018e9b1f28f75fcfcac0139`,
-[main.ts](../src/main.ts), especially `createPayslipSnapshot`, `downloadPayslip`,
-`createStatutoryLiabilities`, and `matchReconciliation`.
+| Area | Place in the model | Purpose |
+|---|---|---|
+| Employee payroll ledgers | Inside payroll | Salary facts/instructions, fixed drafts, and final committed employee amounts |
+| Payslips and payroll reports | Payroll outputs; existing lab behavior | Present and summarize the recorded payroll result |
+| Employer-liability register | Inside payroll; employer/legal-entity side | Record payroll-related obligations, deposits/settlements, and reconciliation |
+| Annual payroll certificate workflow | Payroll compliance output | Combine the applicable payroll/tax data and statutory records for issuance |
+| General accounting | Outside payroll | Consume payroll and liability information for its own accounting records |
 
-The payslip snapshot selects posted entry IDs and computes totals for a payroll
-reference. PDF generation renders those recorded amounts rather than calculating
-salary again from current sources.
+The five central stores describe the employee payroll flow. They are not an
+exhaustive inventory of the payroll module: the employer-liability register
+adds the employer side within payroll. A distinct ledger and owner do not
+imply an external system or a separate deployment.
 
-The liability routine selects tagged committed deductions and creates entries
-owned by a demo legal entity, with references to the payroll entries. Separate
-simulated settlement and matching records track those liability entries. The
-code demonstrates distinct employee-payroll and employer-liability records; it
-does not establish a complete production settlement or accounting system.
-Its statutory examples are code evidence, not validated legal rules.
+Generated employee payroll remains final under PAY-CORE-011. Employer-liability
+settlement has its own events within payroll and does not reopen employee
+amounts. Source tracing is still not a mandatory core responsibility under
+PAY-CORE-010; connecting statutory records to employees/periods serves the
+liability and reporting task rather than tracing upstream business origins.
 
-## Proposed responsibility boundary
+```mermaid
+flowchart LR
+    subgraph Payroll
+        P[Committed employee payroll] --> S[Payslips and reports]
+        P --> L[Employer-liability register]
+        L --> R[Deposits and reconciliation records]
+        P --> F[Annual payroll and tax certificate workflow]
+        R --> F
+        T[Annual tax details and official statement/certificate records] --> F
+    end
+    P --> A[External accounting]
+    L --> A
+```
 
-| Consumer | Responsibility |
-|---|---|
-| Payslip | Present the employee's committed earnings, deductions, and net for the payroll reference. A PDF is a rendering of that result. |
-| Payroll reports | Summarize committed entries for the selected employees and periods. Current salary or instruction sources do not recalculate historical payroll. |
-| Employer-liability and accounting processes | Consume applicable committed components and maintain their own obligation, posting, or settlement records. Their own lifecycle does not reopen employee payroll. |
+The diagram is a responsibility/data map. It does not select APIs, transport,
+or automatic production of an official certificate from ledger balances alone.
 
-Payslips and reports describe payroll money. A liability ledger instead records
-an obligation with its own balance and settlement events. It is not merely
-another payslip layout, even where the opening amount comes from payroll.
-Accounting and liability interpretation belong to the corresponding consuming
-layer, rather than expanding payroll's salary/instruction primitives.
+## Why the employer register belongs in payroll
 
-Identifying the committed payroll result being presented or consumed does not
-require tracing that result back to upstream sources. PAY-CORE-010 remains in
-force. Exact snapshot/reference formats, integration topology, retries, and
-role assignments are not selected by this boundary.
+The user explicitly placed this register inside payroll and identified its
+connection to Form 16. The register retains the employer's payroll obligations
+and how deposits relate to them. Keeping that information with payroll supports
+employee/period reconciliation and annual reporting while accounting maintains
+its broader books independently.
 
-## Rationale and example
+For example, payroll records an employee TDS deduction of INR 1,000. The
+employee result is final. The employer register records the corresponding TDS
+obligation, and the relevant deposit/allocation records record its settlement.
+The payroll certificate workflow can use those records alongside annual salary
+and tax data. General accounting consumes the relevant information externally.
 
-Suppose September's committed payroll includes a deduction of INR 1,000 that
-the consuming layer classifies as an employer remittance obligation. The
-payslip presents the INR 1,000 deduction. The employer-liability process records
-the corresponding obligation and later records its settlement. Those records
-answer different questions while using the same committed payroll amount.
+This explains the boundary; it does not assert a specific tax formula, filing
+schedule, or verified bank/authority integration.
 
-Employee payroll remains final throughout. The employer-liability settlement
-does not establish or withdraw payroll finality. No new employee-payment status
-is introduced into the core by this example.
+## PAY-CORE-012 — liability, remittance proof, and closure
 
-If a later correction is required, its monetary adjustment belongs in a
-subsequent month's payroll under PAY-CORE-011. Each downstream process then
-interprets that later committed adjustment under its own rules; September's
-payroll and payslip amounts stay unchanged. Exact legal/accounting treatment is
-outside this conceptual decision.
+**User-confirmed lifecycle.** The employer-liability register tracks the
+outstanding obligation. When the employer remits the money to the government
+authority, payroll records that remittance and its proof, such as the challan
+number, against the corresponding liability. The settled amount closes that
+liability; its obligation and settlement history remain available.
 
-Counterexamples: rebuilding a historical payslip using today's salary sources;
-editing employee payroll to make a liability balance match a settlement; or
-calling every downstream obligation settled merely because payroll was committed.
+```mermaid
+flowchart LR
+    D[Payroll creates an applicable liability] --> L[Outstanding employer liability]
+    L --> M[Employer remits money to government authority]
+    M --> E[Record amount and proof such as challan number]
+    E --> C[Corresponding liability settled and closed]
+```
 
-Keeping these responsibilities separate preserves a single authoritative payroll
-result while allowing an obligation's own records to describe what happened
-after generation. Folding settlement state into payroll finality would conflict
-with the already agreed as-good-as-paid convention.
+Example: an outstanding TDS liability is INR 1,000. The employer remits
+INR 1,000 and records the challan reference against that liability. Its
+outstanding balance becomes zero, with the deposit evidence retained. Generating
+employee payroll alone does not close this government liability.
 
-## Question and parked details
+Rationale: the register explains both what is owed and how it was discharged.
+It supports reconciliation and the deduction/deposit information needed for
+statutory reporting. Recording a remittance does not alter the earlier
+employee payroll result. Exact allocation of one challan across employees or
+periods, partial-payment mechanics, and proof-validation interfaces are later
+details; this decision does not select their representation.
 
-**PAY-Q-014:** Should payslips and payroll reports present committed payroll,
-while employer-liability and accounting processes consume that result and
-maintain their own records without changing finalized employee payroll?
+## Form 16: a supporting basis, not the only basis
 
-Delivery/retry mechanisms, liability calculation rules, accounting mappings,
-settlement evidence, annual outputs, and downstream correction handling remain
-later topics. Approval of this boundary would not approve the demo formulas or
-declare those integrations implemented.
+Verified against official Income Tax Department Form 16 material on 2026-09-05.
+The cited form is under the Income-tax Act, 1961; this is an explanation of the
+Form 16 relationship discussed in the lab, not selection of the form/version
+applicable to every payroll period.
+
+Part A includes employee-level tax deduction/deposit details and quarterly
+statement references. Part B includes salary, exemptions/deductions, and tax
+computation. The TDS portion of the employer-liability register can support the
+first group; annual payroll and tax data support the second. A register covering
+other payroll obligations is broader than Form 16's salary-TDS purpose.
+[Official Form 16](https://www.incometaxindia.gov.in/documents/d/guest/103120000000007849-pdf).
+
+The Department's tutorial describes obtaining Form 16 through TRACES after the
+TDS statement is processed. Consequently, the internal register is supporting
+data and a reconciliation basis; its balance alone is not an official issued
+certificate. [Income Tax Department tutorial](https://incometaxindia.gov.in/Tutorials/48.Form-16-and-16A.pdf).
+
+The allocation of those inputs to our modules is an architectural inference
+from the form's information needs and the user's stated payroll boundary.
+Detailed annual input completeness, filing/version applicability, and issuance
+integration remain later work.
+
+## Existing code evidence
+
+Lab revision `737465d5e27888518018e9b1f28f75fcfcac0139`,
+[main.ts](../src/main.ts): `createPayslipSnapshot`, `createStatutoryLiabilities`,
+`matchReconciliation`, and `createForm16`.
+
+The lab creates employee payslip snapshots from committed entries. It also
+creates legal-entity-owned liability credits from tagged deductions, with
+separate simulated settlement/match records. Its annual readiness routine uses
+both salary totals and TDS/liability data and explicitly produces an incomplete
+package. This supports the clarified module shape; it does not demonstrate a
+complete certificate-issuance implementation.
+
+## Decision history and remaining work
+
+The earlier PAY-Q-014 proposal grouped employer-liability and accounting
+processes as downstream consumers and the assistant described both as outside
+core payroll. The user corrected that boundary: employer liabilities belong
+inside payroll, while accounting is outside. PAY-ARCH-004 now records that
+clarification rather than the earlier proposal.
+
+The user's tentative Form 16 connection was checked against official material
+above. It is supported as a partial data basis, not as a claim that a liability
+register alone generates the complete certificate. There is no need to ask the
+ownership question again. Exact register entries, allocation/matching rules,
+annual completeness, external accounting mapping, and integration mechanics
+remain to be incorporated from evidence or discussed when materially ambiguous.

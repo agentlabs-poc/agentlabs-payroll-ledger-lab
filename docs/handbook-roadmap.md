@@ -7,15 +7,18 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: review the first incorporation pass under PAY-PROCESS-009.**
+**Current: incorporate the employer-liability boundary clarified under PAY-Q-014.**
 
 The user requested that established material be incorporated first, with a clear
 account of what changed. The existing handbook snapshot was committed and pushed
 as `6a30db5`; the [incorporation record](incorporation-record.md) maps the
 subsequent editorial changes to their existing basis. Read the
 [handbook narrative](handbook.md#reading-path) to see the incorporated result.
-PAY-Q-014 / PAY-ARCH-004 remains the pending domain question, not an approval
-inferred from this incorporation request.
+The user later clarified PAY-Q-014 / PAY-ARCH-004: employer liabilities belong
+in payroll; accounting is external. The [updated output chapter](payroll-outputs.md)
+records that boundary and the verified, partial basis for Form 16. PAY-CORE-012
+also establishes closure on the employer’s government remittance with proof
+such as the challan number.
 
 The user approved PAY-ARCH-003, then clarified that broader questions are
 relevant once the core concepts are clear. PAY-PROCESS-006 still calls for
@@ -42,8 +45,9 @@ the ordinary-payroll example and subsequent-month correction.
 
 ---
 
-The [output boundary](payroll-outputs.md) is the next unapproved horizontal
-proposal. It starts from committed finality and does not reopen it.
+The [output boundary](payroll-outputs.md) is now clarified. Detailed liability
+and annual reporting workflows remain later work; employee payroll finality
+is unchanged.
 
 ## Horizontal coverage map
 
@@ -53,9 +57,9 @@ proposal. It starts from committed finality and does not reopen it.
 | Calculation versus core | PAY-ARCH-001 agreed under PAY-Q-011; mechanics open | Who produces business amounts and who controls their monetary lifecycle? |
 | Ownership and unit of work | PAY-ARCH-002 agreed under PAY-Q-012; mechanics open | Whose ledger is this, and what employee/period or batch does an approval and commit cover? |
 | Authority and review | PAY-ARCH-003 agreed under PAY-Q-013; further detail deferred | Which responsibilities can prepare, approve, commit, correct, and record payment? |
-| Posted payroll and downstream obligations — pending | PAY-ARCH-004 proposed under PAY-Q-014; unchanged during incorporation | How do payslips, employee payment, employer/statutory liabilities, and accounting use posted payroll? |
+| Payroll liabilities and external accounting | PAY-ARCH-004 ownership clarified under PAY-Q-014 | How do payslips, employee payment, employer/statutory liabilities, and accounting use posted payroll? |
 | Corrections | PAY-CORE-001/011 establish preserved history and subsequent-month adjustment | Implementation and downstream projections remain later work; correction timing is settled. |
-| Reports and reconciliation | Pre-commit consistency agreed; other meanings open | Which outputs are projections, which are authoritative records, and what closes a settlement? |
+| Reports and reconciliation | Pre-commit consistency agreed; PAY-CORE-012 establishes liability closure with remittance proof | Which outputs are projections, which are authoritative records, and what closes a settlement? |
 
 ## Parked details and return points
 
@@ -104,8 +108,8 @@ reason. It must not disappear when the conversation changes direction.
 The charter is pinned, initial code findings and a conceptual reconstruction
 are recorded, and the manager's input handoff is established through the user's
 account. Established material is now incorporated into the handbook narrative;
-reviewing that incorporation is current work, with the downstream boundary
-still awaiting discussion.
+the subsequent employer-liability clarification is now recorded, while detailed
+register/annual workflows remain later work.
 Further rules, complete scenario coverage, and an implementation gap register
 against agreed requirements remain ongoing work. The
 [initial gap register](implementation-gaps.md) records missing expiry enforcement;
