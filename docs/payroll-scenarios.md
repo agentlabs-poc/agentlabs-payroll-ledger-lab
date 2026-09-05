@@ -122,7 +122,8 @@ the grouping remains distinct from individual draft and entry identifiers.
 
 The manager consolidates the applicable facts/instructions through the payroll
 APIs. Calculation produces these amounts. The fixed employee-period draft
-contains the seven monetary components; summary rows are not extra monetary
+includes sealing under PAY-CORE-007 and contains the seven monetary components;
+summary rows are not extra monetary
 entries. The contribution appears in both gross and deductions, so it is
 represented without changing net by itself.
 
@@ -188,6 +189,10 @@ employer-liability register remains inside it.
 This is a handbook walkthrough, not an executed end-to-end software test. The
 [implementation gaps](implementation-gaps.md) identify where the lab only
 illustrates or fails to enforce the agreed behavior.
+
+The [final checkpoint review](handbook-review.md#final-walkthrough-results) follows
+this same employee through both unchanged and changed-basis branches and records
+the resulting amounts, responsibilities, and remaining limits.
 
 ## Coverage that remains to develop
 

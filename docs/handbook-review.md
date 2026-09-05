@@ -4,6 +4,63 @@ Review date: 2026-09-06. This records an editorial and conceptual consistency
 review of the current working edition. It is not a production conformance test,
 statutory certification, or a new set of approved payroll rules.
 
+## Edition checkpoints
+
+**Conceptual edition 1, closed 2026-09-06.** This is an editorial closure of the
+agreed conceptual model after the user directed the final walkthrough and
+checkpoint pass. It does not claim employer-specific operating validation or
+completion of every topic in the broader pinned charter. No new payroll rule
+is adopted by closing this edition.
+
+| Checkpoint | Result | Closure evidence |
+|---|---|---|
+| CP-01: core concepts | Complete for this edition | Ledgers, instruction lifetime/application, immutable sources, fixed draft, creation including sealing, approval, and commit are agreed and recorded |
+| CP-02: responsibility boundaries | Complete for this edition | Manager intake, calculation, scoped capabilities, employee-month association, payroll finality, employer register, and external accounting are explained |
+| CP-03: representative walkthrough | Complete for this edition | The final review below traces ordinary payroll, changed inputs, commit, correction, liability closure, and annual information; existing decisions determine the illustrated outcomes |
+| CP-04: documentation closure | Complete for this edition | Current explanations and diagram aligned with PAY-CORE-007; rationale/history retained, source gaps visible, and deferred work classified |
+
+**Known unanswered core decisions: 0.** PAY-Q-009 was the last tracked proposal
+and is approved. This count concerns the current conceptual scope; it is not a
+claim that every future scenario or implementation choice is predetermined.
+
+## Final walkthrough results
+
+Basis: the [continuous example](payroll-scenarios.md#end-to-end-payroll-and-liability-walkthrough),
+[lifecycle](payroll-lifecycle.md), [source reconciliation](source-reconciliation.md),
+[authority](authority-and-review.md), and [extended journeys](employee-and-annual-journeys.md).
+This is a review of handbook semantics and arithmetic, not an executed payroll.
+Amounts are supplied calculation outputs; no contribution or tax formula is
+inferred from the example.
+
+| Step or branch | Responsibility and event | Determinate result from existing decisions |
+|---|---|---|
+| Intake and preparation | HR/payroll manager consolidates applicable facts through APIs; higher-order calculation supplies seven components | September gross INR 57,500, deductions INR 4,000, net INR 53,500; employer contribution is an earning/deduction pair |
+| Creation and approval | Preparation capability creates the complete draft including sealing; approval capability accepts that exact proposal | Monetary content is fixed; neither preparation nor approval consumes instructions or generates final payroll |
+| Unchanged basis | Commit capability invokes protected reconciliation and posting | Seven final rows; one-time bonus consumed and monthly applications recorded for September; net INR 53,500 is final |
+| Changed-basis alternative before commit | The applicable bonus changes from INR 5,000 to INR 6,000 after approval; calculation supplies the other six amounts unchanged for this illustration | Old draft stays INR 53,500 net and cannot commit. Cancel/rebuild with fresh approval: new gross INR 58,500, deductions INR 4,000, net INR 54,500. Only the replacement commits |
+| Retry or abandoned draft | Recovery establishes whether a commit occurred; an uncommitted cancellation produces no payroll | No duplicate result/application from retry; no consumption by cancellation. Exact recovery and cancellation authority remain deferred |
+| Employer liabilities | Payroll records obligations following committed payroll; employer remits to the respective authorities and records proof | Contribution liability INR 1,000 and tax liability INR 2,000 each close against corresponding remittance/proof. The ordinary recovery is not a government liability in this example |
+| Later correction within scope | Manager supplies a subsequent-month INR 500 recovery through the governed payroll flow | September remains unchanged; the later month includes INR -500. No automatic undo of earlier instruction applications |
+| Correction after exit | The correction arises after the employee has exited | External accounting handles it; payroll history stays final |
+| Annual information | Annual workflow uses relevant committed payroll, employer obligations/remittances, and required calculation/official records | September is one contribution to annual information. Neither this example nor liability closure alone constitutes certificate issuance |
+
+The unchanged and changed-basis rows are alternative branches, not two ordinary
+commits of the same instructions. All payroll within either employee-month is
+associated; approval still belongs to the exact draft. Identifier generation
+remains unspecified. Rebuilding includes calculation from the applicable basis.
+
+Additional cases already incorporated cover joining, supplied partial-period
+amounts, supplied exit components, future salary changes, finite expiry, late
+processing of an eligible period, and a stale employee draft within a batch.
+They use the same core operations. The reviewed scenarios expose no additional
+core decision; they do not select broader exception policies.
+
+Rationale for closure: the existing decisions explain the selected records,
+responsibilities, and outcomes. The remaining uncertainties can be named and
+deferred without changing those illustrative outcomes. The lab still lacks
+several required controls, including approved-stale-draft cancellation and
+protected reconciliation; the gap register preserves those findings.
+
 ## Incorporated coverage
 
 | Area | Current coverage | Evidence or rationale |
@@ -51,6 +108,8 @@ formula, API, operational policy, or issuance integration is specified.
 
 | Remaining item | Why it remains | Next treatment |
 |---|---|---|
+| Employer-specific operating procedures | Actual employer/jurisdiction/workforce context, calendars, cutoffs, manual work, and escalation/revocation procedures have not been established | A later operating edition; retain the pinned charter and avoid presenting illustrative practices as observed reality |
+| Additional exception policies | Same-period supplemental runs, partial applications, partial-remittance allocation, and wider payment-failure procedures are not fully selected | Address a concrete scenario when that scope is developed; preserve finality, instruction guards, and accounting boundaries |
 | Expiry and validation representation | Dates/period encoding, immutable-source lifecycle metadata, and validation evidence are not selected | Implementation specification; no reopening of applicability or source-tracing decisions |
 | Exceptional installment/application behavior | Automatic extension, splitting, and restoration have not been adopted | Apply the supplied policy where it fits existing rules; ask if a core behavior change is proposed |
 | Concurrency, retries, and recovery | Durable storage and coordination are not implemented in the demo | Implement against the already stated invariants when authorized |
@@ -72,5 +131,7 @@ The walkthrough covers gross/deductions/net and liability amounts explicitly.
 Source-inspected implementation gaps remain open; no runtime execution or
 completed software behavior is claimed by this review.
 
-The handbook is a reviewable conceptual working edition. Full deployment and
-period-specific compliance procedures remain outside what this review proves.
+The conceptual edition is closed with the above deferrals. Full deployment,
+employer-specific operations, and period-specific compliance procedures remain
+outside what this review proves. This is the stopping point for the current
+conceptual discussion; no additional approval questionnaire is queued.

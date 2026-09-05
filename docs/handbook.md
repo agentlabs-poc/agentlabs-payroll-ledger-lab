@@ -95,6 +95,12 @@ Creating this handbook does not itself authorize payroll implementation changes.
 
 ## Reading path
 
+**Conceptual edition 1 — 2026-09-06.** The final walkthrough and documentation
+closure are recorded in the [checkpoint review](handbook-review.md#edition-checkpoints).
+There are no known unanswered core decisions in this edition. Employer-specific
+operations, implementation specifications, and complete statutory issuance are
+explicitly deferred there; the pinned charter above remains the broader goal.
+
 Start with the five ledgers below, then follow one monthly payroll through
 preparation, commit, and a subsequent-month adjustment. The agreed model is
 written as handbook content; its discussion history remains in the
@@ -145,12 +151,12 @@ flowchart TD
     E[Attendance and other source information] --> M[HR or payroll manager consolidates inputs]
     M --> I[Payroll APIs: salary facts and instructions]
     I --> C[Calculation using applicable facts]
-    C --> D[Complete fixed employee-period draft]
+    C --> D[Create complete fixed employee-period draft including sealing]
     D --> A[Approve the exact draft]
     A --> R[Protected reconciliation at commit]
     R -->|unchanged and valid| P[Final Payroll Ledger entries and instruction applications]
     R -->|relevant change| B[Cancel and rebuild for fresh review]
-    B --> D
+    B --> C
 ```
 
 The manager submits consolidated inputs through payroll APIs. The source-to-
@@ -168,7 +174,8 @@ entries through its governed lifecycle. A calculator cannot bypass approval or
 commit controls. Mandatory tracing of each monetary entry back to its upstream
 sources is outside the agreed core scope.
 
-A complete draft fixes the employee-period proposal. Sources remain immutable
+Complete draft creation includes sealing and fixes the employee-period proposal
+under PAY-CORE-007. Sources remain immutable
 historical records: changes expire old records and create replacements. Source
 maintenance can continue while a draft is reviewed. Before posting, protected
 reconciliation checks that the applicable basis and instruction availability
@@ -403,6 +410,10 @@ examples. The rejected overlap-detection and mandatory-source-tracing questions,
 and the settled subsequent-month correction rule, are not open questions.
 
 ## Resume here
+
+The conceptual edition has passed the final walkthrough and documentation
+closure checkpoints. See [the checkpoint results](handbook-review.md#edition-checkpoints)
+and explicit deferred work before beginning a further scope of work.
 
 The [review record](handbook-review.md) maps incorporated coverage, consistency
 checks, and remaining work. The [continuous walkthrough](payroll-scenarios.md#end-to-end-payroll-and-liability-walkthrough)

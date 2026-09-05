@@ -7,7 +7,15 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: PAY-Q-009 approved; complete draft creation includes sealing.**
+**Current: conceptual edition 1 closed; zero known unanswered core decisions.**
+
+The [checkpoint review](handbook-review.md#edition-checkpoints) records completion
+of the final walkthrough and documentation closure. This closes the conceptual
+edition, with explicit deferrals; it does not complete employer-specific operating
+procedures or implement the agreed model. The pinned broader charter is preserved.
+
+No further decision sequence is queued. Start from a concrete deferred work item
+or scenario; ask only if it exposes a material choice not resolved by the model.
 
 The [lifecycle chapter](payroll-lifecycle.md) brings together existing rules for
 fixed drafts, exact approval, stale-draft cancellation, commit, and retries.
@@ -109,6 +117,10 @@ An open question may be answered, explicitly deferred, or superseded with a
 reason. It must not disappear when the conversation changes direction.
 
 ## Completion status
+
+All four [edition checkpoints](handbook-review.md#edition-checkpoints) are complete
+for the conceptual edition. The final scenario review found no additional core
+decision. Deferred work remains explicit below and in the review record.
 
 The core model, ordinary changes/exceptions, joining/partial-period/exit ledger
 flows, liability lifecycle, and annual information/review sequence are explained.

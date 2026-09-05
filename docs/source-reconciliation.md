@@ -44,7 +44,7 @@ content and respect applicability.
 ```text
 Resolve applicable facts and establish the basis for validation
                          ↓
-Create complete draft with fixed monetary entries
+Create complete draft with fixed monetary entries, including sealing
                          ↓
 Review and approve that draft
                          ↓

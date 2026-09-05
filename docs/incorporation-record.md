@@ -150,9 +150,24 @@ agreement. Current navigation, core concepts, and gap coverage reflect approval.
 The earlier pending status above is retained as the history of the previous pass.
 Runtime changes remain outside this documentation update.
 
+## Final walkthrough and edition checkpoints — 2026-09-06
+
+Following the user’s direction to continue through the remaining checkpoints,
+the [review record](handbook-review.md#edition-checkpoints) now records four
+explicit checkpoint results and closes conceptual edition 1 with named deferrals.
+The final walkthrough follows the existing seven-component example through
+approval, unchanged/changed-basis alternatives, commit, liabilities, correction,
+and annual use. It introduces no additional core decision.
+
+The main flow now explicitly includes sealing during creation, and its rebuild
+arrow returns through calculation. The README distinguishes the conceptual
+handbook from the original browser demo. Employer-specific operations and wider
+exception policies are explicitly deferred alongside implementation and issuance
+work; the original pinned charter remains intact.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local
 Markdown links and heading anchors, fence balance, the example's arithmetic,
-and that the pending decisions remain labeled open/parked. Runtime tests do not
+and that agreement, historical proposal, and deferred-work statuses stay distinct. Runtime tests do not
 validate this editorial change; no software behavior is modified.

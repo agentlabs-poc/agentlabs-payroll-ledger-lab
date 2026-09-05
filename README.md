@@ -5,7 +5,15 @@ The working handbook begins with [the payroll concepts already expressed in code
 its opening page records the intended outcome, completion criteria, and current
 discussion point. See [what was incorporated](docs/incorporation-record.md) for
 the mapping from existing agreements and code descriptions into the handbook.
-Payroll rules remain open until discussed and agreed.
+The [conceptual edition checkpoint review](docs/handbook-review.md#edition-checkpoints)
+records the completed walkthrough, zero known unanswered core decisions, and
+explicitly deferred work. Future proposals require discussion and agreement.
+
+## Existing browser lab
+
+The following describes the original demo. Compare it with the handbook and
+[implementation gaps](docs/implementation-gaps.md) for the agreed model; the
+documentation edition does not change the runtime.
 
 Throwaway, in-memory browser experiment for discovering the smallest useful
 Layer-1 payroll ledger primitives.
