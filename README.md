@@ -1,5 +1,10 @@
 # Payroll Ledger Lab
 
+Start with the [HRMS Payroll Handbook — pinned goal and outcome](docs/handbook.md#pinned-goal-and-intended-outcome).
+The working handbook begins with [the payroll concepts already expressed in code](docs/core-concepts.md);
+its opening page records the intended outcome, completion criteria, and current
+discussion point. Payroll rules remain open until discussed and agreed.
+
 Throwaway, in-memory browser experiment for discovering the smallest useful
 Layer-1 payroll ledger primitives.
 
