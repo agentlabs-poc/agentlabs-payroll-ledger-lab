@@ -7,16 +7,16 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: gap-closure work underway; PAY-Q-017 awaits an answer.**
+**Current: PAY-Q-017 approved as PAY-CORE-016; unpaid balances remain liabilities.**
 
 The [active worksheet](gap-closure-work.md) translates agreed behavior into
 acceptance cases for instruction application, draft reconciliation, correction,
-and full liability settlement. The partial-remittance question is the first
-new policy refinement in this pass. Code gaps remain open.
+and liability settlement. Partial/final settlement now has an agreed worked
+example and acceptance case. Code gaps remain open.
 
 The [audit](gap-resolution-audit.md) distinguishes agreed core behavior, deferred
 policies/specifications, and open code gaps. It recorded no pending proposal
-at the audit checkpoint; PAY-Q-017 has since been opened. PAY-CORE-015 already settles the
+at the audit checkpoint; PAY-Q-017 was subsequently opened and approved. PAY-CORE-015 already settles the
 employee-month association without requiring a canonical ID generator.
 
 The [checkpoint review](handbook-review.md#edition-checkpoints) records completion

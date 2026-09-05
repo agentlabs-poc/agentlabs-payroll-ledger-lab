@@ -11,7 +11,7 @@ or mark a code gap fixed because its expected behavior is now explicit.
 |---|---|---|
 | GAP-001/002/003: instruction lifetime and application | Consolidate ordinary behavior below; keep exceptional installment/application policy separate | Existing rules explain the acceptance cases; representation remains engineering work |
 | GAP-005/006: draft, commit, and correction | Consolidate control outcomes below, including stale approved drafts | Acceptance cases preserve fixed reviewed money and final payroll; mechanism still needs implementation evidence |
-| GAP-007: liability settlement | Resolve the partial-remittance representation question PAY-Q-017 | Record the answer and rationale, then refine the register examples and acceptance cases |
+| GAP-007: liability settlement | PAY-Q-017 approved as PAY-CORE-016: the unpaid remainder stays a liability | Partial and final settlement example and acceptance case recorded; allocation/interfaces and implementation remain open |
 | GAP-008: annual reporting | Retain the known information dependencies and aggregation limitation | Specify the actual reporting scope before claiming a complete issuance design |
 
 GAP-004 is superseded history. Employee-month association is settled as
@@ -39,6 +39,7 @@ not executed tests, new state names, API contracts, or newly approved rules.
 | AC-10: later correction | Supply a correction after generation while employee remains in payroll scope | Original stays final; adjustment goes through a subsequent month's create/approve/commit flow. Same-month or earlier correction posting and direct-posting bypass do not meet the agreement | GAP-006, PAY-CORE-011, PAY-ARCH-001 |
 | AC-11: correction after exit | A correction arises after employee exit | External accounting handles it; payroll does not change the prior result or create the rejected former-employee adjustment flow | GAP-006, PAY-CORE-013 |
 | AC-12: corresponding full settlement | A liability has a corresponding full remittance with retained proof | Close that obligation while preserving history; unrelated or duplicate allocations cannot falsely close another liability or reuse the same remitted amount | GAP-007, PAY-CORE-012, PAY-ARCH-004 |
+| AC-13: partial then final settlement | Against INR 10,000 owed, record INR 6,000 remitted with proof, then the remaining INR 4,000 with its proof | First show INR 6,000 settled and INR 4,000 outstanding; then INR 10,000 settled and zero outstanding. Close only after the balance is settled; retain both remittances and original obligation | GAP-007, PAY-CORE-016 |
 
 Rationale: these cases make existing decisions reviewable without selecting a
 storage schema, identifier generator, database lock strategy, or source-origin
@@ -55,28 +56,27 @@ This does not require a new domain discussion for routine engineering choices.
 
 ## PAY-Q-017 — representing a partial employer remittance
 
-**Status: proposed as PAY-CORE-016; awaiting the user's answer.** The existing
-rule settles a corresponding liability through remittance and proof. The
-handbook has not selected how partial remittances are represented.
+**Status: approved as PAY-CORE-016.** The user confirmed the proposal and
+emphasized that the remainder stays a liability.
 
-Proposal: a INR 10,000 liability with a corresponding INR 6,000 remittance and
-proof records INR 6,000 settled and INR 4,000 outstanding. The obligation is
-fully closed only when its remaining balance is settled with corresponding
-proof. Keep each settlement and the original obligation as history.
+An INR 10,000 liability with a corresponding INR 6,000 remittance and proof
+records INR 6,000 settled and INR 4,000 outstanding. The obligation fully closes
+only when its remaining balance is settled with corresponding proof. Keep each
+settlement and the original obligation as history.
 
-Rationale: the register would represent both money already remitted and money
-still owed. It would avoid showing either an entirely unpaid INR 10,000 balance
-or a fully closed obligation when only INR 6,000 has been remitted.
+Rationale: the register represents both money already remitted and money still
+owed. A partial remittance does not erase the unpaid liability or hide the
+amount already settled. This refines PAY-CORE-012's remittance/proof lifecycle.
 
-Alternative: record settlement only once the full obligation is paid. That
-leaves the actual partial remittance outside the settlement balance until
-completion and needs another way to retain that information. This alternative
-has not been selected either.
+The alternative was to record settlement only once the full obligation was
+paid, requiring another way to retain the interim remittance. The user approved
+recording the actual partial settlement and remaining balance instead.
 
-The question concerns internal representation of an actual remittance. It does
+The decision concerns internal representation of an actual remittance. It does
 not determine statutory acceptability, allocation across multiple liabilities,
 allocation ordering, excess deposits, accounting treatment, or proof-verification
-interfaces. Those are not silently decided by this example.
+interfaces. See [the successive balances](payroll-outputs.md#pay-core-016--partial-remittance-leaves-the-unpaid-liability-outstanding).
 
-**Question:** Should payroll record the INR 6,000 settlement and INR 4,000
-outstanding balance, closing the liability only when the balance is settled?
+**PAY-Q-017 — approved:** the paid portion is settled; the unpaid balance remains
+an outstanding liability. This resolves the basic partial-remittance rule, not
+the entire GAP-007 implementation.

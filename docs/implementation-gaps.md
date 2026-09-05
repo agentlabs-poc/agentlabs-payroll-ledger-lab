@@ -10,8 +10,9 @@ eight entries and the additional coverage findings. An agreed rule does not
 close its implementation gap; deferred policies remain deferred.
 
 The [active gap-closure worksheet](gap-closure-work.md) provides concrete
-acceptance cases derived from the agreements. PAY-Q-017 reopens the deferred
-partial-remittance representation under GAP-007; it is not yet approved.
+acceptance cases derived from the agreements. PAY-Q-017 is approved as
+PAY-CORE-016: a partial remittance leaves the unpaid remainder outstanding.
+This resolves that rule within GAP-007; the code gap remains open.
 
 Evidence revision: lab `737465d5e27888518018e9b1f28f75fcfcac0139`,
 [source](https://github.com/agentlabs-poc/agentlabs-payroll-ledger-lab/blob/737465d5e27888518018e9b1f28f75fcfcac0139/src/main.ts).
@@ -204,7 +205,7 @@ is implied. Exact adjustment representation remains an implementation choice.
 
 ## PAY-GAP-007 — liability matching and remittance evidence
 
-**Status: open, source-inspected. Basis: PAY-CORE-012 and PAY-ARCH-004.**
+**Status: open, source-inspected. Basis: PAY-CORE-012/016 and PAY-ARCH-004.**
 
 `matchReconciliation` rejects a match exceeding the payroll credit's remaining
 amount. It does not generally validate positive match amounts, available
@@ -221,7 +222,10 @@ is reduced only by a valid recorded settlement allocation backed by retained
 proof; the same deposit amount cannot discharge unrelated obligations or be
 reused beyond its available amount. Wrong-scope, invalid-amount, and duplicate
 allocations must not create false closure. This expresses the agreed closure
-meaning; exact record formats and partial-allocation policy remain open.
+meaning. PAY-CORE-016 requires a partial remittance to leave the unpaid balance
+as an outstanding liability; verify partial and subsequent final settlement
+with both proof records retained. Exact record formats and allocation across
+multiple obligations remain open.
 
 ## PAY-GAP-008 — annual employee and period aggregation
 

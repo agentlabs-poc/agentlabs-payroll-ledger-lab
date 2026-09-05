@@ -65,15 +65,18 @@ schedule, or verified bank/authority integration.
 **User-confirmed lifecycle.** The employer-liability register tracks the
 outstanding obligation. When the employer remits the money to the government
 authority, payroll records that remittance and its proof, such as the challan
-number, against the corresponding liability. The settled amount closes that
-liability; its obligation and settlement history remain available.
+number, against the corresponding liability. The remitted amount is settled;
+any unpaid balance remains a liability under PAY-CORE-016. Full closure occurs
+when the remaining balance is settled. Obligation and settlement history remain available.
 
 ```mermaid
 flowchart LR
     D[Payroll creates an applicable liability] --> L[Outstanding employer liability]
     L --> M[Employer remits money to government authority]
     M --> E[Record amount and proof such as challan number]
-    E --> C[Corresponding liability settled and closed]
+    E --> B{Remaining liability balance}
+    B -->|zero| C[Corresponding liability fully settled and closed]
+    B -->|unpaid amount remains| L
 ```
 
 Example: an outstanding TDS liability is INR 1,000. The employer remits
@@ -85,8 +88,32 @@ Rationale: the register explains both what is owed and how it was discharged.
 It supports reconciliation and the deduction/deposit information needed for
 statutory reporting. Recording a remittance does not alter the earlier
 employee payroll result. Exact allocation of one challan across employees or
-periods, partial-payment mechanics, and proof-validation interfaces are later
-details; this decision does not select their representation.
+periods and proof-validation interfaces remain later details. PAY-CORE-016
+below settles the basic partial-remittance balance behavior.
+
+## PAY-CORE-016 — partial remittance leaves the unpaid liability outstanding
+
+**Agreed under PAY-Q-017.** The user approved recording the settled portion and
+confirmed that the unpaid remainder stays a liability.
+
+| Event | Original obligation (INR) | Cumulative settled amount (INR) | Outstanding liability (INR) |
+|---|---:|---:|---:|
+| Payroll records the obligation | 10,000 | 0 | 10,000 |
+| Employer remits 6,000 with corresponding proof | 10,000 | 6,000 | 4,000 |
+| Employer remits the remaining 4,000 with corresponding proof | 10,000 | 10,000 | 0 |
+
+After the first remittance, the liability is partly settled and remains open
+for INR 4,000. After the second, it is fully settled and closed. Preserve both
+remittance/proof records and the original obligation; employee payroll remains
+final throughout. These are explanatory balances, not prescribed status codes.
+
+Rationale: the register must show what was actually remitted and what is still
+owed. Recording a partial payment cannot close the unpaid portion. Waiting until
+full settlement to recognize any settled amount was the unselected alternative.
+
+The example uses supplied corresponding remittances. It does not select an
+automatic allocation order, excess-deposit treatment, or statutory payment policy.
+GAP-007 remains open for implementation and allocation/proof-interface details.
 
 ## Form 16: a supporting basis, not the only basis
 

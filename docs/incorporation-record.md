@@ -192,6 +192,19 @@ remittance, using INR 10,000 owed and INR 6,000 remitted with proof. This is a
 material refinement of the previously deferred partial-payment mechanics. It
 remains awaiting the user’s answer; navigation and proposal status reflect that.
 
+## Partial-remittance rule approved — 2026-09-06
+
+The user approved PAY-Q-017 and emphasized that the remainder stays a liability.
+PAY-CORE-016 moves from proposal to agreement. The output chapter records
+INR 10,000 owed, INR 6,000 settled with proof, INR 4,000 still owed, and full
+closure after the remaining INR 4,000 is settled with proof. Rationale and the
+unselected alternative are retained. AC-13 provides the corresponding
+acceptance case; the main diagram now distinguishes partial from full settlement.
+
+Current navigation reflects approval. Historical audit/proposal records remain
+labeled in time. GAP-007 stays open for implementation and further allocation/
+interface detail; approving this balance rule does not claim a delivered fix.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

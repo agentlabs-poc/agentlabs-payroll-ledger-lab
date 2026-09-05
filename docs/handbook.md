@@ -98,7 +98,8 @@ Creating this handbook does not itself authorize payroll implementation changes.
 **Conceptual edition 1 — 2026-09-06.** The final walkthrough and documentation
 closure are recorded in the [checkpoint review](handbook-review.md#edition-checkpoints).
 At edition closure no named proposal awaited an answer. The later
-[gap-closure work](gap-closure-work.md) now opens PAY-Q-017 on partial remittances.
+[gap-closure work](gap-closure-work.md) records PAY-Q-017 approved as PAY-CORE-016:
+the unpaid remainder after a partial remittance stays a liability.
 [The gap audit](gap-resolution-audit.md)
 distinguishes agreed concepts from unresolved details and implementation gaps. Employer-specific
 operations, implementation specifications, and complete statutory issuance are
@@ -356,7 +357,9 @@ annual information and shows why matching totals alone do not establish correct
 employee/year coverage or complete issuance.
 
 The liability example uses a supplied allocation of one remittance across two
-obligations. It does not select automatic allocation or partial-payment rules.
+obligations. Automatic allocation remains unspecified. PAY-CORE-016 establishes
+that partial remittance leaves the unpaid balance outstanding until settled;
+see [the worked balances](payroll-outputs.md#pay-core-016--partial-remittance-leaves-the-unpaid-liability-outstanding).
 The annual example is illustrative data, not a tax formula. Source limitations
 are separately recorded as PAY-GAP-007/008.
 
@@ -415,8 +418,9 @@ and the settled subsequent-month correction rule, are not open questions.
 ## Resume here
 
 **Active: [gap-closure work](gap-closure-work.md).** Existing rules now have
-acceptance cases; PAY-Q-017 asks how to represent a partial employer remittance.
-It remains proposed, and runtime implementation gaps remain open.
+acceptance cases; PAY-Q-017 is approved as PAY-CORE-016. A partial remittance
+settles that amount; the unpaid remainder stays a liability. Runtime
+implementation gaps remain open.
 
 The conceptual edition has passed the final walkthrough and documentation
 closure checkpoints. See [the checkpoint results](handbook-review.md#edition-checkpoints)

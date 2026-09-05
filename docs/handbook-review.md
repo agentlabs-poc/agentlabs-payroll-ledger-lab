@@ -21,7 +21,8 @@ is adopted by closing this edition.
 
 **At edition closure, no named proposal awaited an answer.** PAY-Q-009 is
 approved. The subsequent [gap-closure pass](gap-closure-work.md) now opens
-PAY-Q-017 on partial remittances; it is awaiting an answer. The
+PAY-Q-017 on partial remittances; it is now approved as PAY-CORE-016. No named
+proposal currently awaits an answer. The
 [gap-resolution audit](gap-resolution-audit.md)
 clarifies the limit: six numbered gaps have agreed core behavior, one is
 superseded, and annual issuance is partly specified. Seven active implementation
@@ -113,7 +114,7 @@ formula, API, operational policy, or issuance integration is specified.
 | Remaining item | Why it remains | Next treatment |
 |---|---|---|
 | Employer-specific operating procedures | Actual employer/jurisdiction/workforce context, calendars, cutoffs, manual work, and escalation/revocation procedures have not been established | A later operating edition; retain the pinned charter and avoid presenting illustrative practices as observed reality |
-| Additional exception policies | Same-period supplemental runs, partial applications, partial-remittance allocation, and wider payment-failure procedures are not fully selected | Address a concrete scenario when that scope is developed; preserve finality, instruction guards, and accounting boundaries |
+| Additional exception policies | Same-period supplemental runs, partial applications, allocation of remittances across multiple obligations, and wider payment-failure procedures are not fully selected | Address a concrete scenario when that scope is developed; preserve finality, instruction guards, and accounting boundaries |
 | Expiry and validation representation | Dates/period encoding, immutable-source lifecycle metadata, and validation evidence are not selected | Implementation specification; no reopening of applicability or source-tracing decisions |
 | Exceptional installment/application behavior | Automatic extension, splitting, and restoration have not been adopted | Apply the supplied policy where it fits existing rules; ask if a core behavior change is proposed |
 | Concurrency, retries, and recovery | Durable storage and coordination are not implemented in the demo | Implement against the already stated invariants when authorized |

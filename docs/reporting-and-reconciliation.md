@@ -34,8 +34,10 @@ would not identify which obligations were discharged.
 
 The lab illustrates this allocation shape with a grouped simulated deposit and
 individual matches. This example does not choose an automatic allocation order
-or a partial-payment policy; it uses a supplied, complete allocation. Concrete
-validation and record representation remain implementation work.
+and uses a supplied, complete allocation. PAY-CORE-016 separately establishes
+that a partial remittance settles only that amount: the remainder stays an
+outstanding liability. See [the partial/final balances](payroll-outputs.md#pay-core-016--partial-remittance-leaves-the-unpaid-liability-outstanding).
+Concrete validation and record representation remain implementation work.
 
 ## Preparing the annual information
 

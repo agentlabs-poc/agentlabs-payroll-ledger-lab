@@ -37,7 +37,7 @@ separately below.
 | PAY-Q-014 | Answered with ownership clarification | Where do employer-liability and accounting records belong relative to payroll? | User clarified that accounting is outside and the employer-liability register is inside payroll. PAY-ARCH-004 replaces the earlier grouping; the Form 16 connection is supported with the qualifications in the chapter. |
 | PAY-Q-015 | Answered with scope exclusion | Should an exited employee remain eligible for a subsequent-month adjustment payroll without reactivating employment? | User directed that this is out of payroll scope and should be corrected in accounting. PAY-CORE-013 excludes the proposed after-exit adjustment payroll. |
 | PAY-Q-016 | Answered by correcting the premise | How do employer contributions enter payroll and the employer-liability register? | User clarified that the offer-letter CTC contribution is a payroll earning plus matching deduction. Gross includes it; net is unchanged by the pair. Payroll entries precede the corresponding liability. |
-| PAY-Q-017 | Open; awaiting answer | Should an actual partial employer remittance reduce the corresponding liability by its recorded amount, with only the remaining balance outstanding until final settlement? | GAP-007 retained partial-payment mechanics as deferred. [Proposal, example, and rationale](gap-closure-work.md#pay-q-017--representing-a-partial-employer-remittance); no statutory acceptability or allocation order is selected. |
+| PAY-Q-017 | Approved | Should an actual partial employer remittance reduce the corresponding liability by its recorded amount, with only the remaining balance outstanding until final settlement? | User: “yes, your proposal is right it remains as liablity”. PAY-CORE-016 records the unpaid remainder as an outstanding liability. [Example and rationale](gap-closure-work.md#pay-q-017--representing-a-partial-employer-remittance); allocation order remains unspecified. |
 
 ## Domain decisions
 
@@ -64,6 +64,7 @@ separately below.
 | PAY-CORE-013 | User-confirmed scope under PAY-Q-015 | Corrections after employee exit are handled in external accounting, outside payroll; the generated payroll remains unchanged. | User: "this should be out of scope and should be currented in accounting". [Example, rationale, and withdrawn alternative](employee-and-annual-journeys.md#pay-core-013--a-correction-after-employment-has-ended). Narrows PAY-CORE-011 at the after-exit boundary; does not prescribe accounting mechanics. |
 | PAY-CORE-014 | User-confirmed contribution flow under PAY-Q-016 | Employer contribution in CTC enters payroll as an earning and matching deduction, then the employer-liability register; gross includes it while the pair leaves net unchanged. | [Rationale, worked amounts, code comparison, and withdrawn alternative](payroll-outputs.md#pay-core-014--employer-contributions-through-payroll). The earlier direct-to-liability/no-gross-effect proposal was incorrect. |
 | PAY-CORE-015 | User-confirmed employee-month association | All payroll for an employee and month is tied together; no canonical ID-generation method is established. | User explicitly described the association and absence of a canonical generator. [Rationale, example, and code comparison](ledger-ownership.md#pay-core-015--all-payroll-for-an-employee-and-month-is-tied-together). Draft/entry identities and batch coordination remain distinct; no identifier format or schema is selected. |
+| PAY-CORE-016 | Approved under PAY-Q-017 | A partial remittance with proof settles that amount; the unpaid balance remains a liability until settled. Full closure requires no remaining balance, with settlement history retained | User explicitly approved the proposal. [Worked balances and rationale](payroll-outputs.md#pay-core-016--partial-remittance-leaves-the-unpaid-liability-outstanding). |
 | PAY-CORE-007 | Approved under PAY-Q-009 | Complete draft creation includes sealing; visible operations are create, approve, and commit, with cancellation before commit. | User answered “agreed”. [Rationale and alternative](payroll-lifecycle.md#pay-core-007--creation-includes-sealing); fixed monetary content, exact approval, and protected reconciliation remain in force. |
 
 The user identified the existing ledger and instruction concepts as the model
@@ -73,12 +74,8 @@ statutory example as an adopted rule.
 
 ## Proposals awaiting confirmation
 
-PAY-Q-009 was approved as PAY-CORE-007. A later gap-closure pass opens the
-following material question.
-
-| ID | Status | Proposal | Rationale |
-|---|---|---|---|
-| PAY-CORE-016 | Proposed under PAY-Q-017; awaiting answer | Record a partial remittance with proof as settling that amount, retaining the remaining outstanding liability until fully settled | [Example and alternative](gap-closure-work.md#pay-q-017--representing-a-partial-employer-remittance). This is not yet an agreement. |
+No named proposal currently awaits an answer. PAY-Q-017 is approved as
+PAY-CORE-016. Deferred specifications and implementation gaps remain open.
 
 ## Alternatives and history
 

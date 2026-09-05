@@ -11,7 +11,8 @@ choice, and an assistant's source finding is not automatically a user decision.
 
 **Later work:** the user subsequently directed work on these gaps. The
 [active worksheet](gap-closure-work.md) records acceptance cases and opens
-PAY-Q-017 on partial remittances. The counts and no-pending-proposal statement
+PAY-Q-017 on partial remittances, subsequently approved as PAY-CORE-016.
+That rule is now settled; the implementation gap remains open. The counts and no-pending-proposal statement
 below describe the audit checkpoint, not this later discussion state.
 
 ## Numbered gaps
