@@ -22,7 +22,8 @@ is adopted by closing this edition.
 **At edition closure, no named proposal awaited an answer.** PAY-Q-009 is
 approved. The subsequent [gap-closure pass](gap-closure-work.md) now opens
 PAY-Q-017 on partial remittances; it is now approved as PAY-CORE-016. No named
-proposal currently awaits an answer. The
+core-rule proposal currently awaits an answer. PAY-Q-018 and PAY-Q-019 now
+request annual-output and completion scope respectively. The
 [gap-resolution audit](gap-resolution-audit.md)
 clarifies the limit: six numbered gaps have agreed core behavior, one is
 superseded, and annual issuance is partly specified. Seven active implementation

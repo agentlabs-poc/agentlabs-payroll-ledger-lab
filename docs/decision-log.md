@@ -38,6 +38,8 @@ separately below.
 | PAY-Q-015 | Answered with scope exclusion | Should an exited employee remain eligible for a subsequent-month adjustment payroll without reactivating employment? | User directed that this is out of payroll scope and should be corrected in accounting. PAY-CORE-013 excludes the proposed after-exit adjustment payroll. |
 | PAY-Q-016 | Answered by correcting the premise | How do employer contributions enter payroll and the employer-liability register? | User clarified that the offer-letter CTC contribution is a payroll earning plus matching deduction. Gross includes it; net is unchanged by the pair. Payroll entries precede the corresponding liability. |
 | PAY-Q-017 | Approved | Should an actual partial employer remittance reduce the corresponding liability by its recorded amount, with only the remaining balance outstanding until final settlement? | User: “yes, your proposal is right it remains as liablity”. PAY-CORE-016 records the unpaid remainder as an outstanding liability. [Example and rationale](gap-closure-work.md#pay-q-017--representing-a-partial-employer-remittance); allocation order remains unspecified. |
+| PAY-Q-018 | Open; awaiting scope answer | Should the annual chapter specify the payroll annual package and issuance handoff, or complete certificate issuance for a specified jurisdiction and financial year? | GAP-008 distinguishes data aggregation from statutory issuance. Payroll-side data contracts can progress independently; complete issuance needs an applicable scope. |
+| PAY-Q-019 | Open; completion scope clarification | Does completing all gaps mean handbook decisions/specifications first, or also implementing and verifying runtime fixes in the lab? | User directed continued gap closure. The existing work has been documentation-only; runtime work has not started while this clarification is pending. |
 
 ## Domain decisions
 
@@ -74,8 +76,10 @@ statutory example as an adopted rule.
 
 ## Proposals awaiting confirmation
 
-No named proposal currently awaits an answer. PAY-Q-017 is approved as
-PAY-CORE-016. Deferred specifications and implementation gaps remain open.
+PAY-Q-017 is approved as PAY-CORE-016. PAY-Q-018 and PAY-Q-019 are open scope
+questions, not proposed replacements of the agreed payroll rules. No further
+PAY-CORE decision is assigned before the scope answers establish what is needed.
+Deferred specifications and implementation gaps remain visible.
 
 ## Alternatives and history
 

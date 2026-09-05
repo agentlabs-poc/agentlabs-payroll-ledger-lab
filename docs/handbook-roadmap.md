@@ -7,7 +7,14 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: PAY-Q-017 approved as PAY-CORE-016; unpaid balances remain liabilities.**
+**Current: operation contracts recorded; PAY-Q-018 and PAY-Q-019 await scope answers.**
+
+The [contracts](payroll-operation-contracts.md) cover instruction eligibility,
+complete drafts, approval, protected commit, cancellation/recovery, corrections,
+liability balances, and payroll annual data. PAY-Q-018 settles the annual
+package/issuance scope; PAY-Q-019 settles whether this phase also includes
+implementing and verifying the runtime fixes. Independent handbook work proceeds
+without treating unanswered scope questions as approvals.
 
 The [active worksheet](gap-closure-work.md) translates agreed behavior into
 acceptance cases for instruction application, draft reconciliation, correction,

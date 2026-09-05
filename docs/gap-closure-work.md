@@ -5,14 +5,20 @@ and the user's direction to work on the gaps. This pass develops handbook
 specifications and acceptance evidence. It does not implement runtime changes
 or mark a code gap fixed because its expected behavior is now explicit.
 
+The [operation contracts](payroll-operation-contracts.md) now specify required
+information, preconditions, outcomes, rejection/recovery behavior, liability
+balances, and annual data-selection cases. PAY-Q-018 asks the annual reporting
+scope; PAY-Q-019 asks whether completion also includes runtime implementation.
+Both await answers. Documentation proceeds within the established scope.
+
 ## Work sequence and checkpoints
 
 | Work group | Current treatment | Checkpoint |
 |---|---|---|
-| GAP-001/002/003: instruction lifetime and application | Consolidate ordinary behavior below; keep exceptional installment/application policy separate | Existing rules explain the acceptance cases; representation remains engineering work |
-| GAP-005/006: draft, commit, and correction | Consolidate control outcomes below, including stale approved drafts | Acceptance cases preserve fixed reviewed money and final payroll; mechanism still needs implementation evidence |
+| GAP-001/002/003: instruction lifetime and application | Eligibility/application contract and acceptance cases recorded | Ordinary expected outcomes specified; exact encoding and implementation proof remain |
+| GAP-005/006: draft, commit, and correction | Preconditions, protected commit sequence, recovery outcomes, and correction contract recorded | Observable behavior specified; storage/concurrency and authorization mapping still need implementation evidence |
 | GAP-007: liability settlement | PAY-Q-017 approved as PAY-CORE-016: the unpaid remainder stays a liability | Partial and final settlement example and acceptance case recorded; allocation/interfaces and implementation remain open |
-| GAP-008: annual reporting | Retain the known information dependencies and aggregation limitation | Specify the actual reporting scope before claiming a complete issuance design |
+| GAP-008: annual reporting | Payroll-side data contract and employee/employer/year selection cases recorded | PAY-Q-018 awaits an answer on package/handoff versus complete scoped issuance |
 
 GAP-004 is superseded history. Employee-month association is settled as
 PAY-CORE-015 and is not a new question in this sequence. Supplemental-run

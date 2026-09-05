@@ -418,9 +418,10 @@ and the settled subsequent-month correction rule, are not open questions.
 ## Resume here
 
 **Active: [gap-closure work](gap-closure-work.md).** Existing rules now have
-acceptance cases; PAY-Q-017 is approved as PAY-CORE-016. A partial remittance
-settles that amount; the unpaid remainder stays a liability. Runtime
-implementation gaps remain open.
+[operation contracts](payroll-operation-contracts.md) and acceptance cases.
+PAY-Q-017 is approved as PAY-CORE-016: the unpaid remainder after a partial
+remittance stays a liability. PAY-Q-018 and PAY-Q-019 await annual-output and
+completion-scope answers. Runtime implementation gaps remain open.
 
 The conceptual edition has passed the final walkthrough and documentation
 closure checkpoints. See [the checkpoint results](handbook-review.md#edition-checkpoints)

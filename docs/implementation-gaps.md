@@ -14,6 +14,11 @@ acceptance cases derived from the agreements. PAY-Q-017 is approved as
 PAY-CORE-016: a partial remittance leaves the unpaid remainder outstanding.
 This resolves that rule within GAP-007; the code gap remains open.
 
+The [operation contracts](payroll-operation-contracts.md) specify observable
+behavior against these gaps, including liability balances and annual selection
+cases. They do not close the code findings. PAY-Q-018 and PAY-Q-019 track the
+remaining annual-output and implementation-scope clarification.
+
 Evidence revision: lab `737465d5e27888518018e9b1f28f75fcfcac0139`,
 [source](https://github.com/agentlabs-poc/agentlabs-payroll-ledger-lab/blob/737465d5e27888518018e9b1f28f75fcfcac0139/src/main.ts).
 

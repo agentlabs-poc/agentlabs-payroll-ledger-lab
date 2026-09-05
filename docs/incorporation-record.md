@@ -205,6 +205,22 @@ Current navigation reflects approval. Historical audit/proposal records remain
 labeled in time. GAP-007 stays open for implementation and further allocation/
 interface detail; approving this balance rule does not claim a delivered fix.
 
+## Operation contracts and completion scope — 2026-09-06
+
+The user directed continued work until all gaps are complete. The
+[operation contracts](payroll-operation-contracts.md) develop the agreed rules
+into inputs, preconditions, outcomes, failure/recovery behavior, and review
+cases. They include an explicit supplied split of a INR 9,000 remittance across
+two obligations and correctly scoped annual data-selection examples. These
+specifications do not introduce an allocation order, ID generator, or business
+source-tracing requirement.
+
+PAY-Q-018 asks whether annual coverage means the payroll package/handoff or
+complete issuance for a specified jurisdiction/year. PAY-Q-019 tracks whether
+completion includes implementing and verifying lab fixes as well as handbook
+work. Both are awaiting answers. Work independent of those answers has proceeded;
+no runtime behavior or gap-closure claim is inferred from silence.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local
