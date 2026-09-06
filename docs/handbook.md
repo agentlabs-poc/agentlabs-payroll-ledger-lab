@@ -95,29 +95,28 @@ Creating this handbook does not itself authorize payroll implementation changes.
 
 ## Reading path
 
-**Current: consolidated handbook review; implementation paused.** The
-[current review](handbook-review.md#current-consolidated-review) supersedes the
-historical conceptual-edition closure as the readiness statement. Approved
-concepts remain intact. PAY-Q-020 on withdrawal of approval from an unchanged
-draft is the one recorded unanswered lifecycle proposal.
+**Current: layered conceptual handbook, reviewed under PAY-ARCH-006.**
+PAY-Q-020 is closed as superseded. Implementation remains paused; completing
+this documentation does not authorize code changes or release.
 
-The [baseline reconciliation](baseline-reconciliation.md) separates the merged
-Core Layer-1 system, the browser experiment, later handbook decisions and local
-unmerged fixes. Employer-specific procedures and detailed statutory issuance
-remain deferred; the broader pinned charter above is preserved.
+Read the handbook in this order:
 
-Start with the five ledgers below, then follow one monthly payroll through
-preparation, commit, and a subsequent-month adjustment. The agreed model is
-written as handbook content; its discussion history remains in the
-[decision log](decision-log.md) and linked rationale chapters.
+1. [Layer-1 payroll records and contracts](layer-1-contracts.md): the five
+   employee stores, exact drafts, authority, posting, history and liabilities.
+2. [HRMS payroll policy](hrms-payroll-policy.md): manager intake, approval,
+   holds, reconciliation or draft authority, batch selection and worked outcomes.
+3. [Operation contracts](payroll-operation-contracts.md) and
+   [lifecycle](payroll-lifecycle.md): capabilities and the two policy paths.
+4. [Annual package](annual-payroll-package.md), scenarios and supporting chapters:
+   downstream information and the scope of each example.
+5. [Review record](handbook-review.md#current-consolidated-review) and
+   [baseline reconciliation](baseline-reconciliation.md): conceptual coverage,
+   current Core evidence, local candidate and deferred work.
 
-[The incorporation record](incorporation-record.md) identifies which material
-came from agreements and which came from clearly described code. This edition
-incorporates established material; it does not approve pending proposals.
-
-The [lifecycle chapter](payroll-lifecycle.md) consolidates operation outcomes,
-stale-draft cancellation, and retry guarantees, with code limitations separated
-from the agreed inclusion of sealing in complete draft creation.
+The [decision log](decision-log.md) and [boundary rationale](payroll-policy-boundary.md)
+preserve why organizational workflow is separate from stable ledger guarantees.
+The [core-concepts chapter](core-concepts.md) retains source reconstruction and
+historical alternatives. Its demo behavior is not the production contract.
 
 ## The five ledgers
 
@@ -147,50 +146,35 @@ what is proposed from what has become final.
 
 ## From manager inputs to generated payroll
 
-**Status: agreed flow.** PAY-INTAKE-001 establishes the manager handoff;
-PAY-ARCH-001/002/003 and PAY-CORE-006-C establish the responsibility, unit of
-work, authority, and commit boundaries.
+In the supplied operating account, information reaches the HR/payroll manager,
+who consolidates it through APIs. Business calculation supplies proposed amounts.
+Layer 1 creates a complete fixed draft and provides the protected operations
+that the organization's Layer-2 policy uses.
 
 ```mermaid
 flowchart TD
-    E[Attendance and other source information] --> M[HR or payroll manager consolidates inputs]
-    M --> I[Payroll APIs: salary facts and instructions]
-    I --> C[Calculation using applicable facts]
-    C --> D[Create complete fixed employee-period draft including sealing]
-    D --> A[Approve the exact draft]
-    A --> R[Protected reconciliation at commit]
-    R -->|unchanged and valid| P[Final Payroll Ledger entries and instruction applications]
-    R -->|relevant change| B[Cancel and rebuild for fresh review]
-    B --> C
+    I[Source information] --> M[HR or payroll manager]
+    M --> C[Calculation supplies proposed amounts]
+    C --> D[Layer 1: complete fixed employee-period draft]
+    D --> P[Layer 2: apply organizational payroll policy]
+    P --> A[Reconcile current inputs before commit]
+    P --> B[Use fixed draft as monetary authority]
+    A --> S[Apply required approval and hold controls; select drafts]
+    B --> S
+    S --> H[Held or excluded draft remains outstanding]
+    S --> K[Layer 1: protected commit of exact selected draft]
+    K --> L[Immutable Payroll Ledger and application records]
 ```
 
-The manager submits consolidated inputs through payroll APIs. The source-to-
-manager delivery mechanism is not prescribed. Information being present in
-attendance does not itself mean that it has entered payroll.
+A current-source change blocks an otherwise unchanged draft under policy A;
+it need not do so under policy B. Neither can silently change the draft's
+money, bypass applicable controls, duplicate posting or rewrite history.
+The [policy chapter](hrms-payroll-policy.md) works through both outcomes and a
+held employee in a batch.
 
-Calculation uses the applicable facts for the period when payroll runs. The
-producing layer determines whether business inputs represent additional money,
-replacement intent, or a duplicate request. Payroll does not infer those
-relationships from equal amounts or matching component names. This is separate
-from preventing repeated application of the same instruction.
-
-Calculation logic produces business amounts. Payroll core accepts the proposed
-entries through its governed lifecycle. A calculator cannot bypass approval or
-commit controls. Mandatory tracing of each monetary entry back to its upstream
-sources is outside the agreed core scope.
-
-Complete draft creation includes sealing and fixes the employee-period proposal
-under PAY-CORE-007. Sources remain immutable
-historical records: changes expire old records and create replacements. Source
-maintenance can continue while a draft is reviewed. Before posting, protected
-reconciliation checks that the applicable basis and instruction availability
-still permit the reviewed result. Relevant changes require rebuilding and
-fresh review. Validation, posting, and application recording are protected
-together; the exact mechanism remains an implementation choice.
-
-**Why:** reviewed amounts remain stable without a day-long source freeze. Payroll
-can accept maintained facts while preventing a stale draft from being posted.
-See [source reconciliation](source-reconciliation.md) for the full rationale.
+Layer 1 may record approval and hold separately. Policy determines who uses
+them and what releasing a hold requires. The distinction concerns records and
+responsibilities, not a mandated field name or particular implementation.
 
 ## Instruction lifetime and application
 
@@ -212,6 +196,10 @@ can differ if payroll is skipped. Automatic extension or catch-up was not
 adopted and is not implied by this example.
 
 ## One monthly payroll, then a correction
+
+This example uses the handbook’s approval-and-reconciliation policy. The
+[draft-authoritative variant](hrms-payroll-policy.md#policy-b-the-fixed-draft-is-monetary-authority)
+is also valid; both preserve exact posted amounts and application guarantees.
 
 **Status: illustration of agreed rules**, PAY-CORE-001/003/004/011. These amounts
 illustrate ledger behavior, not recommended payroll formulas.
@@ -269,7 +257,7 @@ and keeps later corrections and annual use within the established boundaries.
 The [extended journeys](employee-and-annual-journeys.md) apply the established
 flow to a first payroll, supplied partial-month amounts, and exit-related
 components. Business calculations supply the amounts; the same draft,
-approval, reconciliation, and commit rules govern them. These examples do not
+applicable policy and core commit guarantees govern them. These examples do not
 select proration formulas or settlement entitlement rules.
 
 The annual workflow combines committed employee payroll, the employer-liability
@@ -297,7 +285,8 @@ IDs serve their own purposes. Rebuilding a draft does not transfer approval
 merely because it belongs to the same employee-month payroll. See the
 [association rationale](ledger-ownership.md#pay-core-015--all-payroll-for-an-employee-and-month-is-tied-together).
 
-A batch coordinates exact employee drafts and retains each outcome. If 99
+A batch coordinates exact employee drafts and retains each outcome. Under
+policy A, if 99
 employee drafts pass reconciliation and one is stale, the 99 may commit while
 the remaining draft is rebuilt and reviewed. Batch status must reflect that
 partial completion. Replacement drafts do not inherit approval merely by being
@@ -306,7 +295,7 @@ members of the same batch.
 Input maintenance, preparation, draft approval, and commit are distinct scoped
 capabilities. Policy determines which a person or role may hold. Accepting an
 instruction does not approve the entire payroll, and commit authority cannot
-bypass reconciliation or exact-draft approval. No requirement for four separate
+bypass active holds, required approval or the selected freshness controls. No requirement for four separate
 people has been adopted.
 
 See [ownership and batch rationale](ledger-ownership.md) and
@@ -394,56 +383,33 @@ is implied by incorporating these descriptions.
 
 ---
 
-## Decisions still requiring discussion
+## Policy choices and deferred work
 
-**PAY-Q-014 is answered with a corrected boundary:** the employer-liability
-register is inside payroll; accounting is outside. Its Form 16 contribution and
-the distinction from complete issuance are recorded in the
-[output chapter](payroll-outputs.md). Detailed register and annual workflows
-remain later work, rather than an unresolved ownership question.
+PAY-Q-020 is closed as superseded: withdrawal, hold/release and source-freshness
+choices belong in the organization's [HRMS payroll policy](hrms-payroll-policy.md).
+They are not unresolved universal Layer-1 rules. Organizations choose their
+policy without weakening exact-money, authorization or history guarantees.
 
-**PAY-Q-015 is answered with a scope exclusion:** after-exit corrections belong
-in external accounting. The [recorded rationale](employee-and-annual-journeys.md#pay-core-013--a-correction-after-employment-has-ended)
-withdraws the proposed former-employee adjustment payroll.
+The employee-month association, finite instruction lifetime, monthly/one-time
+application meaning, employer-liability ownership, contribution treatment and
+annual package scope remain explained with their retained decisions. This pass
+does not reopen them or invent a canonical identifier generator.
 
-**PAY-Q-016 is answered by correcting the premise:** employer contributions
-enter the Payroll Ledger as an earning plus matching deduction before becoming
-employer liabilities. Gross includes them; the pair leaves net unchanged.
-
-**PAY-Q-009 is approved as PAY-CORE-007:** complete draft creation includes
-sealing. The visible operations are create → approve → commit, with cancellation
-before commit. See [the rationale](payroll-lifecycle.md#pay-core-007--creation-includes-sealing).
-
-Exact expiry representation, exceptional recovery policies, API and concurrency
-mechanics, detailed role assignments, and wider journeys remain in the
-[roadmap](handbook-roadmap.md). They are not silently selected by the ordinary
-examples. The rejected overlap-detection and mandatory-source-tracing questions,
-and the settled subsequent-month correction rule, are not open questions.
+Employer calendars, concrete approver assignments, exceptional repayment rules,
+automatic remittance allocation and statutory issuance are explicitly deferred.
+Storage, API design and concurrency mechanisms are implementation work. None
+should be presented as an unanswered foundational question without a concrete
+change to the Layer-1 contract.
 
 ## Resume here
 
-Implementation is paused while this handbook is completed. Follow the
-[current consolidated review](handbook-review.md#current-consolidated-review)
-and the [remaining-item classification](gap-closure-work.md#remaining-item-classification).
-PAY-Q-020 awaits an answer on withdrawing approval from an unchanged draft.
-After the answer, align the lifecycle and examples and close this review before
-returning to implementation.
+The layered conceptual edition is documented and reviewed. See the
+[current review](handbook-review.md#current-consolidated-review) for the checked
+scenarios and limits. PAY-Q-020 is closed as superseded; no organizational
+freshness or withdrawal choice is silently imposed on every deployment.
 
-The [database-table review](database-table-review.md) records both original Core
-findings and subsequent local fixes. Those fixes are preserved on a separate
-branch, not merged into Core main. The [baseline reconciliation](baseline-reconciliation.md)
-explains which hub contracts and later handbook decisions guide future review.
-PAY-CORE-016 settles partial remittance; PAY-ARCH-005 specifies the
-[annual package and handoff](annual-payroll-package.md). These remain approved.
-
-The [review record](handbook-review.md) maps incorporated coverage, consistency
-checks, and remaining work. The [continuous walkthrough](payroll-scenarios.md#end-to-end-payroll-and-liability-walkthrough)
-now includes employer-contribution entries, employee-month association,
-commit/application, employer liabilities, and remittance/proof closure.
-
-PAY-CORE-015 remains agreed: all payroll for an employee and month
-is tied together, without a prescribed ID-generation method. The
-[lifecycle consolidation](payroll-lifecycle.md) now explains operation outcomes
-and the approved-stale-draft cancellation gap. PAY-Q-009 is now approved:
-creation includes sealing. Implementation representations, detailed exception
-policies, and complete statutory issuance remain tracked separately.
+Implementation remains paused. Future work must compare the accepted Layer-1
+contracts and the selected organizational policy with current Core main. The
+[database review](database-table-review.md) and [baseline reconciliation](baseline-reconciliation.md)
+keep the unmerged local fixes, existing API limitations and remaining CLI/live
+proof separate from handbook completion.

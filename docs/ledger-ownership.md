@@ -1,5 +1,11 @@
 # Ledger ownership and the unit of work
 
+**Policy scope under PAY-ARCH-006:** examples requiring approval and current-source
+reconciliation describe [policy A](hrms-payroll-policy.md#policy-a-reconcile-current-inputs-before-commit).
+Organizations may select [draft authority](hrms-payroll-policy.md#policy-b-the-fixed-draft-is-monetary-authority).
+The [Layer-1 contracts](layer-1-contracts.md) preserve exact records and posting
+under either workflow; the examples below do not mandate policy A universally.
+
 **PAY-ARCH-002 / PAY-Q-012 — agreed. User approved the explained boundary.** This is the next
 high-impact boundary after the agreed [calculation boundary](calculation-boundary.md).
 Detailed batch APIs, identifiers, and retry algorithms remain parked.
@@ -36,7 +42,7 @@ October payroll are different associations. A subsequent-month adjustment
 belongs with the subsequent month's payroll while leaving the prior result final.
 
 The association is distinct from identifying a particular draft or monetary
-row. Rebuilding a draft still requires fresh approval of that exact proposal;
+row. Where approval is required, rebuilding requires approval of the new proposal;
 association with the same employee/month does not transfer approval. Likewise,
 the grouping does not authorize duplicate instruction applications or changing
 already generated payroll. A multi-employee batch remains a separate coordination

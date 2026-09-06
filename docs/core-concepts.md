@@ -1,5 +1,11 @@
 # Payroll core concepts — agreed model and source evidence
 
+**Current interpretation — [PAY-ARCH-006](payroll-policy-boundary.md):** approval,
+hold and reconciliation workflow belongs to organizational Layer-2 policy.
+The reconciliation/rebuild examples below describe that policy. Layer 1
+protects fixed draft content, authorized operations, exact posting and immutable
+history; it does not mandate current-source reconciliation for every commit.
+
 This is the starting chapter for the [handbook](handbook.md), following the
 user's direction to begin with the concepts already expressed in code and
 confirm and refine the model that produces the flow.
@@ -30,9 +36,11 @@ This section consolidates existing agreements; it introduces no new rule.
    period. Previewing is not posting. A batch coordinates exact employee drafts
    and retains individual outcomes. PAY-CORE-015 ties all payroll for the same
    employee/month together without prescribing an ID-generation method.
-4. The approved draft is reconciled against the applicable basis at protected
-   commit. Relevant changes require rebuilding and fresh review. Source
-   maintenance continues during review; there is no day-long source freeze.
+4. Layer 2 selects the freshness policy: reconcile current sources before commit,
+   or accept the fixed draft as monetary authority. Under reconciliation policy,
+   relevant changes block the draft and replacement amounts need a new proposal
+   and any required approval. Source maintenance continues; neither policy
+   mandates a day-long freeze.
 5. Commit records the monetary entries and instruction applications together.
    One-time instructions are consumed then. A monthly instruction has one
    ordinary application per applicable month until expiry; expiry is evaluated
@@ -48,8 +56,8 @@ flowchart LR
     M[Monthly instructions with expiry] --> C
     O[One-time instructions] --> C
     C --> D[Fixed employee-period draft]
-    D --> A[Approval]
-    A --> R[Protected reconciliation and commit]
+    D --> A[Organizational policy: review, freshness and hold controls]
+    A --> R[Protected commit of exact selected draft]
     R --> P[Final Payroll Ledger entries]
     R --> U[Record instruction applications]
     X[Later adjustment] --> N[Subsequent month draft and commit]
@@ -87,7 +95,7 @@ See the [contribution example](payroll-outputs.md#pay-core-014--employer-contrib
 | Salary Earning Ledger | Employee salary entitlement broken into earning components, with owner, effective date, source, and reference. These are sources for preparing payroll. | `SalaryEntry`, `state.salary`, `appendSalary` |
 | Monthly standing-instruction ledger | Recurring payroll directions with an effective lifetime and expiry (agreed in PAY-CORE-002). The demo includes both a monthly allowance and recurring deductions, but does not enforce expiry. | `PayrollInputEntry` with `monthly_standing`, `state.standingInputs` |
 | One-time payroll-input ledger | Inputs intended for a specific period and a single application, such as a bonus or recovery. Posting records the consuming payroll reference. | `PayrollInputEntry` with `one_time`, `state.oneTimeInputs`, `consumedBy` |
-| Draft transaction ledger | Complete proposed payroll entries, fixed from creation and reconciled before commit under PAY-CORE-006-C. The inspected lab still permits appends while open; that is a recorded implementation gap. | `Draft`, `DraftEntry`, `state.drafts` |
+| Draft transaction ledger | Complete proposed payroll entries, fixed from creation; source reconciliation is selected by policy under PAY-ARCH-006. The inspected lab still permits appends while open; that is a recorded implementation gap. | `Draft`, `DraftEntry`, `state.drafts` |
 | Payroll Ledger | Committed earning and deduction entries, retaining their draft, payroll reference, owner, date, and source links. | `PostedEntry`, `state.posted` |
 
 Monthly and one-time classify an input's recurrence. Earning and deduction

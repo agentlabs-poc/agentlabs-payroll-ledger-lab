@@ -4,7 +4,8 @@ Audit date: 2026-09-06, after conceptual edition 1 at `a1eb93a`.
 **Historical snapshot:** the gap table and counts below describe that checkpoint
 and the browser lab. For current handbook readiness use the
 [consolidated review](handbook-review.md#current-consolidated-review). Partial
-remittance and annual package scope were subsequently agreed; PAY-Q-020 is open.
+remittance and annual package scope were subsequently agreed; PAY-Q-020 was
+later closed as superseded by [PAY-ARCH-006](payroll-policy-boundary.md).
 Core main and the unmerged local fixes have [separate evidence](baseline-reconciliation.md).
 The user asked whether every gap had been discussed and resolved, and specifically
 revisited the employee-month association under PAY-CORE-015.
@@ -89,7 +90,8 @@ have been fixed.
 The editorial checkpoints remain completed for the selected conceptual examples.
 The status at that historical checkpoint was: **the reviewed core rules were
 agreed; no named proposal awaited an answer; explicit policy/specification
-deferrals and code gaps remained.** PAY-Q-020 subsequently opened; this statement
+deferrals and code gaps remained.** PAY-Q-020 subsequently opened and was
+closed as superseded; this statement
 must not be used as the current completion status.
 There is no basis for a claim that every possible payroll gap has been found.
 

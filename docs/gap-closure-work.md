@@ -10,10 +10,15 @@ information, preconditions, outcomes, rejection/recovery behavior, liability
 balances, and annual data-selection cases. PAY-Q-018 is approved as PAY-ARCH-005;
 the [annual package](annual-payroll-package.md) now specifies the selected scope.
 
-**Current gate:** finish the consolidated handbook review before resuming code.
+**Current status:** the layered conceptual handbook is reviewed; code remains paused.
 [Baseline reconciliation](baseline-reconciliation.md) separates Core main and
 local fixes from the browser-lab gaps below. The recorded contracts already
-resolve the ordinary cases; PAY-Q-020 is the remaining named lifecycle question.
+describe the ordinary cases; PAY-Q-020 is closed as superseded by
+[PAY-ARCH-006](payroll-policy-boundary.md). The reconciliation/approval cases
+below describe that policy, not mandatory workflow for every organization.
+The [HRMS payroll policy](hrms-payroll-policy.md) and
+[layered review cases](handbook-review.md#layered-walkthrough-results) also cover
+draft authority and holding one employee while the other selected drafts proceed.
 
 ## Remaining-item classification
 
@@ -25,7 +30,7 @@ behavior decision. Classification does not mark an unimplemented control fixed.
 | Skipped loan installments and changed repayment schedules | Business calculation/manager input under PAY-ARCH-001; payroll respects the supplied lifetime | No automatic extension is implied; a revised business arrangement enters through the existing instruction flow |
 | Partial instruction application and restoration | The ordinary full-application/consumption rules are agreed | Not implicitly supported; a concrete partial-application scenario would require a behavior decision before adding that feature |
 | Cancellation/recovery role assignment | Deployment authorization policy supplies the appropriate scoped capability; no fixed job titles are required | Implement the chosen mapping and preserve the already specified cancellation/recovery outcomes |
-| Withdrawal of approval with unchanged draft amounts | A distinct uncommitted lifecycle case, separate from source changes | PAY-Q-020 below proposes withdrawing approval without rebuilding unchanged monetary content |
+| Withdrawal of approval with unchanged draft amounts | Organizational Layer-2 policy under PAY-ARCH-006 | PAY-Q-020 closed as superseded; Layer 1 does not mandate either withdrawal alternative |
 | Expiry encoding, application keys, reconciliation representation, concurrency and retries | Engineering choices constrained by the operation contracts | No canonical ID generator or business-source tracing requirement is introduced |
 | Remittance allocation and proof interfaces | The supplied allocation must match the obligation and cannot exceed valid balances; proof is retained | Concrete interfaces/verification belong to integration work; no automatic allocation order selected |
 | Excess remittance and unused deposit treatment | Excess cannot falsely close unrelated obligations | Detailed unused-money/refund treatment is not selected; retain as a distinct scoped follow-up, not a hidden liability rule |
@@ -119,21 +124,23 @@ the entire GAP-007 implementation.
 
 ## PAY-Q-020 — withdrawing approval without changing draft amounts
 
-**Status: proposed as PAY-CORE-017; awaiting the user's answer.**
-An authorized reviewer wishes to withdraw approval before commit, while the
-monetary proposal remains unchanged. Existing rules require cancellation and
-rebuilding for a changed proposal/basis; they do not select this separate case.
+**Closed as superseded by PAY-ARCH-006, 2026-09-06.** The user clarified that
+this is an organizational policy decision in Layer 2, then explicitly requested
+closure as superseded. It is not a remaining Layer-1 decision.
 
-Proposal: retain the same fixed draft, withdraw its current approval, and block
-commit until fresh approval is granted. Preserve the approval/withdrawal history.
-If the applicable basis changes, the existing cancellation/rebuild/fresh-review
-rule still applies. Committed payroll remains final and cannot enter this path.
+The original question offered two alternatives: retain an unchanged draft and
+require fresh approval, or cancel/rebuild it after approval withdrawal. Neither
+is adopted as a universal core rule. Proposed PAY-CORE-017 is superseded as a
+core proposal; an organization may select that behavior in its payroll policy.
 
-Rationale: withdrawing acceptance need not recreate unchanged monetary content.
-The alternative is cancellation and rebuilding even when only the review
-judgment changed; that reuses the cancellation path but creates a replacement
-proposal unnecessarily. No approver/job-title mapping is prescribed by either
-alternative; the action still requires the applicable authority.
+**Rationale:** Layer 1 owns records, authorized transitions, exact posting and
+immutable history. Layer 2 owns the organization's approval, hold, selection
+and source-reconciliation workflow. One organization may reconcile before
+commit; another may accept the fixed draft as final authority. A held draft
+can be excluded while the other selected drafts proceed, without being marked
+committed itself. These choices need not change the core ledger guarantees.
 
-**Question:** Should the same fixed draft return for fresh approval, with commit
-blocked until approval is granted again?
+See [the full boundary and supersession rationale](payroll-policy-boundary.md).
+The earlier reconcile/rebuild rule is retained as a policy example, with its
+universal Layer-1 placement superseded. No fresh-approval or hold representation
+is silently made mandatory by closing this ticket.

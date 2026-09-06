@@ -27,7 +27,7 @@ owns approved inputs, fixed reviewable money, protected posting and immutable
 history. Every producer uses the same authority boundary. Lua, managed pipelines,
 country formulas and a particular calculation engine are not prerequisites.
 
-Retain exact approval, tenant and principal checks, exact-decimal amounts,
+Retain exact approval evidence when used, tenant and principal checks, exact-decimal amounts,
 idempotent operations, non-writing simulation, correction history and
 ledger-backed reports. Retain public CLI coverage and authenticated acceptance
 against the exact Core commit being reviewed. Those requirements are grounded
@@ -39,8 +39,8 @@ not invented by this handbook pass.
 | Area | Agreed handbook outcome | Relationship to baseline and later review |
 |---|---|---|
 | Manager intake and calculation | HR/payroll manager consolidates inputs through APIs; calculation supplies business amounts | Compatible with the hub's producer-neutral APIs. This does not authorize automatic attendance-to-payroll transitions or put business formulas into Core. |
-| Draft creation | A usable complete draft is already fixed and sealed; visible ordinary flow is create → approve → commit | Existing API preparation, batch, validation and seal operations must map to that user-facing meaning. A low-level endpoint name does not create an extra approved business step. |
-| Sources and commit | Immutable source content; expiry/replacement changes applicability; reconcile the complete relevant basis within commit | Preserve validation and instruction-application evidence. PAY-CORE-010 removes mandatory business-origin tracing, not authority checks or application identity. |
+| Draft creation | A usable complete draft is already fixed and sealed; approval/hold workflow is organizational policy | Existing API preparation, batch, validation and seal operations must map to that user-facing meaning. A low-level endpoint name does not create an extra approved business step. |
+| Sources and commit | Immutable source content; expiry/replacement changes applicability; policy A requires current-source freshness, policy B accepts draft authority | Preserve validation and instruction-application evidence. PAY-CORE-010 removes mandatory business-origin tracing, not authority checks or application identity. |
 | Employee and batch | Exact employee-period draft is the approval/commit unit; a batch records independent outcomes | PAY-ARCH-002 resolves granularity left open in the older hub. Employee-month association needs no prescribed ID generator and does not authorize duplicate applications. |
 | Authority | Input maintenance, preparation, approval and commit are distinct scoped capabilities | Core currently requires a different human actor and effective executor for approval. PAY-ARCH-003 does not require four people or direct removal of existing safeguards. Role-policy configurability has not been established. |
 | Generated payroll and payment | Generated payroll is final; payment evidence does not reopen it | “As good as paid” describes payroll finality, not proof of a bank transfer. Corrections use a subsequent payroll month; corrections after exit belong to accounting. Existing correction APIs still need conformance review against these later scope rules. |
@@ -85,8 +85,11 @@ instruction-version API adapter defect remain implementation work. See the
 ## Current handbook gate
 
 The agreed concepts, examples and later scope clarifications govern the
-handbook. PAY-Q-020 remains the one recorded unresolved lifecycle proposal;
-it is not approved by this reconciliation. Implementation remains paused while
-that material decision and the consolidated handbook review are completed.
+handbook. PAY-Q-020 is closed as superseded by
+[PAY-ARCH-006](payroll-policy-boundary.md). Earlier reconciliation/approval
+requirements in this comparison now describe organizational Layer-2 policy,
+not universal Layer-1 workflow. The [Layer-1 contracts](layer-1-contracts.md)
+and [HRMS payroll policy](hrms-payroll-policy.md) now express that distinction.
+Implementation remains paused after this documentation review.
 The [current review record](handbook-review.md#current-consolidated-review)
 is the single place to check this edition's readiness.

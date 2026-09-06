@@ -1,5 +1,11 @@
 # Core-concept coverage checkpoint
 
+**Policy scope under PAY-ARCH-006:** examples requiring approval and current-source
+reconciliation describe [policy A](hrms-payroll-policy.md#policy-a-reconcile-current-inputs-before-commit).
+Organizations may select [draft authority](hrms-payroll-policy.md#policy-b-the-fixed-draft-is-monetary-authority).
+The [Layer-1 contracts](layer-1-contracts.md) preserve exact records and posting
+under either workflow; the examples below do not mandate policy A universally.
+
 Status: updated after the user's direct clarifications, PAY-CORE-008/009/010/011.
 The previous four-gap checklist was too broad. Its rejected assumptions are
 preserved below rather than retained as prerequisites for core clarity.
@@ -89,6 +95,9 @@ former employee. The generated result stays final; see the
 [exit boundary](employee-and-annual-journeys.md#pay-core-013--a-correction-after-employment-has-ended).
 
 ## Current flow and return point
+
+This retained diagram shows policy A. The current [Layer-1 contracts](layer-1-contracts.md)
+also support the organizational choice of fixed-draft authority under PAY-ARCH-006.
 
 ```mermaid
 flowchart LR

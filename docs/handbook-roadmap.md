@@ -7,10 +7,11 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: consolidated handbook review; implementation paused.** The
+**Current: layered conceptual handbook reviewed; implementation paused.** The
 [review record](handbook-review.md#current-consolidated-review) records the current
-gate. Core concepts and high-impact examples are reviewed; PAY-Q-020 on approval
-withdrawal from an unchanged draft awaits an answer.
+gate. PAY-Q-020 is closed as superseded by the user’s
+[Layer-1/Layer-2 clarification](payroll-policy-boundary.md). Approval withdrawal
+and source freshness are organizational policy choices.
 
 The [baseline reconciliation](baseline-reconciliation.md) establishes that
 payroll Layer 1 is already merged into Core main `3a87931`. It maps the hub's
@@ -18,14 +19,14 @@ architecture and later handbook decisions without reviving the old integration
 branch or deferred Layer-2 work. The local database-fix branch is preserved;
 it is not handbook approval or a merged delivery.
 
-The next steps are:
+This pass completed the [Layer-1 contracts](layer-1-contracts.md), separate
+[HRMS payroll policy](hrms-payroll-policy.md), both freshness variants, hold/batch
+examples and consolidated review. PAY-Q-020 requires no further answer.
 
-1. Resolve PAY-Q-020 without changing the fixed-draft, changed-basis rebuild or
-   committed-finality rules.
-2. Incorporate the answer into the lifecycle, operation contracts, examples and
-   decision log; finish the consolidated walkthrough and closure record.
-3. Only then assess implementation against the accepted handbook and current
-   Core main, including API/CLI coverage and acceptance evidence.
+The next implementation stage, when resumed, must assess current Core main and
+the local candidate against these contracts and the selected policy. API/CLI
+coverage and acceptance evidence remain implementation work; they do not turn
+organizational workflow choices back into universal Layer-1 questions.
 
 The [operation contracts](payroll-operation-contracts.md) and
 [annual package](annual-payroll-package.md) specify the agreed outcomes.

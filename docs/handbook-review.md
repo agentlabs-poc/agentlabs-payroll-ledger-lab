@@ -5,21 +5,24 @@ review. It does not certify a deployed system or adopt new payroll rules.
 
 ## Current consolidated review
 
-**Documentation reconciliation complete; handbook closure awaits PAY-Q-020.
-Implementation remains paused.** The previously closed conceptual edition is
-historical evidence, not approval to implement the current working edition.
+**Layered conceptual handbook reviewed and closed for this documentation pass.
+PAY-Q-020 is closed as superseded. Implementation remains paused.** This closure
+covers the stated Layer-1 contract and organizational policy distinction; it is
+not employer-policy selection, production conformance or release approval.
 
 | Review area | Current result | Evidence or remaining boundary |
 |---|---|---|
-| Core concepts and responsibility boundaries | Reviewed against recorded decisions | Ledgers, expiry/application, manager intake, calculation, fixed draft, protected commit, employee-month grouping and external accounting agree across the current chapters |
+| Core concepts and responsibility boundaries | Reviewed under PAY-ARCH-006 | [Layer-1 contracts](layer-1-contracts.md) separate records/integrity from the [HRMS payroll policy](hrms-payroll-policy.md); existing source, instruction, employee-month, liability and accounting distinctions remain explicit |
 | High-impact scenarios and arithmetic | Reviewed | Ordinary payroll, replacement before commit, retries, employee batch exceptions, contribution pairs, subsequent-month correction and partial/full remittance have determinate outcomes; annual package cases isolate employee/employer/year |
 | Hub and current Core main | Reconciled | [Baseline reconciliation](baseline-reconciliation.md) distinguishes the merged Layer-1 delivery from later handbook refinements and the unmerged local code candidate |
 | Agreement, deferral and code evidence | Reconciled | PAY-GAP findings remain browser-lab findings; PAY-DB findings describe Core. Neither local test success nor historical hub closure language establishes handbook approval |
-| Approval withdrawn from an unchanged draft | Awaiting answer | PAY-Q-020 proposes retaining the fixed draft with fresh approval required; cancellation/rebuild is the alternative. No choice is silently adopted |
-| Implementation readiness | Paused | Finish the material handbook decision and final walkthrough first. Subsequent implementation must map accepted requirements to current Core behavior and the actual public API/CLI acceptance boundary |
+| Approval withdrawn from an unchanged draft | Closed as superseded | PAY-ARCH-006 places this choice in organizational Layer-2 policy. Neither alternative is mandated by Layer 1; [rationale](payroll-policy-boundary.md) |
+| Layer-2 policy variants and hold | Reviewed | Same changed-bonus facts lead to rebuild under policy A or fixed-draft commit under policy B; both preserve exact money and application guards. A held draft remains outstanding while other selected drafts commit |
+| Implementation readiness | Paused | Documentation is separated and reviewed. Subsequent implementation must map these contracts and the selected policy to actual Core behavior and public API/CLI acceptance; existing safeguards are unchanged |
 
-This review found one recorded unanswered lifecycle proposal. It does not claim
-that every possible employer policy or future payroll exception has been decided.
+The previously recorded unanswered lifecycle proposal is now superseded, not
+answered by selecting one workflow. Organizational policies remain variable;
+this does not claim every employer policy or future exception has been decided.
 The [remaining-item classification](gap-closure-work.md#remaining-item-classification)
 separates those extensions from the current ordinary payroll contract. No generic
 operating questionnaire is introduced as a prerequisite to core clarity.
@@ -35,6 +38,10 @@ PAY-Q-020. The current review above supersedes the older readiness statement;
 the agreed concepts and their rationale remain valid.
 
 ## Final walkthrough results
+
+The walkthrough below was reviewed under the reconcile-before-commit policy.
+[PAY-ARCH-006](payroll-policy-boundary.md) now classifies that workflow as Layer 2;
+it is not a universal Layer-1 freshness or approval requirement.
 
 Basis: the [continuous example](payroll-scenarios.md#end-to-end-payroll-and-liability-walkthrough),
 [lifecycle](payroll-lifecycle.md), [source reconciliation](source-reconciliation.md),
@@ -71,6 +78,19 @@ responsibilities, and outcomes. The remaining uncertainties can be named and
 deferred without changing those illustrative outcomes. The browser lab still lacks
 several required controls, including approved-stale-draft cancellation and
 protected reconciliation; the gap register preserves those findings.
+
+## Layered walkthrough results
+
+| Case | Policy result | Layer-1 guarantee retained |
+|---|---|---|
+| Bonus changes from 5,000 to 6,000 before commit, policy A | Block/hold old draft and review a replacement; in the seven-entry example net changes from 53,500 to 54,500 only in the replacement | No silent edit or approval transfer; no posting of the blocked draft |
+| Same change, policy B | Fixed 5,000 bonus can commit if other controls pass; original seven-entry net stays 53,500 | Exact money, holds, required approval and application constraints still apply; any later adjustment is a new result |
+| One of 100 employee drafts held | Select and commit the other 99 if eligible | Held employee stays uncommitted and outstanding; batch evidence does not imply 100 completed payrolls |
+| Approval exists before a hold | Retain approval history and apply the hold; release/reapproval behavior is policy | Hold cannot edit money or erase history; changed money is a different draft |
+| Draft authority but one-time instruction already consumed | Reject a duplicate application | A freshness policy does not bypass atomic application integrity |
+
+These outcomes follow PAY-ARCH-006 and the retained ledger/application decisions.
+They are conceptual walkthroughs, not claims of new executed API behavior.
 
 ## Incorporated coverage
 
@@ -149,15 +169,16 @@ The walkthrough covers gross/deductions/net and liability amounts explicitly.
 Source-inspected implementation gaps remain open; no runtime execution or
 completed software behavior is claimed by this review.
 
-Verification for this correction: all 27 Markdown files passed relative-link,
-heading-anchor and fence checks (253 local links/anchors). The seven-entry
+Verification for this correction: all 30 Markdown files passed relative-link,
+heading-anchor and fence checks (304 local links/anchors). The seven-entry
 walkthrough, changed bonus, contribution pair, successive/split remittances and
 annual examples were recalculated successfully. `git diff --check` passed.
 The checked remote Core main is `3a87931`; the separate local Core branch remains
 at `01268e5`. No runtime tests were run for these Markdown-only changes.
 
-The earlier conceptual closure is preserved as history. The current working
-edition has been reconciled, but PAY-Q-020 is still unanswered and implementation
-is paused. Employer-specific operating procedures and detailed statutory
-issuance remain explicitly deferred under the agreed scope. Subsequent
-refinements are tracked in the active gap-closure worksheet without treating the earlier edition as an implementation release.
+The earlier conceptual closure is preserved as history. This layered edition
+records PAY-Q-020 as closed/superseded and completes the requested separation
+of core contracts from organizational payroll policy. Employer-specific choices,
+detailed statutory issuance and verified implementation remain separate work.
+No named universal Layer-1 decision awaits an answer in this review; this is not
+a claim that every future payroll policy has been specified. Code remains paused.

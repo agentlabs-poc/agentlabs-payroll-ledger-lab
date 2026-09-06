@@ -289,6 +289,51 @@ all 27 Markdown files and 253 local links/anchors, fence balance and the worked
 payroll, contribution, settlement and annual arithmetic. All passed; the pending
 PAY-Q-020 answer remains a closure dependency.
 
+## PAY-Q-020 closed as superseded — 2026-09-06
+
+The user explained that approval withdrawal, reconciliation and selection of
+held drafts belong to the upper layer and vary by organization, then instructed
+“add the rationale and close the ticket as superseded”. PAY-Q-020 and proposed
+PAY-CORE-017 are now closed/superseded as core decisions, not approved as a
+mandatory withdrawal workflow. Earlier paragraphs describing them as unanswered
+are historical and are superseded by this entry.
+
+[PAY-ARCH-006](payroll-policy-boundary.md) records the rationale: Layer 1
+protects records and monetary operations; Layer 2 chooses organizational policy.
+One policy may reconcile current sources; another may treat the fixed draft as
+final. Holding one draft can exclude it while other selected drafts proceed,
+without reporting the held draft as committed. Separate approval evidence and
+hold state are recorded as a suggested representation, not an adopted schema.
+
+Current navigation and status records no longer list PAY-Q-020 as a blocker.
+The universal Layer-1 placement of the earlier freshness/rebuild requirement is
+superseded; its history remains as a Layer-2 policy example. Further handbook
+alignment remains work. Only Markdown changes; no Core or runtime change is
+made and implementation remains paused.
+
+## Layer-1 handbook and HRMS payroll policy — 2026-09-06
+
+The user additionally approved expressing the handbook as Layer 1 plus separate
+policy and directed continuation. The [Layer-1 chapter](layer-1-contracts.md)
+now states records, capabilities and monetary guarantees; the
+[HRMS payroll policy](hrms-payroll-policy.md) states organizational ground rules,
+reconciliation and draft-authority variants, hold/release and batch examples.
+
+Current operation contracts, lifecycle, diagrams, authority, ownership and source
+chapters now distinguish conditional policy from universal ledger integrity.
+The review walks the same changed-bonus facts through both policies and checks
+that a held employee remains outstanding while the other selected drafts proceed.
+Original decisions and earlier examples remain traceable as policy or history;
+PAY-Q-020 remains closed as superseded rather than approved as a universal rule.
+
+The conceptual documentation pass is closed with explicit employer-policy,
+statutory and implementation limits. Runtime and Core are unchanged; the local
+candidate requires later assessment against the clarified layer boundary. Validation passed across
+30 Markdown files and 304 local links/anchors, code-fence balance and the worked
+arithmetic. A semantic reread checked both policy outcomes, hold exclusion,
+approval history and retained application/commit guarantees; no runtime tests
+are claimed for these documentation changes.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

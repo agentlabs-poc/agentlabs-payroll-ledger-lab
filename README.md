@@ -5,9 +5,12 @@ The working handbook begins with [the payroll concepts already expressed in code
 its opening page records the intended outcome, completion criteria, and current
 discussion point. See [what was incorporated](docs/incorporation-record.md) for
 the mapping from existing agreements and code descriptions into the handbook.
-**Current: handbook reconciliation; implementation paused.** The
+**Current: layered conceptual handbook reviewed; implementation paused.** The
 [current review](docs/handbook-review.md#current-consolidated-review) records
-reviewed coverage and the unanswered PAY-Q-020. The earlier conceptual edition
+reviewed coverage and PAY-Q-020’s superseded closure under the
+[Layer-1/Layer-2 boundary](docs/payroll-policy-boundary.md). Read the
+[Layer-1 contracts](docs/layer-1-contracts.md), then the
+[HRMS payroll policy](docs/hrms-payroll-policy.md). The earlier conceptual edition
 is historical, not current implementation approval. The
 [baseline reconciliation](docs/baseline-reconciliation.md) separates Core main,
 the payroll hub, browser-lab evidence and local unmerged fixes.

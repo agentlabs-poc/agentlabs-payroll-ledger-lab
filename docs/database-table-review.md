@@ -15,6 +15,10 @@ user has directed handbook review before further implementation. The evidence
 below records what was done; it is not approval of the current handbook or a
 claim that the six fixes cover every agreed behavior. See the
 [baseline reconciliation](baseline-reconciliation.md) for the current gate.
+The candidate was tested against the earlier mandatory-reconciliation model;
+PAY-ARCH-006 now permits organizational freshness/approval policy. Support for
+that policy choice and hold controls must be reassessed before implementation
+resumes. Earlier test success does not establish conformance to this refinement.
 
 The user subsequently asked to fix these findings. HRMS Core now has a local
 implementation on `fix/payroll-ledger-schema`, based on main `3a87931`.
@@ -46,8 +50,10 @@ trusted server resolver's responsibility. The new batch HTTP path coordinates
 individual transactions and durable receipts. Existing whole-run operations
 retain their existing workflow; runs that enter employee coordination continue
 through the employee operations. Current approval-separation rules remain in
-force. Approval withdrawal for an unchanged draft is still PAY-Q-020, not an
-implemented or approved feature.
+force in this local candidate. PAY-Q-020 is now closed as superseded: approval
+withdrawal belongs to organizational policy under [PAY-ARCH-006](payroll-policy-boundary.md).
+That classification does not implement a withdrawal feature or qualify this
+candidate against the newly clarified layer boundary.
 
 All six fixes have passed individual reviews and final combined code review.
 At final code revision `5bc0b1a`, the complete PostgreSQL 16 payroll suite passed

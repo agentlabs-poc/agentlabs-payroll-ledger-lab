@@ -1,5 +1,11 @@
 # Joining, partial periods, exit, and annual reporting
 
+**Policy scope under PAY-ARCH-006:** examples requiring approval and current-source
+reconciliation describe [policy A](hrms-payroll-policy.md#policy-a-reconcile-current-inputs-before-commit).
+Organizations may select [draft authority](hrms-payroll-policy.md#policy-b-the-fixed-draft-is-monetary-authority).
+The [Layer-1 contracts](layer-1-contracts.md) preserve exact records and posting
+under either workflow; the examples below do not mandate policy A universally.
+
 Status: incorporation of existing agreements and source descriptions, with the
 user-confirmed accounting boundary under PAY-Q-015. This chapter extends the
 [ordinary payroll scenarios](payroll-scenarios.md). Illustrative amounts are
