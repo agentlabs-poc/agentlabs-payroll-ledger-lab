@@ -19,6 +19,10 @@ behavior against these gaps, including liability balances and annual selection
 cases. They do not close the code findings. PAY-Q-018 is approved as
 PAY-ARCH-005; [the annual package](annual-payroll-package.md) is specified.
 
+A separate [database-table review](database-table-review.md) examines HRMS Core
+migrations and consuming code, with its own source revision and PAY-DB findings.
+Those findings must not be mistaken for the in-memory lab implementation below.
+
 Evidence revision: lab `737465d5e27888518018e9b1f28f75fcfcac0139`,
 [source](https://github.com/agentlabs-poc/agentlabs-payroll-ledger-lab/blob/737465d5e27888518018e9b1f28f75fcfcac0139/src/main.ts).
 

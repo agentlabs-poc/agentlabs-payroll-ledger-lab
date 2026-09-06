@@ -7,7 +7,13 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: PAY-Q-018 approved; annual payroll package specified.**
+**Current: remaining items classified; database-table review recorded; PAY-Q-020 awaits an answer.**
+
+The [classification](gap-closure-work.md#remaining-item-classification) distinguishes
+engineering choices, producing-layer policy, and unresolved behavior. The
+[database review](database-table-review.md) records HRMS Core schema findings
+against the agreed model. PAY-Q-020 asks about approval withdrawal for an
+unchanged uncommitted draft; it is not yet approved.
 
 The [contracts](payroll-operation-contracts.md) cover instruction eligibility,
 complete drafts, approval, protected commit, cancellation/recovery, corrections,

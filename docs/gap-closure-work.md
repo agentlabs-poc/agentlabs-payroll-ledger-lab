@@ -10,6 +10,26 @@ information, preconditions, outcomes, rejection/recovery behavior, liability
 balances, and annual data-selection cases. PAY-Q-018 is approved as PAY-ARCH-005;
 the [annual package](annual-payroll-package.md) now specifies the selected scope.
 
+## Remaining-item classification
+
+This pass separates implementation choices from matters still needing a payroll
+behavior decision. Classification does not mark an unimplemented control fixed.
+
+| Item | Treatment from the agreed model | Remaining decision or work |
+|---|---|---|
+| Skipped loan installments and changed repayment schedules | Business calculation/manager input under PAY-ARCH-001; payroll respects the supplied lifetime | No automatic extension is implied; a revised business arrangement enters through the existing instruction flow |
+| Partial instruction application and restoration | The ordinary full-application/consumption rules are agreed | Not implicitly supported; a concrete partial-application scenario would require a behavior decision before adding that feature |
+| Cancellation/recovery role assignment | Deployment authorization policy supplies the appropriate scoped capability; no fixed job titles are required | Implement the chosen mapping and preserve the already specified cancellation/recovery outcomes |
+| Withdrawal of approval with unchanged draft amounts | A distinct uncommitted lifecycle case, separate from source changes | PAY-Q-020 below proposes withdrawing approval without rebuilding unchanged monetary content |
+| Expiry encoding, application keys, reconciliation representation, concurrency and retries | Engineering choices constrained by the operation contracts | No canonical ID generator or business-source tracing requirement is introduced |
+| Remittance allocation and proof interfaces | The supplied allocation must match the obligation and cannot exceed valid balances; proof is retained | Concrete interfaces/verification belong to integration work; no automatic allocation order selected |
+| Excess remittance and unused deposit treatment | Excess cannot falsely close unrelated obligations | Detailed unused-money/refund treatment is not selected; retain as a distinct scoped follow-up, not a hidden liability rule |
+| Annual package and complete issuance | PAY-ARCH-005 selects the package/handoff; statutory procedures are separate | Package aggregation is specified; code implementation remains open |
+
+The [database-table review](database-table-review.md) adds source-backed HRMS
+Core findings to this work. Its database findings are not new user decisions
+and are separate from the browser-lab gap register.
+
 ## Work sequence and checkpoints
 
 | Work group | Current treatment | Checkpoint |
@@ -85,3 +105,26 @@ interfaces. See [the successive balances](payroll-outputs.md#pay-core-016--parti
 **PAY-Q-017 — approved:** the paid portion is settled; the unpaid balance remains
 an outstanding liability. This resolves the basic partial-remittance rule, not
 the entire GAP-007 implementation.
+
+---
+
+## PAY-Q-020 — withdrawing approval without changing draft amounts
+
+**Status: proposed as PAY-CORE-017; awaiting the user's answer.**
+An authorized reviewer wishes to withdraw approval before commit, while the
+monetary proposal remains unchanged. Existing rules require cancellation and
+rebuilding for a changed proposal/basis; they do not select this separate case.
+
+Proposal: retain the same fixed draft, withdraw its current approval, and block
+commit until fresh approval is granted. Preserve the approval/withdrawal history.
+If the applicable basis changes, the existing cancellation/rebuild/fresh-review
+rule still applies. Committed payroll remains final and cannot enter this path.
+
+Rationale: withdrawing acceptance need not recreate unchanged monetary content.
+The alternative is cancellation and rebuilding even when only the review
+judgment changed; that reuses the cancellation path but creates a replacement
+proposal unnecessarily. No approver/job-title mapping is prescribed by either
+alternative; the action still requires the applicable authority.
+
+**Question:** Should the same fixed draft return for fresh approval, with commit
+blocked until approval is granted again?

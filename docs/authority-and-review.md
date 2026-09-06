@@ -78,6 +78,10 @@ the same person or role; no mandatory separate-person rule was adopted.
 
 ---
 
+PAY-Q-020 now examines [approval withdrawal without monetary changes](gap-closure-work.md#pay-q-020--withdrawing-approval-without-changing-draft-amounts).
+It is proposed and awaiting an answer; the capability boundary above remains
+agreed. Role assignment is distinct from this lifecycle behavior question.
+
 The user directed a return to [core-concept clarity](core-coverage.md) before
 further authority or downstream discussion (PAY-PROCESS-008). Role names,
 source-acceptance policy, separation of duties, delegation, revocation, approval

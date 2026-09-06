@@ -421,6 +421,12 @@ and the settled subsequent-month correction rule, are not open questions.
 
 ## Resume here
 
+The [remaining-item classification](gap-closure-work.md#remaining-item-classification)
+now separates engineering work from unresolved behavior. PAY-Q-020 asks about
+approval withdrawal with unchanged draft amounts. The [database-table review](database-table-review.md)
+examines HRMS Core schema fit, constraints, and index duplication; no runtime
+or schema changes are included.
+
 **Active: [gap-closure work](gap-closure-work.md).** Existing rules now have
 [operation contracts](payroll-operation-contracts.md) and acceptance cases.
 PAY-Q-017 is approved as PAY-CORE-016: the unpaid remainder after a partial

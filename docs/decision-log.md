@@ -39,6 +39,7 @@ separately below.
 | PAY-Q-016 | Answered by correcting the premise | How do employer contributions enter payroll and the employer-liability register? | User clarified that the offer-letter CTC contribution is a payroll earning plus matching deduction. Gross includes it; net is unchanged by the pair. Payroll entries precede the corresponding liability. |
 | PAY-Q-017 | Approved | Should an actual partial employer remittance reduce the corresponding liability by its recorded amount, with only the remaining balance outstanding until final settlement? | User: “yes, your proposal is right it remains as liablity”. PAY-CORE-016 records the unpaid remainder as an outstanding liability. [Example and rationale](gap-closure-work.md#pay-q-017--representing-a-partial-employer-remittance); allocation order remains unspecified. |
 | PAY-Q-018 | Approved | Should the annual chapter specify the payroll annual package and issuance handoff, or complete certificate issuance for a specified jurisdiction and financial year? | User answered “yes” to the payroll annual package and issuance handoff, with detailed statutory procedures in a separate jurisdiction/year chapter. PAY-ARCH-005 records the scope; [package specification](annual-payroll-package.md). |
+| PAY-Q-020 | Open; awaiting answer | When approval is withdrawn before commit but draft amounts are unchanged, should the same fixed draft require fresh approval instead of mandatory cancellation/rebuilding? | [Proposal, rationale, and alternative](gap-closure-work.md#pay-q-020--withdrawing-approval-without-changing-draft-amounts). Changed-basis rebuilding and committed finality remain in force. |
 
 ## Domain decisions
 
@@ -77,6 +78,11 @@ statutory example as an adopted rule.
 ## Proposals awaiting confirmation
 
 PAY-Q-017 is approved as PAY-CORE-016; PAY-Q-018 is approved as PAY-ARCH-005.
+
+| ID | Status | Proposal | Rationale |
+|---|---|---|---|
+| PAY-CORE-017 | Proposed under PAY-Q-020; awaiting answer | Withdraw approval from an unchanged uncommitted draft, retaining its fixed content and requiring fresh approval before commit | [Rationale and alternative](gap-closure-work.md#pay-q-020--withdrawing-approval-without-changing-draft-amounts); no change to committed payroll or changed-basis rebuild rules |
+
 Deferred specifications and implementation gaps remain visible.
 
 ## Alternatives and history

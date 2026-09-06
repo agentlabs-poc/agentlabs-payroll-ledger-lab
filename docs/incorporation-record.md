@@ -234,6 +234,23 @@ settled shows INR 2,000 outstanding, independent of the illustrative
 INR 600,000 payroll gross. Scope isolation and exact-once entry aggregation are
 explicit.
 
+## Remaining-item classification and database review — 2026-09-06
+
+The [classification](gap-closure-work.md#remaining-item-classification) distinguishes
+engineering choices, upstream repayment policy, integration work, and unresolved
+payroll behavior. PAY-Q-020 / proposed PAY-CORE-017 asks whether approval may be
+withdrawn from an unchanged draft while retaining its fixed content for fresh
+approval. This remains unapproved.
+
+The user also requested review of actual database tables. The
+[database review](database-table-review.md) examines HRMS Core migrations and
+consuming code at fetched main `3a87931ea536c8b617e6e391c14affd03ade9f65`;
+the reviewed payroll files are unchanged from the local checkout. Six PAY-DB
+findings distinguish confirmed schema inconsistencies, model mismatches, index
+duplication, and a constraint-coverage question. The source review does not
+inspect a deployed database or claim measured performance. No schema/runtime
+changes were made.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local
