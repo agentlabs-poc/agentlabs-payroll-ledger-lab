@@ -6,7 +6,7 @@ review. It does not certify a deployed system or adopt new payroll rules.
 ## Current consolidated review
 
 **Layered conceptual handbook reviewed and closed for this documentation pass.
-PAY-Q-020 is closed as superseded. Implementation remains paused.** This closure
+PAY-Q-020 is closed as superseded. Implementation is authorized through the draft Core hub and checkpoint PRs.** This closure
 covers the stated Layer-1 contract and organizational policy distinction; it is
 not employer-policy selection, production conformance or release approval.
 
@@ -19,7 +19,7 @@ not employer-policy selection, production conformance or release approval.
 | Approval withdrawn from an unchanged draft | Closed as superseded | PAY-ARCH-006 places this choice in organizational Layer-2 policy. Neither alternative is mandated by Layer 1; [rationale](payroll-policy-boundary.md) |
 | Layer-2 policy variants and hold | Reviewed | Same changed-bonus facts lead to rebuild under policy A or fixed-draft commit under policy B; both preserve exact money and application guards. A held draft remains outstanding while other selected drafts commit |
 | Local implementation reconciliation | Reviewed; changes remain pending | [Six-finding disposition](implementation-reconciliation.md): three fixes retained directly; three require reshaping. Protected hold, policy support and public API/CLI evidence remain gaps |
-| Implementation readiness | Paused | The source-backed reconciliation supplies the next design/acceptance checkpoints; it does not implement them or change existing safeguards |
+| Implementation readiness | In progress | [Hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172) coordinates checkpoint PRs; existing code is not declared compatible until the recorded acceptance gates pass |
 
 The previously recorded unanswered lifecycle proposal is now superseded, not
 answered by selecting one workflow. Organizational policies remain variable;

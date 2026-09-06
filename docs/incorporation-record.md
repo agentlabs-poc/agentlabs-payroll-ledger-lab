@@ -373,6 +373,17 @@ fence balance and worked arithmetic. A self-review checked contract coverage,
 package dependencies, named interfaces, coding-model instructions and placeholder
 absence. No runtime verification is claimed for this documentation-only pass.
 
+## Checkpoint execution authorized — 2026-09-06
+
+The user approved proceeding with one draft Core hub PR and separate checkpoint
+branches/PRs merging into it. [Hub #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172)
+is open against main. Core main `3a87931` passed baseline short tests; the older
+local candidate remains unchanged. Sol-medium owns coding tasks, with controller
+integration and independent review. CP-0 source audit and independent CP-1
+work have started. Historical paused statements above describe earlier passes;
+this authorization supersedes that execution status, not the ledger contracts.
+Cross-repository handbook/E2E PRs are companions; they cannot merge into Core.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

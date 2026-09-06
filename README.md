@@ -5,7 +5,7 @@ The working handbook begins with [the payroll concepts already expressed in code
 its opening page records the intended outcome, completion criteria, and current
 discussion point. See [what was incorporated](docs/incorporation-record.md) for
 the mapping from existing agreements and code descriptions into the handbook.
-**Current: layered conceptual handbook reviewed; implementation paused.** The
+**Current: layered conceptual handbook reviewed; implementation proceeding through [Core hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172).** The
 [current review](docs/handbook-review.md#current-consolidated-review) records
 reviewed coverage and PAY-Q-020’s superseded closure under the
 [Layer-1/Layer-2 boundary](docs/payroll-policy-boundary.md). Read the

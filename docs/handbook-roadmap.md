@@ -7,7 +7,7 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: layered conceptual handbook reviewed; implementation paused.** The
+**Current: layered conceptual handbook reviewed; implementation proceeding through checkpoint PRs.** The
 [review record](handbook-review.md#current-consolidated-review) records the current
 gate. PAY-Q-020 is closed as superseded by the user’s
 [Layer-1/Layer-2 clarification](payroll-policy-boundary.md). Approval withdrawal
@@ -42,8 +42,10 @@ used as a percentage of handbook completion.
 The [handbook compatibility plan](superpowers/plans/2026-09-06-payroll-handbook-compatibility.md)
 now defines CP-0 through CP-5, four implementation packages, repository scope,
 file ownership and acceptance evidence. Coding is assigned to `gpt-5.6-sol` at
-medium reasoning, with primary-agent integration/review. This records the user's
-requested plan and execution preference; no coding starts in this planning pass.
+medium reasoning, with primary-agent integration/review. The user has now authorized execution through
+[Core hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172)
+and separate checkpoint PRs. Compatibility is not complete until their
+implementation and acceptance evidence close the gates.
 
 ## Incorporated coverage
 

@@ -28,7 +28,7 @@
 
 ## Status, scope and chosen approach
 
-Plan prepared 2026-09-06; no implementation starts in this documentation pass.
+Plan prepared 2026-09-06; the user subsequently authorized execution through a draft hub PR and checkpoint PRs targeting its branch.
 Core main was rechecked at `3a87931ea536c8b617e6e391c14affd03ade9f65`.
 The preserved candidate is `fix/payroll-ledger-schema@01268e5`, last code
 `5bc0b1a`. The handbook reconciliation is `65f24ee`.
@@ -67,7 +67,7 @@ update test fixtures. Never rewrite a migration already shipped elsewhere.
 - Include exact handbook clauses, owned files, prerequisite commits, acceptance cases and commands. The agent returns its commit, test evidence and unresolved issues.
 - Keep one coding owner for shared payroll services/migrations. Parallel coding is limited to independent files after their interfaces are fixed; four available slots are a ceiling, not a target.
 - Review contract compliance and then code quality after each task. Fix findings before integration; do not treat the coding agent's summary as verification.
-- Commit each verified unit locally. Publishing, merging and deployment are separate from this plan's implementation checkpoints.
+- Publish each checkpoint as a PR targeting the hub branch and merge it there after review and checks, as authorized by the user. The hub stays draft; its merge to main and deployment are separate. Link cross-repository companion PRs.
 
 ## CP-0: establish coverage and lock interfaces
 
@@ -136,3 +136,13 @@ all new operations are granted and reachable through API/CLI, migrations preserv
 history, and both policy scenarios pass. External live-proof blockers must remain
 visible; a local build cannot close that checkpoint. Employer-specific approver
 lists, formulas and certificate issuance are not conditions for this completion.
+
+## Execution topology — approved
+
+[Core hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172)
+targets main from `feat/payroll-handbook-compat`. Each CP has a separate branch
+and PR targeting that hub branch. Later dependent CPs start from the updated
+hub head; independent work may begin earlier and incorporate completed
+prerequisites before review. CP PRs merge only after their scoped checks/review.
+The hub remains draft until integrated acceptance and final review complete.
+Handbook/E2E companion PRs live in their own repositories and link to the hub.
