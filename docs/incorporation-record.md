@@ -251,6 +251,17 @@ duplication, and a constraint-coverage question. The source review does not
 inspect a deployed database or claim measured performance. No schema/runtime
 changes were made.
 
+## Local HRMS Core implementation candidate — 2026-09-06
+
+The later request to fix the database findings was implemented in HRMS Core on
+an isolated local branch, `fix/payroll-ledger-schema`. New migrations 92–95 and
+their Go consumers address all six PAY-DB findings. The
+[database review](database-table-review.md#implementation-candidate--2026-09-06)
+now records outcomes, rationale, historical compatibility and test evidence.
+No shared branch or deployed database was changed. This handbook update changes
+documentation only; the browser lab runtime and its separate gap list remain
+unchanged. PAY-Q-020 remains unapproved.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

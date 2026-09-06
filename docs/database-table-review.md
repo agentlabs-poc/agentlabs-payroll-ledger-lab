@@ -3,10 +3,60 @@
 Review date: 2026-09-06. The user requested review of the actual database
 tables, in addition to closing handbook gaps.
 
-**Conclusion: the schema has useful integrity structures, but is not yet a
+**Initial review conclusion: the schema has useful integrity structures, but is not yet a
 good fit for every agreed payroll rule.** Correct the mismatches and redundant
 indexes before considering wider consolidation. Table count alone does not
 establish whether this model is optimal.
+
+## Implementation candidate — 2026-09-06
+
+The user subsequently asked to fix these findings. HRMS Core now has a local
+implementation on `fix/payroll-ledger-schema`, based on main `3a87931`.
+New migrations 92–95 and the consuming Go services implement the changes below.
+The original main checkout and deployed databases are unchanged. No code has
+been pushed, merged or deployed during this implementation.
+
+| Finding | Local implementation and rationale |
+| --- | --- |
+| PAY-DB-001 | Immutable obligations, proof-bearing remittances and explicit allocations. A 10,000 obligation paid/allocated by 6,000 retains 4,000 outstanding; another 4,000 closes it while retaining both proofs. Concurrent allocation cannot overdraw either balance. |
+| PAY-DB-002 | Employer contributions produce an earning and matching deduction, with one statutory liability basis. Salary 50,000 plus contribution 1,000 gives gross 51,000, deductions 1,000, net 50,000. Reports, register, CTC and payslips use the same treatment. |
+| PAY-DB-003 | Application stable keys accept the full 160-character source identity. Creation through finalization tests cover 100, 101 and 160 without truncation. |
+| PAY-DB-004 | Two equivalent explicit indexes are removed; unique constraints remain. Catalog drift causes migration refusal rather than an unsafe drop. No storage or performance saving has been measured. |
+| PAY-DB-005 | Exact employee proposal/approval/commit and independent batch outcomes. A stale employee refreshes into a new draft and obtains fresh approval; committed colleagues, old drafts and reviews remain intact. No employee/month number generator is prescribed. |
+| PAY-DB-006 | A recurring logical instruction can apply once per tenant/employee/payroll month across runs and versions. Source eligibility uses the same identity; next-month eligibility and expiry remain separate. |
+
+Historical posted amounts, legacy contribution `none` snapshots and stored
+replay responses are preserved. A fresh amended uncommitted candidate may
+convert legacy contributions to the new pair, with a new content hash and
+fresh review. Corrections produce explicit signed liability credits, retaining
+original allocations/proofs and the original statutory state; they do not
+automatically offset another obligation or imply a refund. This keeps payroll
+facts immutable without adding accounting reconciliation policy.
+
+The employee service re-resolves the complete V4 snapshot in its protected
+serializable transaction; SQL independently compares eligible fact/instruction
+sets. Full compensation/profile and other snapshot projections remain the
+trusted server resolver's responsibility. The new batch HTTP path coordinates
+individual transactions and durable receipts. Existing whole-run operations
+retain their existing workflow; runs that enter employee coordination continue
+through the employee operations. Current approval-separation rules remain in
+force. Approval withdrawal for an unchanged draft is still PAY-Q-020, not an
+implemented or approved feature.
+
+All six fixes have passed individual reviews and final combined code review.
+At final code revision `5bc0b1a`, the complete PostgreSQL 16 payroll suite passed
+(95.531 seconds), repository-wide short tests passed, and server/CLI builds
+passed. The final regression covers same-month one-time-to-recurring replacement,
+subsequent recurring rejection and exact receipt replay. Core's
+`docs/payroll-database-fixes.md` records the implementation contracts and
+verification. These results do not close the browser lab's separate runtime gaps.
+
+A separate pre-existing Core API adapter error was found during regression
+setup: `CreateInstructionVersion` supplies 17 arguments to an 18-placeholder
+SQL call, while the protected function accepts 17. That API path still needs
+correction. The replacement regression uses the existing protected gateway
+for version creation and the service for review, activation and payroll;
+passing these tests does not establish that the broken API path works.
 
 ## Evidence and scope
 
@@ -20,7 +70,7 @@ revisions. The newer migration 91 concerns local identity mapping.
 
 This is a source-backed design review, not inspection of a deployed catalog or
 a measured performance benchmark. No schema, runtime code, or business data
-was changed. The numbered browser-lab gaps and these HRMS Core findings describe
+was changed during the initial review. The numbered browser-lab gaps and these HRMS Core findings describe
 different implementations and must not be conflated.
 
 ## Findings in priority order

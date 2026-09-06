@@ -7,12 +7,13 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: remaining items classified; database-table review recorded; PAY-Q-020 awaits an answer.**
+**Current: HRMS Core database fixes implemented, tested and reviewed locally; PAY-Q-020 awaits an answer.**
 
 The [classification](gap-closure-work.md#remaining-item-classification) distinguishes
 engineering choices, producing-layer policy, and unresolved behavior. The
 [database review](database-table-review.md) records HRMS Core schema findings
-against the agreed model. PAY-Q-020 asks about approval withdrawal for an
+and the local implementation candidate against the agreed model. No migration
+has been deployed. PAY-Q-020 asks about approval withdrawal for an
 unchanged uncommitted draft; it is not yet approved.
 
 The [contracts](payroll-operation-contracts.md) cover instruction eligibility,
@@ -24,7 +25,8 @@ statutory procedures are a separate jurisdiction/year chapter.
 The [active worksheet](gap-closure-work.md) translates agreed behavior into
 acceptance cases for instruction application, draft reconciliation, correction,
 and liability settlement. Partial/final settlement now has an agreed worked
-example and acceptance case. Code gaps remain open.
+example and acceptance case. Browser-lab code gaps remain open; the HRMS Core
+implementation candidate is tracked separately.
 
 The [audit](gap-resolution-audit.md) distinguishes agreed core behavior, deferred
 policies/specifications, and open code gaps. It recorded no pending proposal
