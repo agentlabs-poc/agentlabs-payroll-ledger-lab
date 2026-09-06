@@ -1,6 +1,15 @@
-# Immutable sources and reconciliation before commit
+# Reconcile-before-commit payroll policy
 
-**PAY-CORE-006-C / PAY-Q-010 — agreed; replaces the long-lived source freeze.**
+**Current interpretation — [PAY-ARCH-006](payroll-policy-boundary.md):** approval,
+hold and reconciliation workflow belongs to organizational Layer-2 policy.
+The reconciliation/rebuild examples below describe that policy. Layer 1
+protects fixed draft content, authorized operations, exact posting and immutable
+history; it does not mandate current-source reconciliation for every commit.
+
+**PAY-CORE-006-C / PAY-Q-010 — retained policy; universal Layer-1 placement
+superseded by PAY-ARCH-006.** This chapter explains policy A, including the
+commit-boundary guarantee it requires. [Policy B](hrms-payroll-policy.md#policy-b-the-fixed-draft-is-monetary-authority)
+uses the fixed draft as authority and does not require this current-source check.
 The user answered "approved" and directed discussion to move horizontally
 through high-impact areas first (PAY-PROCESS-006).
 The user clarified that source records are immutable: an old record
@@ -40,6 +49,9 @@ version metadata—is not selected here. The requirement is to preserve historic
 content and respect applicability.
 
 ## Agreed flow
+
+The organization in this example selects reconciliation and exact approval.
+These workflow requirements apply to this policy, not to every Layer-1 caller.
 
 ```text
 Resolve applicable facts and establish the basis for validation
@@ -144,12 +156,16 @@ The demo also mutates approval/consumption metadata and does not implement a
 general source expiry/replacement lifecycle. The user's clarified source model
 must therefore remain distinct from verified implementation behavior.
 
-Open decisions: validation evidence and expiry/supersession representation,
-captured calculation dependencies, validation scope, transaction/concurrency
-mechanism, cancellation authority, and the treatment of changed applicability
-history. These implementation details remain deferred. PAY-Q-009 is now
+Implementation work: choose validation evidence and expiry/supersession
+representation, identify the relevant calculation dependencies, implement the
+protected concurrency mechanism, and map cancellation authority. These choices
+must preserve the full employee-period basis and changed-source outcomes already
+specified above. They are not unanswered core questions about whether to
+reconcile, freeze sources throughout review, or trace business origins. PAY-Q-009 is now
 approved as PAY-CORE-007: [complete draft creation includes sealing](payroll-lifecycle.md#pay-core-007--creation-includes-sealing).
 
-**PAY-Q-010 — approved:** Immutable source history plus a fixed draft and
-protected reconciliation at commit replaces the long-lived source freeze.
-A changed basis requires cancellation, rebuilding, and fresh review.
+**PAY-Q-010 — historical approval, now policy A:** Immutable source history plus
+a fixed draft and protected reconciliation replaces the long-lived source freeze
+for this workflow. A changed basis blocks posting and the replacement is reviewed
+again. PAY-ARCH-006 allows an organization to select draft authority instead;
+fixed money and immutable history remain Layer-1 guarantees under both policies.

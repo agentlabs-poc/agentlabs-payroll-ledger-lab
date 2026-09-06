@@ -7,55 +7,48 @@ See the [decision log](decision-log.md) for recorded user directions and the
 
 ## Resume here
 
-**Current: remaining items classified; database-table review recorded; PAY-Q-020 awaits an answer.**
+**Current: layered conceptual handbook reviewed; implementation proceeding through checkpoint PRs.** The
+[review record](handbook-review.md#current-consolidated-review) records the current
+gate. PAY-Q-020 is closed as superseded by the user’s
+[Layer-1/Layer-2 clarification](payroll-policy-boundary.md). Approval withdrawal
+and source freshness are organizational policy choices.
 
-The [classification](gap-closure-work.md#remaining-item-classification) distinguishes
-engineering choices, producing-layer policy, and unresolved behavior. The
-[database review](database-table-review.md) records HRMS Core schema findings
-against the agreed model. PAY-Q-020 asks about approval withdrawal for an
-unchanged uncommitted draft; it is not yet approved.
+The [baseline reconciliation](baseline-reconciliation.md) establishes that
+payroll Layer 1 is already merged into Core main `3a87931`. It maps the hub's
+architecture and later handbook decisions without reviving the old integration
+branch or deferred Layer-2 work. The local database-fix branch is preserved;
+it is not handbook approval or a merged delivery.
 
-The [contracts](payroll-operation-contracts.md) cover instruction eligibility,
-complete drafts, approval, protected commit, cancellation/recovery, corrections,
-liability balances, and payroll annual data. PAY-Q-018 approves the
-[annual package and handoff specification](annual-payroll-package.md). Detailed
-statutory procedures are a separate jurisdiction/year chapter.
+This pass completed the [Layer-1 contracts](layer-1-contracts.md), separate
+[HRMS payroll policy](hrms-payroll-policy.md), both freshness variants, hold/batch
+examples and consolidated review. PAY-Q-020 requires no further answer.
 
-The [active worksheet](gap-closure-work.md) translates agreed behavior into
-acceptance cases for instruction application, draft reconciliation, correction,
-and liability settlement. Partial/final settlement now has an agreed worked
-example and acceptance case. Code gaps remain open.
+The [implementation reconciliation](implementation-reconciliation.md) now maps
+the six local findings to these contracts: three retained directly and three
+to reshape. It records code evidence, missing protected hold/policy support,
+dependencies and review checkpoints. Implementation has resumed: CP-0 through
+CP-3 and the complete Core CP-4 implementation are reviewed and merged into
+the draft hub. The final whole-branch review and fix re-review passed. Full
+E2E implementation/review and authenticated acceptance remain. See the [checkpoint status](handbook-review.md#implementation-checkpoint-status)
+for exact commits and evidence boundaries. Organizational workflow choices
+remain outside universal Layer-1 rules.
 
-The [audit](gap-resolution-audit.md) distinguishes agreed core behavior, deferred
-policies/specifications, and open code gaps. It recorded no pending proposal
-at the audit checkpoint; PAY-Q-017 was subsequently opened and approved. PAY-CORE-015 already settles the
-employee-month association without requiring a canonical ID generator.
+The [operation contracts](payroll-operation-contracts.md) and
+[annual package](annual-payroll-package.md) specify the agreed outcomes.
+The [classification](gap-closure-work.md#remaining-item-classification) separates
+material behavior choices from engineering, deployment and future policy work.
+Browser-lab gaps and local Core findings have separate evidence and must not be
+used as a percentage of handbook completion.
 
-The [checkpoint review](handbook-review.md#edition-checkpoints) records completion
-of the final walkthrough and documentation closure. This closes the conceptual
-edition, with explicit deferrals; it does not complete employer-specific operating
-procedures or implement the agreed model. The pinned broader charter is preserved.
+## Proposed implementation plan
 
-The active sequence is recorded in the worksheet. Ask only about concrete
-material choices left unresolved by the model; ordinary engineering choices
-do not automatically become new payroll questions.
-
-The [lifecycle chapter](payroll-lifecycle.md) brings together existing rules for
-fixed drafts, exact approval, stale-draft cancellation, commit, and retries.
-Its code comparison records the missing cancellation path for approved stale
-drafts. It does not select recovery algorithms or additional roles.
-
-The [continuous example](payroll-scenarios.md#end-to-end-payroll-and-liability-walkthrough)
-connects employer-contribution earning/deduction, employee payroll, liability,
-and remittance/proof closure. The [review record](handbook-review.md) distinguishes
-incorporated coverage from remaining implementation and policy work.
-
-The latest user clarification, PAY-CORE-015, ties all payroll for an employee
-and month together, without selecting a canonical ID-generation method. See
-[the association explanation](ledger-ownership.md#pay-core-015--all-payroll-for-an-employee-and-month-is-tied-together).
-PAY-Q-016's employer-contribution flow is already settled. The previously
-parked PAY-Q-009 is now approved: creation includes sealing, followed by
-separate approval and commit operations.
+The [handbook compatibility plan](superpowers/plans/2026-09-06-payroll-handbook-compatibility.md)
+now defines CP-0 through CP-5, four implementation packages, repository scope,
+file ownership and acceptance evidence. Coding is assigned to `gpt-5.6-sol` at
+medium reasoning, with primary-agent integration/review. The user has now authorized execution through
+[Core hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172)
+and separate checkpoint PRs. Compatibility is not complete until their
+implementation and acceptance evidence close the gates.
 
 ## Incorporated coverage
 

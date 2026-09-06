@@ -1,6 +1,7 @@
 # Payroll handbook — implementation gap register
 
-This register compares agreed handbook concepts with inspected source behavior.
+This register compares agreed handbook concepts with the inspected browser-lab
+source. Its findings do not describe the current implementation status of Core main.
 It does not claim a complete implementation audit or authorize code changes.
 See [core concepts](core-concepts.md) for definitions and rationale, and
 [the decision log](decision-log.md) for agreement status.
@@ -22,6 +23,15 @@ PAY-ARCH-005; [the annual package](annual-payroll-package.md) is specified.
 A separate [database-table review](database-table-review.md) examines HRMS Core
 migrations and consuming code, with its own source revision and PAY-DB findings.
 Those findings must not be mistaken for the in-memory lab implementation below.
+The [baseline reconciliation](baseline-reconciliation.md) identifies each source
+and its limits. Core changes do not close browser-lab gaps.
+
+**Layer interpretation under PAY-ARCH-006:** the source-reconciliation and
+mandatory-approval portions of earlier gap descriptions assess policy A. They
+are not universal Layer-1 defects for an organization selecting draft authority.
+Fixed draft content, applicable controls, exact posting, application integrity
+and immutable history remain core guarantees. See the
+[Layer-1 contracts](layer-1-contracts.md) and [policy variants](hrms-payroll-policy.md).
 
 Evidence revision: lab `737465d5e27888518018e9b1f28f75fcfcac0139`,
 [source](https://github.com/agentlabs-poc/agentlabs-payroll-ledger-lab/blob/737465d5e27888518018e9b1f28f75fcfcac0139/src/main.ts).

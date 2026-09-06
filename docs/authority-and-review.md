@@ -34,20 +34,33 @@ automatically grant access or operational permissions to that employee.
 | Maintain and accept inputs | Submit, expire/replace, and accept payroll sources under the relevant authority. Accepting an instruction does not approve the resulting payroll draft. |
 | Prepare payroll | Request calculation and create the fixed employee-period draft from eligible sources. Preparation-report review does not substitute for draft approval. |
 | Approve payroll | Accept the exact fixed draft and its review basis. Record who approved which draft; rebuilt drafts require fresh approval. |
-| Commit payroll | Execute posting of an approved draft under commit authority, with protected reconciliation and instruction-application controls. Permission to commit cannot bypass those checks. |
+| Commit payroll | Execute posting of the exact selected draft under commit authority, honoring holds, required approval and instruction-application controls. Policy A additionally requires current-source reconciliation; policy B accepts fixed draft authority. |
 
 Treat these as separately grantable capabilities scoped to the appropriate
 employer/tenant and employees. Merely holding input-maintenance or preparation
 authority does not confer approval or commit authority. A bulk action must obey
-the same authority and exact-draft approval rules for each employee it covers.
+the same authority and applicable draft-control rules for each employee it covers.
 
 Capabilities are distinct even if an organization's policy grants more than one
 to the same person or role. This decision does not require four job titles or
 decide whether preparer and approver must be different people. An automated
 commit executor would also need appropriate authority and a valid approved
-draft; automation is not itself approval.
+draft where approval is required; automation is not itself approval.
+
+## Current Core comparison
+
+The agreed capabilities above do not prescribe four separate people. Current
+Core nevertheless enforces a different human actor and effective executor for
+approval, as recorded in [Core PR #162](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/162).
+Keeping distinct capabilities does not authorize removing that safeguard, and
+this handbook does not claim role-policy configurability is implemented.
+See [baseline reconciliation](baseline-reconciliation.md) for this distinction.
 
 ## Rationale and example
+
+The example below selects approval and current-source reconciliation as its
+organizational policy. It illustrates those choices without requiring them for
+every organization.
 
 Input acceptance answers whether an instruction may enter payroll preparation.
 Draft approval accepts the resulting combination of salary, instructions, and
@@ -78,9 +91,11 @@ the same person or role; no mandatory separate-person rule was adopted.
 
 ---
 
-PAY-Q-020 now examines [approval withdrawal without monetary changes](gap-closure-work.md#pay-q-020--withdrawing-approval-without-changing-draft-amounts).
-It is proposed and awaiting an answer; the capability boundary above remains
-agreed. Role assignment is distinct from this lifecycle behavior question.
+PAY-Q-020 is [closed as superseded](gap-closure-work.md#pay-q-020--withdrawing-approval-without-changing-draft-amounts).
+Under [PAY-ARCH-006](payroll-policy-boundary.md), organizational Layer-2 policy
+selects approval, withdrawal and hold workflow. Layer 1 supplies authorized
+operations and records; distinct capabilities do not mandate one organization’s
+approval sequence for everyone.
 
 The user directed a return to [core-concept clarity](core-coverage.md) before
 further authority or downstream discussion (PAY-PROCESS-008). Role names,

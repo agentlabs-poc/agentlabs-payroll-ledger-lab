@@ -1,5 +1,11 @@
 # Payroll scenarios from the established model
 
+**Current interpretation — [PAY-ARCH-006](payroll-policy-boundary.md):** approval,
+hold and reconciliation workflow belongs to organizational Layer-2 policy.
+The reconciliation/rebuild examples below describe that policy. Layer 1
+protects fixed draft content, authorized operations, exact posting and immutable
+history; it does not mandate current-source reconciliation for every commit.
+
 Status: incorporation of existing agreements and clearly described lab behavior.
 These are handbook examples, not executed software tests or new domain rules.
 The [main handbook](handbook.md) defines the concepts; this chapter applies them

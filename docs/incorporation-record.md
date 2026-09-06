@@ -251,6 +251,139 @@ duplication, and a constraint-coverage question. The source review does not
 inspect a deployed database or claim measured performance. No schema/runtime
 changes were made.
 
+## Local HRMS Core implementation candidate — 2026-09-06
+
+The later request to fix the database findings was implemented in HRMS Core on
+an isolated local branch, `fix/payroll-ledger-schema`. New migrations 92–95 and
+their Go consumers address all six PAY-DB findings. The
+[database review](database-table-review.md#implementation-candidate--2026-09-06)
+now records outcomes, rationale, historical compatibility and test evidence.
+No shared branch or deployed database was changed. This handbook update changes
+documentation only; the browser lab runtime and its separate gap list remain
+unchanged. PAY-Q-020 remains unapproved.
+
+## Consolidated handbook correction — 2026-09-06
+
+The user required handbook completion before more implementation. This pass
+pauses code work, preserves the local Core candidate, and corrects the use of
+historical conceptual-edition closure as current readiness. The current review
+and navigation agree that PAY-Q-020 is unanswered; no proposed rule is adopted.
+
+The new [baseline reconciliation](baseline-reconciliation.md) compares later
+user decisions with the hub's layered architecture, merged Core main `3a87931`,
+browser-lab revision `737465d`, and local Core candidate `5bc0b1a`. It records
+retained public API/CLI acceptance requirements, later employee commit and
+liability rules, existing Core approval separation, and future work boundaries.
+The historical eight-gap audit is labeled as such rather than rewritten to
+claim current Core lacks its already merged payroll controls.
+
+Stale decision-row notes about source replacement, corrections and consumption
+are aligned with subsequent approvals. Four acceptance cases make already
+agreed batch, association, contribution and capability outcomes explicit.
+Rationale: decisions govern implementation; local code and passed tests are
+evidence to assess, not a way to settle an unanswered handbook question.
+
+Only handbook Markdown is changed in this pass. No Core/runtime, hub ticket,
+PR, deployment or remote branch is changed. The documentation check covered
+all 27 Markdown files and 253 local links/anchors, fence balance and the worked
+payroll, contribution, settlement and annual arithmetic. All passed; the pending
+PAY-Q-020 answer remains a closure dependency.
+
+## PAY-Q-020 closed as superseded — 2026-09-06
+
+The user explained that approval withdrawal, reconciliation and selection of
+held drafts belong to the upper layer and vary by organization, then instructed
+“add the rationale and close the ticket as superseded”. PAY-Q-020 and proposed
+PAY-CORE-017 are now closed/superseded as core decisions, not approved as a
+mandatory withdrawal workflow. Earlier paragraphs describing them as unanswered
+are historical and are superseded by this entry.
+
+[PAY-ARCH-006](payroll-policy-boundary.md) records the rationale: Layer 1
+protects records and monetary operations; Layer 2 chooses organizational policy.
+One policy may reconcile current sources; another may treat the fixed draft as
+final. Holding one draft can exclude it while other selected drafts proceed,
+without reporting the held draft as committed. Separate approval evidence and
+hold state are recorded as a suggested representation, not an adopted schema.
+
+Current navigation and status records no longer list PAY-Q-020 as a blocker.
+The universal Layer-1 placement of the earlier freshness/rebuild requirement is
+superseded; its history remains as a Layer-2 policy example. Further handbook
+alignment remains work. Only Markdown changes; no Core or runtime change is
+made and implementation remains paused.
+
+## Layer-1 handbook and HRMS payroll policy — 2026-09-06
+
+The user additionally approved expressing the handbook as Layer 1 plus separate
+policy and directed continuation. The [Layer-1 chapter](layer-1-contracts.md)
+now states records, capabilities and monetary guarantees; the
+[HRMS payroll policy](hrms-payroll-policy.md) states organizational ground rules,
+reconciliation and draft-authority variants, hold/release and batch examples.
+
+Current operation contracts, lifecycle, diagrams, authority, ownership and source
+chapters now distinguish conditional policy from universal ledger integrity.
+The review walks the same changed-bonus facts through both policies and checks
+that a held employee remains outstanding while the other selected drafts proceed.
+Original decisions and earlier examples remain traceable as policy or history;
+PAY-Q-020 remains closed as superseded rather than approved as a universal rule.
+
+The conceptual documentation pass is closed with explicit employer-policy,
+statutory and implementation limits. Runtime and Core are unchanged; the local
+candidate requires later assessment against the clarified layer boundary. Validation passed across
+30 Markdown files and 304 local links/anchors, code-fence balance and the worked
+arithmetic. A semantic reread checked both policy outcomes, hold exclusion,
+approval history and retained application/commit guarantees; no runtime tests
+are claimed for these documentation changes.
+
+## Local implementation reconciliation — 2026-09-06
+
+At the user’s request, [the reconciliation](implementation-reconciliation.md)
+compares Core main `3a87931`, local candidate `01268e5` / code `5bc0b1a`, and the
+layered handbook `e4c8d3a`. It retains identity width, guarded index removal and
+monthly application integrity; it retains useful mechanics but requires
+reshaping contribution production, liability classification and employee
+controls. Rationale and exact code locations distinguish a policy choice from
+an invariant. Protected hold, trusted policy selection, the existing
+instruction-version adapter defect and public API/CLI coverage remain work.
+
+This completes the bounded reconciliation, not implementation conformance or
+release readiness. PAY-Q-020 remains superseded. Only handbook Markdown is
+changed; the candidate is preserved and implementation remains paused.
+Validation passed across 31 Markdown files and 314 local links/anchors, fence
+balance and the worked payroll arithmetic; `git diff --check` passed. The
+source review confirmed the cited Go/SQL controls and unchanged Core head.
+No new runtime test result is claimed.
+
+## Handbook compatibility implementation plan — 2026-09-06
+
+The user requested a plan and selected Sol-medium coding subagents. The
+[master plan](superpowers/plans/2026-09-06-payroll-handbook-compatibility.md)
+and four linked packages define repository/branch scope, file ownership,
+proposed interfaces, dependency order, acceptance cases and CP-0 through CP-5.
+The plan extends beyond the six database findings to verify source lifetime,
+fixed draft semantics, corrections, annual package scope and public acceptance.
+The existing E2E S03/S03C signoff harness is the integration starting point.
+
+Coding agents are specified as `gpt-5.6-sol` with medium reasoning; the primary
+agent retains integration and review. This planning pass changes only handbook
+Markdown. Core and E2E code remain unchanged, and no coding agent is started.
+New schema/API names are proposed engineering choices; no organizational rule
+or superseded question is adopted by writing the plan.
+The planning checks covered 36 Markdown files and 341 local links/anchors,
+fence balance and worked arithmetic. A self-review checked contract coverage,
+package dependencies, named interfaces, coding-model instructions and placeholder
+absence. No runtime verification is claimed for this documentation-only pass.
+
+## Checkpoint execution authorized — 2026-09-06
+
+The user approved proceeding with one draft Core hub PR and separate checkpoint
+branches/PRs merging into it. [Hub #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172)
+is open against main. Core main `3a87931` passed baseline short tests; the older
+local candidate remains unchanged. Sol-medium owns coding tasks, with controller
+integration and independent review. CP-0 source audit and independent CP-1
+work have started. Historical paused statements above describe earlier passes;
+this authorization supersedes that execution status, not the ledger contracts.
+Cross-repository handbook/E2E PRs are companions; they cannot merge into Core.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

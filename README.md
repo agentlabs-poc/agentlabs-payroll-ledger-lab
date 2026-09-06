@@ -5,11 +5,21 @@ The working handbook begins with [the payroll concepts already expressed in code
 its opening page records the intended outcome, completion criteria, and current
 discussion point. See [what was incorporated](docs/incorporation-record.md) for
 the mapping from existing agreements and code descriptions into the handbook.
-The [conceptual edition checkpoint review](docs/handbook-review.md#edition-checkpoints)
-records the completed walkthrough and explicitly deferred work. The
-[gap-resolution audit](docs/gap-resolution-audit.md) distinguishes agreed concepts
-from unresolved specifications and code gaps. Future proposals require discussion
-and agreement.
+**Current: layered conceptual handbook reviewed; implementation proceeding through [Core hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172).** The
+[current review](docs/handbook-review.md#current-consolidated-review) records
+reviewed coverage and PAY-Q-020’s superseded closure under the
+[Layer-1/Layer-2 boundary](docs/payroll-policy-boundary.md). Read the
+[Layer-1 contracts](docs/layer-1-contracts.md), then the
+[HRMS payroll policy](docs/hrms-payroll-policy.md). The earlier conceptual edition
+is historical, not current implementation approval. The
+[baseline reconciliation](docs/baseline-reconciliation.md) separates Core main,
+the payroll hub, browser-lab evidence and local unmerged fixes. The
+[implementation reconciliation](docs/implementation-reconciliation.md) records
+which of the six local fixes to retain or reshape and the remaining controls.
+The [implementation checkpoint status](docs/handbook-review.md#implementation-checkpoint-status)
+records the complete reviewed Core implementation merged into the draft hub.
+Final Core review fixes passed; full E2E implementation/review and authenticated
+acceptance remain in progress.
 
 ## Existing browser lab
 

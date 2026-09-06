@@ -1,5 +1,11 @@
 # Payroll core concepts — agreed model and source evidence
 
+**Current interpretation — [PAY-ARCH-006](payroll-policy-boundary.md):** approval,
+hold and reconciliation workflow belongs to organizational Layer-2 policy.
+The reconciliation/rebuild examples below describe that policy. Layer 1
+protects fixed draft content, authorized operations, exact posting and immutable
+history; it does not mandate current-source reconciliation for every commit.
+
 This is the starting chapter for the [handbook](handbook.md), following the
 user's direction to begin with the concepts already expressed in code and
 confirm and refine the model that produces the flow.
@@ -30,9 +36,11 @@ This section consolidates existing agreements; it introduces no new rule.
    period. Previewing is not posting. A batch coordinates exact employee drafts
    and retains individual outcomes. PAY-CORE-015 ties all payroll for the same
    employee/month together without prescribing an ID-generation method.
-4. The approved draft is reconciled against the applicable basis at protected
-   commit. Relevant changes require rebuilding and fresh review. Source
-   maintenance continues during review; there is no day-long source freeze.
+4. Layer 2 selects the freshness policy: reconcile current sources before commit,
+   or accept the fixed draft as monetary authority. Under reconciliation policy,
+   relevant changes block the draft and replacement amounts need a new proposal
+   and any required approval. Source maintenance continues; neither policy
+   mandates a day-long freeze.
 5. Commit records the monetary entries and instruction applications together.
    One-time instructions are consumed then. A monthly instruction has one
    ordinary application per applicable month until expiry; expiry is evaluated
@@ -48,8 +56,8 @@ flowchart LR
     M[Monthly instructions with expiry] --> C
     O[One-time instructions] --> C
     C --> D[Fixed employee-period draft]
-    D --> A[Approval]
-    A --> R[Protected reconciliation and commit]
+    D --> A[Organizational policy: review, freshness and hold controls]
+    A --> R[Protected commit of exact selected draft]
     R --> P[Final Payroll Ledger entries]
     R --> U[Record instruction applications]
     X[Later adjustment] --> N[Subsequent month draft and commit]
@@ -87,7 +95,7 @@ See the [contribution example](payroll-outputs.md#pay-core-014--employer-contrib
 | Salary Earning Ledger | Employee salary entitlement broken into earning components, with owner, effective date, source, and reference. These are sources for preparing payroll. | `SalaryEntry`, `state.salary`, `appendSalary` |
 | Monthly standing-instruction ledger | Recurring payroll directions with an effective lifetime and expiry (agreed in PAY-CORE-002). The demo includes both a monthly allowance and recurring deductions, but does not enforce expiry. | `PayrollInputEntry` with `monthly_standing`, `state.standingInputs` |
 | One-time payroll-input ledger | Inputs intended for a specific period and a single application, such as a bonus or recovery. Posting records the consuming payroll reference. | `PayrollInputEntry` with `one_time`, `state.oneTimeInputs`, `consumedBy` |
-| Draft transaction ledger | Complete proposed payroll entries, fixed from creation and reconciled before commit under PAY-CORE-006-C. The inspected lab still permits appends while open; that is a recorded implementation gap. | `Draft`, `DraftEntry`, `state.drafts` |
+| Draft transaction ledger | Complete proposed payroll entries, fixed from creation; source reconciliation is selected by policy under PAY-ARCH-006. The inspected lab still permits appends while open; that is a recorded implementation gap. | `Draft`, `DraftEntry`, `state.drafts` |
 | Payroll Ledger | Committed earning and deduction entries, retaining their draft, payroll reference, owner, date, and source links. | `PostedEntry`, `state.posted` |
 
 Monthly and one-time classify an input's recurrence. Earning and deduction
@@ -118,7 +126,7 @@ components rather than just one net amount.
 The **draft ledger** holds the proposed entries before they are committed.
 It gives the system a concrete set of amounts to inspect and approve. Its
 monetary proposal is distinct from the source entitlement and instructions
-that produced it. In the current code, new entries can be appended while the
+that produced it. In the inspected browser lab, new entries can be appended while the
 draft is open. The current PAY-CORE-006-C decision retains fixed monetary content
 from complete creation, with cancellation and rebuilding for corrections;
 the appendable open draft is an implementation gap.
@@ -246,9 +254,11 @@ business logic can determine the repayment schedule that it represents.
 
 This example assumes the five scheduled applications occur normally. A
 five-calendar-month window and five successful deductions can diverge when a
-payroll is skipped. The user has not selected a representation or catch-up rule
-for that case. Expiry is agreed; end-date encoding, installment-count semantics,
-boundary inclusivity, early cessation, and extension rules remain open.
+payroll is skipped. The core respects the supplied lifetime; it does not
+extend it automatically to collect a missing installment. A changed repayment
+arrangement belongs to manager/business input. End-date encoding is engineering
+work; exceptional installment behavior is outside the ordinary contract.
+See [instruction eligibility](payroll-operation-contracts.md#instruction-eligibility-and-application).
 
 ### Rationale and consequences of expiry
 
@@ -349,9 +359,12 @@ duplicate September deductions.
 
 The conceptual record is that this instruction has already been applied for
 this employee and month, with a link to the committed result. This does not
-prescribe a new table, field name, or locking strategy. It also does not decide
-how changed instruction versions, split applications, skipped months, or
-corrections affect that record.
+prescribe a new table, field name, or locking strategy. Version/application identity is an implementation matter constrained by the
+same monthly guard. A replacement of the same ordinary monthly instruction
+cannot by itself authorize a second application. Splitting and skipped-installment
+business policy are not adopted; subsequent-month corrections do not automatically
+restore earlier applications. Payroll does not infer whether two distinct
+instructions express duplicate business intent.
 
 The current lab marks one-time consumption but has no general monthly
 application check in `commitDraft`. Its single guided preparation does not
@@ -400,8 +413,9 @@ This is not authorization to reopen a closed period, duplicate a committed
 application, or change an approved result. Those operations retain their own
 rules. It does not automatically move a missed installment into February,
 extend expiry until five deductions succeed, or settle early termination and
-instruction-version history. Date versus installment-count expiry, exact
-boundary encoding, catch-up policy, and correction mechanics remain open.
+instruction-version storage. Exact boundary encoding is engineering work;
+a revised repayment schedule comes from the producing layer. PAY-CORE-011/013
+subsequently settle subsequent-month correction and the after-exit boundary.
 
 The existing code already distinguishes source effective fields from a draft's
 period and ledger date, but its fixed demo selection does not implement this
@@ -421,7 +435,7 @@ correction treatment; those boundaries are not still-open core questions.
 **Status: superseded by approved PAY-CORE-006-B under PAY-Q-008.** The user
 approved freezing relevant sources and draft monetary entries from creation
 through commit or cancellation. The
-[agreed source-freeze chapter](draft-source-freeze.md) records that shape and
+[historical source-freeze chapter](draft-source-freeze.md) records that shape and
 its rationale. The original proposal below is preserved as superseded history.
 The later [PAY-CORE-006-C reconciliation model](source-reconciliation.md)
 is now approved and supersedes the long-lived source freeze as well.

@@ -1,6 +1,14 @@
 # Payroll operation contracts
 
-Status: specification of observable behavior derived from recorded agreements.
+**Current interpretation — [PAY-ARCH-006](payroll-policy-boundary.md):** approval,
+hold and reconciliation workflow belongs to organizational Layer-2 policy.
+The reconciliation/rebuild examples below describe that policy. Layer 1
+protects fixed draft content, authorized operations, exact posting and immutable
+history; it does not mandate current-source reconciliation for every commit.
+
+Status: Layer-1 operation contracts with explicitly identified Layer-2 policy
+conditions under PAY-ARCH-006. See [core guarantees](layer-1-contracts.md) and
+[the policy variants](hrms-payroll-policy.md).
 This extends the [gap-closure acceptance cases](gap-closure-work.md). It does
 not select canonical identifiers, endpoint names, tables, legal calculation
 rules, or a new role policy. Implementation gaps remain open until actual
@@ -15,9 +23,10 @@ These are meanings the implementation must preserve, not prescribed field names.
 | Payroll scope | The employer/tenant, employee, and target payroll month to which the operation applies | PAY-ARCH-002/003, PAY-CORE-015 |
 | Draft identity | The exact fixed proposal being approved, cancelled, or committed; distinct from employee-month grouping | PAY-ARCH-002, PAY-CORE-007/015 |
 | Proposed entries | Complete earning/deduction components supplied by calculation, retaining their fixed reviewed amounts | PAY-ARCH-001, PAY-CORE-001/006-C |
-| Applicable basis | Enough validation evidence to determine whether all relevant inputs and dependencies still apply at commit | PAY-CORE-006-C/010; no mandatory per-entry source-origin graph |
+| Applicable basis | Input/application evidence needed by the declared operation; policy A additionally requires current-source freshness at commit | PAY-ARCH-006; PAY-CORE-006-C is policy A, with no mandatory business-origin graph |
 | Instruction applications | Which one-time or monthly instructions the commit applies, in the correct scope/period | PAY-CORE-003/004; representation is distinct from business-source tracing |
-| Approval | Acceptance of the exact draft by an actor with the applicable capability | PAY-ARCH-003 |
+| Approval | When used, acceptance of the exact draft by an actor with the applicable capability | PAY-ARCH-003/006; requirement and withdrawal workflow are policy |
+| Hold | Authorized control excluding a draft from commit while active, retaining history | PAY-ARCH-006; reasons and release workflow are policy |
 | Correction relation | The prior final payroll result being adjusted, and the later payroll month in which the supplied adjustment is committed | PAY-CORE-001/011/013 |
 | Liability settlement correspondence | The obligation, remitted amount, proof, and amount applied to that obligation | PAY-CORE-012/016, PAY-ARCH-004 |
 
@@ -61,8 +70,9 @@ are not implied by a cancelled draft or an unprocessed month.
 |---|---|---|---|
 | Create complete draft | Preparation capability; selected payroll scope; complete calculated proposal with a consistently established basis | One fixed draft, including sealing, ready for review | An incomplete/inconsistent proposal cannot be exposed as a complete reviewable draft; no final payroll or application follows from preparation failure |
 | Approve | Approval capability for that scope; exact uncommitted draft | Approval belongs to the fixed proposal | Another draft, changed amounts, or batch membership cannot inherit this approval |
+| Hold/release | Applicable authority; exact uncommitted draft | Record the current control and its history; active hold prevents commit | Releasing a hold does not alter fixed money or erase approval; further review follows organizational policy |
 | Cancel uncommitted draft | Applicable cancellation authority; draft has not committed | Draft cannot later commit; monetary proposal is preserved as cancelled history; no consumption by cancellation | A committed result cannot be cancelled through this operation. An uncertain commit must be resolved before treating it as uncommitted |
-| Commit | Commit capability; approval of the exact draft; full basis/applications valid within the protected posting boundary | Final entries and instruction applications recorded for that draft, with corresponding payroll outputs | Changed/invalid basis blocks posting and requires rebuild/fresh review; retry cannot duplicate the result |
+| Commit | Commit capability; exact eligible draft; no active hold; applicable approval and instruction-application controls; current-source freshness if policy A requires it | Exact final entries and instruction applications recorded atomically, with corresponding payroll outputs | Failed controls prevent posting; retry cannot duplicate the result. Current-source differences alone do not invalidate policy B’s fixed draft |
 
 Cancellation authority is supplied by operating authorization policy. The
 capability separation decision does not assign it to a particular job title or
@@ -72,31 +82,33 @@ once the operation is authorized; no new role assignment is adopted.
 ### Protected commit sequence
 
 The following is the observable consistency contract, independent of transaction
-technology:
+technology. Source freshness in step 3 is conditional on the selected policy:
 
 1. Establish the draft's existing outcome. If already committed, preserve and
    report that result; do not create another one.
-2. Check the exact draft, applicable authority, and approval. A cancelled draft
-   cannot become committed through a retry.
-3. Validate the full relevant basis for the same employee/period, including
-   applicable additions, replacement/expiry, and instruction applications.
+2. Check the exact draft, applicable authority, active holds and required approval.
+   A held or cancelled draft cannot become committed through a retry.
+3. Enforce instruction-application constraints. If policy A is selected, also
+   validate the full current employee-period basis, including relevant additions,
+   replacement and expiry. Policy B does not require that freshness comparison.
 4. Publish the final monetary result and applications under the same protected
    boundary, preventing conflicting changes between validation and posting.
 5. Make the outcome discoverable for retries/recovery. A lost response is not
    evidence of failure; recovery must establish whether the result exists.
 
 These steps describe one consistency boundary, not separately exposed API calls.
-A checksum over the proposed amounts alone cannot establish step 3. Historical
+Under policy A, a checksum over proposed amounts alone cannot establish source
+freshness in step 3. Historical
 source IDs alone cannot detect a newly applicable instruction. Validation must
 cover what can change the relevant basis while allowing unrelated changes to
 continue. The exact validation representation and concurrency technology remain
 implementation choices subject to these outcomes.
 
-If the basis changes, commit does not recalculate or replace reviewed amounts.
-Cancel the old uncommitted draft, calculate from the applicable basis, create
-the replacement including sealing, and obtain fresh approval. This also applies
-when the stale draft was already approved. Sources are not frozen throughout
-the review window.
+Under policy A, a changed relevant basis blocks the old draft; replacement
+amounts require a new fixed proposal and the policy’s required approval. Under
+policy B, later source changes alone do not block the exact fixed proposal.
+Neither path recalculates or substitutes money during commit, and neither
+requires sources to be frozen throughout the review window.
 
 Batch coordination records each employee draft's actual outcome. An exception
 for one employee does not authorize rewriting another employee's committed
@@ -107,7 +119,7 @@ result or presenting a partially completed batch as complete.
 The manager/producing layer supplies the adjustment amount and relevant prior
 payroll relation. Within payroll scope, the adjustment enters a subsequent
 month's ordinary governed lifecycle. Generated payroll remains unchanged;
-approval, reconciliation, and application controls still apply. After-exit
+the selected approval/freshness policy and core application controls still apply. After-exit
 corrections belong in accounting under PAY-CORE-013.
 
 The correction relation identifies the final result being adjusted. It is not
