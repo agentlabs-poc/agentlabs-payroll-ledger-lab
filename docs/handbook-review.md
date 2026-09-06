@@ -18,7 +18,7 @@ not employer-policy selection, production conformance or release approval.
 | Agreement, deferral and code evidence | Reconciled | PAY-GAP findings remain browser-lab findings; PAY-DB findings describe Core. Neither local test success nor historical hub closure language establishes handbook approval |
 | Approval withdrawn from an unchanged draft | Closed as superseded | PAY-ARCH-006 places this choice in organizational Layer-2 policy. Neither alternative is mandated by Layer 1; [rationale](payroll-policy-boundary.md) |
 | Layer-2 policy variants and hold | Reviewed | Same changed-bonus facts lead to rebuild under policy A or fixed-draft commit under policy B; both preserve exact money and application guards. A held draft remains outstanding while other selected drafts commit |
-| Local implementation reconciliation | Reviewed; changes remain pending | [Six-finding disposition](implementation-reconciliation.md): three fixes retained directly; three require reshaping. Protected hold, policy support and public API/CLI evidence remain gaps |
+| Local implementation reconciliation | Reviewed; CP-0 through CP-2 integrated into draft hub | [Six-finding disposition](implementation-reconciliation.md): three fixes retained directly; three require reshaping. Protected hold, policy support and public API/CLI evidence remain gaps |
 | Implementation readiness | In progress | [Hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172) coordinates checkpoint PRs; existing code is not declared compatible until the recorded acceptance gates pass |
 
 The previously recorded unanswered lifecycle proposal is now superseded, not
@@ -161,6 +161,35 @@ Some are implementation choices; others belong to the producing/consuming layer.
 PAY-Q-009 is now settled as PAY-CORE-007. If a future scenario exposes a material
 choice within payroll scope, identify that choice and ask before adopting it.
 
+## Implementation checkpoint status
+
+Implementation status following the reviewed CP-2 merge on 2026-09-06:
+
+| Checkpoint | Recorded result |
+|---|---|
+| CP-0 — conformance and boundaries | [Core PR #173](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/173) merged into the draft hub |
+| CP-1 — source/API/application integrity | [Core PR #174](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/174) reviewed and merged into the draft hub |
+| CP-2 — explicit contributions and generic liabilities | [Core PR #175](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/175) reviewed, fixed and merged into the draft hub |
+| CP-3 — draft controls and policy-aware employee commit | Sol-medium implementation underway in a separate branch |
+| CP-4 — annual package, CLI and authenticated evidence | Annual API implementation underway; CLI integration awaits accepted controls; live evidence remains open |
+| CP-5 — integrated conformance and whole-branch review | Pending |
+
+The current integrated hub commit is
+`3eb71f5de0b96708b2e715ddf302ea81d66f92d8`; Core main remains
+`3a87931ea536c8b617e6e391c14affd03ade9f65`. The original local candidate
+`01268e541011db15f448b9e9020f3191779c2125` is preserved.
+[Hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172)
+remains draft. A checkpoint merge is neither a main merge nor deployment.
+
+CP-2's scoped fix verification ran 83 top-level PostgreSQL tests and 40 subtests,
+with zero failures or skips, at code/test commit
+`385f0d3ce5a86b4a384c7fe6e6427377ced9e363`; final reviewed commit
+`fd30fe3b68588ddee3cfbd82bae8ac635adf11fc` adds conformance documentation only.
+The Core checkpoint PR and conformance record describe the verification
+and the five review fixes. This local evidence does not certify the pending
+controls, annual package, CLI or authenticated live journey. No new payroll
+policy is adopted by this status update.
+
 ## Review checks
 
 This pass checks local Markdown links and heading anchors, fence balance,
@@ -182,4 +211,4 @@ records PAY-Q-020 as closed/superseded and completes the requested separation
 of core contracts from organizational payroll policy. Employer-specific choices,
 detailed statutory issuance and verified implementation remain separate work.
 No named universal Layer-1 decision awaits an answer in this review; this is not
-a claim that every future payroll policy has been specified. Code remains paused.
+a claim that every future payroll policy has been specified. Implementation is proceeding through the draft hub and reviewed checkpoint PRs.

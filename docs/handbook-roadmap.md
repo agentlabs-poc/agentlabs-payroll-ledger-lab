@@ -26,9 +26,11 @@ examples and consolidated review. PAY-Q-020 requires no further answer.
 The [implementation reconciliation](implementation-reconciliation.md) now maps
 the six local findings to these contracts: three retained directly and three
 to reshape. It records code evidence, missing protected hold/policy support,
-dependencies and review checkpoints. The next stage, when resumed, is revised
-implementation design followed by code and API/CLI acceptance; organizational
-workflow choices remain outside universal Layer-1 rules.
+dependencies and review checkpoints. Implementation has resumed: CP-0 through
+CP-2 are reviewed and merged into the draft hub; CP-3 controls and CP-4 annual
+reporting are underway. See the [checkpoint status](handbook-review.md#implementation-checkpoint-status)
+for exact commits and evidence boundaries. Organizational workflow choices
+remain outside universal Layer-1 rules.
 
 The [operation contracts](payroll-operation-contracts.md) and
 [annual package](annual-payroll-package.md) specify the agreed outcomes.
