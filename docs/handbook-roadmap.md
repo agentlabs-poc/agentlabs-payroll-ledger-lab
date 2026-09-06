@@ -23,10 +23,12 @@ This pass completed the [Layer-1 contracts](layer-1-contracts.md), separate
 [HRMS payroll policy](hrms-payroll-policy.md), both freshness variants, hold/batch
 examples and consolidated review. PAY-Q-020 requires no further answer.
 
-The next implementation stage, when resumed, must assess current Core main and
-the local candidate against these contracts and the selected policy. API/CLI
-coverage and acceptance evidence remain implementation work; they do not turn
-organizational workflow choices back into universal Layer-1 questions.
+The [implementation reconciliation](implementation-reconciliation.md) now maps
+the six local findings to these contracts: three retained directly and three
+to reshape. It records code evidence, missing protected hold/policy support,
+dependencies and review checkpoints. The next stage, when resumed, is revised
+implementation design followed by code and API/CLI acceptance; organizational
+workflow choices remain outside universal Layer-1 rules.
 
 The [operation contracts](payroll-operation-contracts.md) and
 [annual package](annual-payroll-package.md) specify the agreed outcomes.

@@ -8,9 +8,19 @@ good fit for every agreed payroll rule.** Correct the mismatches and redundant
 indexes before considering wider consolidation. Table count alone does not
 establish whether this model is optimal.
 
+## Current disposition after the layer clarification
+
+The [implementation reconciliation](implementation-reconciliation.md) assesses
+all six findings against PAY-ARCH-006: retain PAY-DB-003/004/006; retain useful
+mechanics but reshape PAY-DB-001/002/005. It records protected hold, policy
+selection, producer/classification boundaries and public acceptance gaps. The
+implementation evidence below remains historical; the branch is not ready to
+merge as a unit. Handbook closure is complete for the stated conceptual pass;
+implementation remains paused pending this revised design and later work.
+
 ## Implementation candidate — 2026-09-06
 
-**Preserved local work; implementation paused pending handbook closure.** The
+**Preserved local work; implementation paused.** The
 user has directed handbook review before further implementation. The evidence
 below records what was done; it is not approval of the current handbook or a
 claim that the six fixes cover every agreed behavior. See the

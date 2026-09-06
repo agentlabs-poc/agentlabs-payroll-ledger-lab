@@ -90,6 +90,9 @@ handbook. PAY-Q-020 is closed as superseded by
 requirements in this comparison now describe organizational Layer-2 policy,
 not universal Layer-1 workflow. The [Layer-1 contracts](layer-1-contracts.md)
 and [HRMS payroll policy](hrms-payroll-policy.md) now express that distinction.
-Implementation remains paused after this documentation review.
+The [local implementation reconciliation](implementation-reconciliation.md) now
+records the retain/reshape disposition of all six PAY-DB fixes, code evidence,
+dependencies and next acceptance checkpoints. Implementation remains paused
+after this documentation review.
 The [current review record](handbook-review.md#current-consolidated-review)
 is the single place to check this edition's readiness.

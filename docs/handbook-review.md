@@ -18,7 +18,8 @@ not employer-policy selection, production conformance or release approval.
 | Agreement, deferral and code evidence | Reconciled | PAY-GAP findings remain browser-lab findings; PAY-DB findings describe Core. Neither local test success nor historical hub closure language establishes handbook approval |
 | Approval withdrawn from an unchanged draft | Closed as superseded | PAY-ARCH-006 places this choice in organizational Layer-2 policy. Neither alternative is mandated by Layer 1; [rationale](payroll-policy-boundary.md) |
 | Layer-2 policy variants and hold | Reviewed | Same changed-bonus facts lead to rebuild under policy A or fixed-draft commit under policy B; both preserve exact money and application guards. A held draft remains outstanding while other selected drafts commit |
-| Implementation readiness | Paused | Documentation is separated and reviewed. Subsequent implementation must map these contracts and the selected policy to actual Core behavior and public API/CLI acceptance; existing safeguards are unchanged |
+| Local implementation reconciliation | Reviewed; changes remain pending | [Six-finding disposition](implementation-reconciliation.md): three fixes retained directly; three require reshaping. Protected hold, policy support and public API/CLI evidence remain gaps |
+| Implementation readiness | Paused | The source-backed reconciliation supplies the next design/acceptance checkpoints; it does not implement them or change existing safeguards |
 
 The previously recorded unanswered lifecycle proposal is now superseded, not
 answered by selecting one workflow. Organizational policies remain variable;

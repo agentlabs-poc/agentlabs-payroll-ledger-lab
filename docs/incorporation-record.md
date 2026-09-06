@@ -334,6 +334,25 @@ arithmetic. A semantic reread checked both policy outcomes, hold exclusion,
 approval history and retained application/commit guarantees; no runtime tests
 are claimed for these documentation changes.
 
+## Local implementation reconciliation — 2026-09-06
+
+At the user’s request, [the reconciliation](implementation-reconciliation.md)
+compares Core main `3a87931`, local candidate `01268e5` / code `5bc0b1a`, and the
+layered handbook `e4c8d3a`. It retains identity width, guarded index removal and
+monthly application integrity; it retains useful mechanics but requires
+reshaping contribution production, liability classification and employee
+controls. Rationale and exact code locations distinguish a policy choice from
+an invariant. Protected hold, trusted policy selection, the existing
+instruction-version adapter defect and public API/CLI coverage remain work.
+
+This completes the bounded reconciliation, not implementation conformance or
+release readiness. PAY-Q-020 remains superseded. Only handbook Markdown is
+changed; the candidate is preserved and implementation remains paused.
+Validation passed across 31 Markdown files and 314 local links/anchors, fence
+balance and the worked payroll arithmetic; `git diff --check` passed. The
+source review confirmed the cited Go/SQL controls and unchanged Core head.
+No new runtime test result is claimed.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

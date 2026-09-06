@@ -13,7 +13,9 @@ reviewed coverage and PAY-Q-020’s superseded closure under the
 [HRMS payroll policy](docs/hrms-payroll-policy.md). The earlier conceptual edition
 is historical, not current implementation approval. The
 [baseline reconciliation](docs/baseline-reconciliation.md) separates Core main,
-the payroll hub, browser-lab evidence and local unmerged fixes.
+the payroll hub, browser-lab evidence and local unmerged fixes. The
+[implementation reconciliation](docs/implementation-reconciliation.md) records
+which of the six local fixes to retain or reshape and the remaining controls.
 
 ## Existing browser lab
 
