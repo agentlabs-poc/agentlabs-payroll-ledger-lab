@@ -17,8 +17,8 @@ the payroll hub, browser-lab evidence and local unmerged fixes. The
 [implementation reconciliation](docs/implementation-reconciliation.md) records
 which of the six local fixes to retain or reshape and the remaining controls.
 The [implementation checkpoint status](docs/handbook-review.md#implementation-checkpoint-status)
-records CP-0 through CP-3 reviewed and merged into the draft hub, plus accepted
-annual API and liability/annual CLI subsets. Control CLI and integrated
+records the complete reviewed Core implementation merged into the draft hub.
+Final Core review fixes passed; full E2E implementation/review and authenticated
 acceptance remain in progress.
 
 ## Existing browser lab

@@ -27,9 +27,9 @@ The [implementation reconciliation](implementation-reconciliation.md) now maps
 the six local findings to these contracts: three retained directly and three
 to reshape. It records code evidence, missing protected hold/policy support,
 dependencies and review checkpoints. Implementation has resumed: CP-0 through
-CP-3 are reviewed and merged into the draft hub. CP-4 annual reporting and its
-liability/annual CLI subset are independently accepted; control CLI and full
-authenticated acceptance remain. See the [checkpoint status](handbook-review.md#implementation-checkpoint-status)
+CP-3 and the complete Core CP-4 implementation are reviewed and merged into
+the draft hub. The final whole-branch review and fix re-review passed. Full
+E2E implementation/review and authenticated acceptance remain. See the [checkpoint status](handbook-review.md#implementation-checkpoint-status)
 for exact commits and evidence boundaries. Organizational workflow choices
 remain outside universal Layer-1 rules.
 
