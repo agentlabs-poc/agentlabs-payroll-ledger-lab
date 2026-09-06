@@ -163,19 +163,19 @@ choice within payroll scope, identify that choice and ask before adopting it.
 
 ## Implementation checkpoint status
 
-Implementation status on 2026-09-06, after CP-4 annual and CLI subset reviews:
+Implementation status on 2026-09-06, after the reviewed CP-3 merge:
 
 | Checkpoint | Recorded result |
 |---|---|
 | CP-0 — conformance and boundaries | [Core PR #173](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/173) merged into the draft hub |
 | CP-1 — source/API/application integrity | [Core PR #174](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/174) reviewed and merged into the draft hub |
 | CP-2 — explicit contributions and generic liabilities | [Core PR #175](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/175) reviewed, fixed and merged into the draft hub |
-| CP-3 — draft controls and policy-aware employee commit | [Core PR #177](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/177): local tests passed; seven independent review findings in consolidated fix round 1; unmerged |
+| CP-3 — draft controls and policy-aware employee commit | [Core PR #177](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/177): reviewed through two fix rounds and merged into the draft hub |
 | CP-4 — annual package, CLI and authenticated evidence | [Core PR #176](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/176): annual API and liability/remittance/annual CLI subsets reviewed; control CLI and full authenticated evidence remain; unmerged |
 | CP-5 — integrated conformance and whole-branch review | Pending |
 
 The current integrated hub commit is
-`3eb71f5de0b96708b2e715ddf302ea81d66f92d8`; Core main remains
+`da89d101f1d8a439bd2bbd447252b8cd4ab7081d`; Core main remains
 `3a87931ea536c8b617e6e391c14affd03ade9f65`. The original local candidate
 `01268e541011db15f448b9e9020f3191779c2125` is preserved.
 [Hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172)
@@ -185,6 +185,15 @@ CP-2's scoped fix verification ran 83 top-level PostgreSQL tests and 40 subtests
 with zero failures or skips, at code/test commit
 `385f0d3ce5a86b4a384c7fe6e6427377ced9e363`; final reviewed commit
 `fd30fe3b68588ddee3cfbd82bae8ac635adf11fc` adds conformance documentation only.
+
+CP-3 is reviewed at `50d0ff84767a12edc012fb3a9d96c6b0319a3ebc`, with runtime/tests
+at `8636ac20463c64fbb15375a6ceca0f5a87a24b40`. The final payroll PostgreSQL suite
+passed 427 tests and 421 subtests, plus four fuzz functions and 17 seed cases,
+with zero failures/skips. Six source-writer/commit and four competing-instruction
+cases observed actual database blocking and proved both winner outcomes. The
+review also verified retained controls, source locking, migration/grant safety
+and lossless history byte/hash transport. This is local checkpoint acceptance;
+control CLI and authenticated live integration remain CP-4 work.
 
 CP-4 annual API is reviewed at
 `b5827f48c15a4490a896c0da8f8d194d6ad4229b`: the final annual PostgreSQL suite
