@@ -224,6 +224,9 @@ clarification rather than the earlier proposal.
 The user's tentative Form 16 connection was checked against official material
 above. It is supported as a partial data basis, not as a claim that a liability
 register alone generates the complete certificate. There is no need to ask the
-ownership question again. Exact register entries, allocation/matching rules,
-annual completeness, external accounting mapping, and integration mechanics
-remain to be incorporated from evidence or discussed when materially ambiguous.
+ownership question again. Subsequent agreements specify partial settlement
+(PAY-CORE-016) and the annual package/handoff (PAY-ARCH-005). Supplied allocation
+balances and annual completeness checks are recorded in the
+[operation contracts](payroll-operation-contracts.md). Record formats and proof
+integration remain engineering work; automatic allocation and external accounting
+policy are not selected by these rules.

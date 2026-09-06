@@ -47,6 +47,15 @@ decide whether preparer and approver must be different people. An automated
 commit executor would also need appropriate authority and a valid approved
 draft; automation is not itself approval.
 
+## Current Core comparison
+
+The agreed capabilities above do not prescribe four separate people. Current
+Core nevertheless enforces a different human actor and effective executor for
+approval, as recorded in [Core PR #162](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/162).
+Keeping distinct capabilities does not authorize removing that safeguard, and
+this handbook does not claim role-policy configurability is implemented.
+See [baseline reconciliation](baseline-reconciliation.md) for this distinction.
+
 ## Rationale and example
 
 Input acceptance answers whether an instruction may enter payroll preparation.

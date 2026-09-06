@@ -10,6 +10,12 @@ establish whether this model is optimal.
 
 ## Implementation candidate — 2026-09-06
 
+**Preserved local work; implementation paused pending handbook closure.** The
+user has directed handbook review before further implementation. The evidence
+below records what was done; it is not approval of the current handbook or a
+claim that the six fixes cover every agreed behavior. See the
+[baseline reconciliation](baseline-reconciliation.md) for the current gate.
+
 The user subsequently asked to fix these findings. HRMS Core now has a local
 implementation on `fix/payroll-ledger-schema`, based on main `3a87931`.
 New migrations 92–95 and the consuming Go services implement the changes below.

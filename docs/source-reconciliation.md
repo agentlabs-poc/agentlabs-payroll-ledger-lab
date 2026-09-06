@@ -144,10 +144,12 @@ The demo also mutates approval/consumption metadata and does not implement a
 general source expiry/replacement lifecycle. The user's clarified source model
 must therefore remain distinct from verified implementation behavior.
 
-Open decisions: validation evidence and expiry/supersession representation,
-captured calculation dependencies, validation scope, transaction/concurrency
-mechanism, cancellation authority, and the treatment of changed applicability
-history. These implementation details remain deferred. PAY-Q-009 is now
+Implementation work: choose validation evidence and expiry/supersession
+representation, identify the relevant calculation dependencies, implement the
+protected concurrency mechanism, and map cancellation authority. These choices
+must preserve the full employee-period basis and changed-source outcomes already
+specified above. They are not unanswered core questions about whether to
+reconcile, freeze sources throughout review, or trace business origins. PAY-Q-009 is now
 approved as PAY-CORE-007: [complete draft creation includes sealing](payroll-lifecycle.md#pay-core-007--creation-includes-sealing).
 
 **PAY-Q-010 — approved:** Immutable source history plus a fixed draft and

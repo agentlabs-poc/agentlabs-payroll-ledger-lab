@@ -59,6 +59,15 @@ That demonstrates only a same-draft check in memory. It does not establish
 durable recovery, atomic posting, concurrent exclusion, or cross-draft
 instruction protection. Those remain [implementation gaps](implementation-gaps.md).
 
+## Approval withdrawal with an unchanged draft
+
+[PAY-Q-020](gap-closure-work.md#pay-q-020--withdrawing-approval-without-changing-draft-amounts)
+is not yet decided. It asks whether withdrawing approval before commit should
+retain the same fixed proposal for fresh approval, or require cancellation and
+rebuilding. Neither alternative allows posting without valid approval or
+reopening committed payroll. The ordinary lifecycle above does not silently
+select an approval-withdrawal transition.
+
 ## Code comparison
 
 Evidence: [main.ts](../src/main.ts) at

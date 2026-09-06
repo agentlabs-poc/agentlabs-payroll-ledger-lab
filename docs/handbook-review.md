@@ -1,35 +1,38 @@
 # Handbook review and remaining work
 
-Review date: 2026-09-06. This records an editorial and conceptual consistency
-review of the current working edition. It is not a production conformance test,
-statutory certification, or a new set of approved payroll rules.
+Review date: 2026-09-06. This records the consolidated conceptual and editorial
+review. It does not certify a deployed system or adopt new payroll rules.
+
+## Current consolidated review
+
+**Documentation reconciliation complete; handbook closure awaits PAY-Q-020.
+Implementation remains paused.** The previously closed conceptual edition is
+historical evidence, not approval to implement the current working edition.
+
+| Review area | Current result | Evidence or remaining boundary |
+|---|---|---|
+| Core concepts and responsibility boundaries | Reviewed against recorded decisions | Ledgers, expiry/application, manager intake, calculation, fixed draft, protected commit, employee-month grouping and external accounting agree across the current chapters |
+| High-impact scenarios and arithmetic | Reviewed | Ordinary payroll, replacement before commit, retries, employee batch exceptions, contribution pairs, subsequent-month correction and partial/full remittance have determinate outcomes; annual package cases isolate employee/employer/year |
+| Hub and current Core main | Reconciled | [Baseline reconciliation](baseline-reconciliation.md) distinguishes the merged Layer-1 delivery from later handbook refinements and the unmerged local code candidate |
+| Agreement, deferral and code evidence | Reconciled | PAY-GAP findings remain browser-lab findings; PAY-DB findings describe Core. Neither local test success nor historical hub closure language establishes handbook approval |
+| Approval withdrawn from an unchanged draft | Awaiting answer | PAY-Q-020 proposes retaining the fixed draft with fresh approval required; cancellation/rebuild is the alternative. No choice is silently adopted |
+| Implementation readiness | Paused | Finish the material handbook decision and final walkthrough first. Subsequent implementation must map accepted requirements to current Core behavior and the actual public API/CLI acceptance boundary |
+
+This review found one recorded unanswered lifecycle proposal. It does not claim
+that every possible employer policy or future payroll exception has been decided.
+The [remaining-item classification](gap-closure-work.md#remaining-item-classification)
+separates those extensions from the current ordinary payroll contract. No generic
+operating questionnaire is introduced as a prerequisite to core clarity.
 
 ## Edition checkpoints
 
-**Conceptual edition 1, closed 2026-09-06.** This is an editorial closure of the
-agreed conceptual model after the user directed the final walkthrough and
-checkpoint pass. It does not claim employer-specific operating validation or
-completion of every topic in the broader pinned charter. No new payroll rule
-is adopted by closing this edition.
-
-| Checkpoint | Result | Closure evidence |
-|---|---|---|
-| CP-01: core concepts | Complete for this edition | Ledgers, instruction lifetime/application, immutable sources, fixed draft, creation including sealing, approval, and commit are agreed and recorded |
-| CP-02: responsibility boundaries | Complete for this edition | Manager intake, calculation, scoped capabilities, employee-month association, payroll finality, employer register, and external accounting are explained |
-| CP-03: representative walkthrough | Complete for this edition | The final review below traces ordinary payroll, changed inputs, commit, correction, liability closure, and annual information; existing decisions determine the illustrated outcomes |
-| CP-04: documentation closure | Complete for this edition | Current explanations and diagram aligned with PAY-CORE-007; rationale/history retained, source gaps visible, and deferred work classified |
-
-**At edition closure, no named proposal awaited an answer.** PAY-Q-009 is
-approved. The subsequent [gap-closure pass](gap-closure-work.md) now opens
-PAY-Q-017 on partial remittances; it is now approved as PAY-CORE-016. No named
-core-rule proposal was pending at that checkpoint. PAY-Q-020 has since opened
-on approval withdrawal from an unchanged draft. PAY-Q-018 is approved as
-PAY-ARCH-005, and the [annual package](annual-payroll-package.md) is specified.
-The [gap-resolution audit](gap-resolution-audit.md)
-clarifies the limit: six numbered gaps have agreed core behavior, one is
-superseded, and the annual scope was then partly specified. PAY-ARCH-005 now
-selects the payroll package/handoff and separates statutory procedures. Seven
-active code gaps/limitations remain; scope approval does not implement them.
+**Historical conceptual edition 1, closed 2026-09-06.** The earlier pass reviewed
+CP-01 core concepts, CP-02 responsibility boundaries, CP-03 the representative
+walkthrough and CP-04 documentation consistency for that edition. At that point
+no named proposal awaited an answer. Later discussion approved partial settlement
+(PAY-CORE-016) and annual package/handoff scope (PAY-ARCH-005), then opened
+PAY-Q-020. The current review above supersedes the older readiness statement;
+the agreed concepts and their rationale remain valid.
 
 ## Final walkthrough results
 
@@ -46,7 +49,7 @@ inferred from the example.
 | Creation and approval | Preparation capability creates the complete draft including sealing; approval capability accepts that exact proposal | Monetary content is fixed; neither preparation nor approval consumes instructions or generates final payroll |
 | Unchanged basis | Commit capability invokes protected reconciliation and posting | Seven final rows; one-time bonus consumed and monthly applications recorded for September; net INR 53,500 is final |
 | Changed-basis alternative before commit | The applicable bonus changes from INR 5,000 to INR 6,000 after approval; calculation supplies the other six amounts unchanged for this illustration | Old draft stays INR 53,500 net and cannot commit. Cancel/rebuild with fresh approval: new gross INR 58,500, deductions INR 4,000, net INR 54,500. Only the replacement commits |
-| Retry or abandoned draft | Recovery establishes whether a commit occurred; an uncommitted cancellation produces no payroll | No duplicate result/application from retry; no consumption by cancellation. Exact recovery and cancellation authority remain deferred |
+| Retry or abandoned draft | Recovery establishes whether a commit occurred; an uncommitted cancellation produces no payroll | No duplicate result/application from retry; no consumption by cancellation. Recovery mechanics and role mapping remain implementation work |
 | Employer liabilities | Payroll records obligations following committed payroll; employer remits to the respective authorities and records proof | Contribution liability INR 1,000 and tax liability INR 2,000 each close against corresponding remittance/proof. The ordinary recovery is not a government liability in this example |
 | Later correction within scope | Manager supplies a subsequent-month INR 500 recovery through the governed payroll flow | September remains unchanged; the later month includes INR -500. No automatic undo of earlier instruction applications |
 | Correction after exit | The correction arises after the employee has exited | External accounting handles it; payroll history stays final |
@@ -65,7 +68,7 @@ core decision; they do not select broader exception policies.
 
 Rationale for closure: the existing decisions explain the selected records,
 responsibilities, and outcomes. The remaining uncertainties can be named and
-deferred without changing those illustrative outcomes. The lab still lacks
+deferred without changing those illustrative outcomes. The browser lab still lacks
 several required controls, including approved-stale-draft cancellation and
 protected reconciliation; the gap register preserves those findings.
 
@@ -124,10 +127,10 @@ active browser-lab code gaps and does not claim deployed-schema verification.
 | Remaining item | Why it remains | Next treatment |
 |---|---|---|
 | Employer-specific operating procedures | Actual employer/jurisdiction/workforce context, calendars, cutoffs, manual work, and escalation/revocation procedures have not been established | A later operating edition; retain the pinned charter and avoid presenting illustrative practices as observed reality |
-| Additional exception policies | Same-period supplemental runs, partial applications, allocation of remittances across multiple obligations, and wider payment-failure procedures are not fully selected | Address a concrete scenario when that scope is developed; preserve finality, instruction guards, and accounting boundaries |
+| Additional exception policies | Supplemental-run eligibility, partial instruction application, automatic remittance allocation and wider payment-failure procedures are not selected | Later scope only; supplied valid allocations and partial settlement are already specified. These extensions do not reopen ordinary rules |
 | Expiry and validation representation | Dates/period encoding, immutable-source lifecycle metadata, and validation evidence are not selected | Implementation specification; no reopening of applicability or source-tracing decisions |
 | Exceptional installment/application behavior | Automatic extension, splitting, and restoration have not been adopted | Apply the supplied policy where it fits existing rules; ask if a core behavior change is proposed |
-| Concurrency, retries, and recovery | Durable storage and coordination are not implemented in the demo | Implement against the already stated invariants when authorized |
+| Concurrency, retries, and recovery | Observable outcomes are specified; the browser demo lacks durable enforcement | Later Core conformance review uses current main and the local candidate separately; choose mechanisms against the existing contracts |
 | Detailed role assignments and integrations | Capabilities and system boundaries are settled, concrete mappings are not | Deployment/operating specification rather than invented job-title rules |
 | Complete annual issuance | PAY-ARCH-005 selects the payroll annual package/handoff for this handbook; complete issuance is a separate chapter | Develop the statutory procedure for the applicable jurisdiction/year when that chapter is scoped; it does not block the approved package specification |
 | Detailed business calculations | Proration, contribution amounts, and annual tax formulas belong to higher-order policy | Do not turn them into new core ledger primitives or infer policy from demo arithmetic |
@@ -146,8 +149,15 @@ The walkthrough covers gross/deductions/net and liability amounts explicitly.
 Source-inspected implementation gaps remain open; no runtime execution or
 completed software behavior is claimed by this review.
 
-The conceptual edition is closed with the above deferrals. Full deployment,
-employer-specific operations, and period-specific compliance procedures remain
-outside what this review proves. This is the stopping point for the current
-conceptual edition. Subsequent refinements are tracked in the active gap-closure
-worksheet without treating the earlier edition as an implementation release.
+Verification for this correction: all 27 Markdown files passed relative-link,
+heading-anchor and fence checks (253 local links/anchors). The seven-entry
+walkthrough, changed bonus, contribution pair, successive/split remittances and
+annual examples were recalculated successfully. `git diff --check` passed.
+The checked remote Core main is `3a87931`; the separate local Core branch remains
+at `01268e5`. No runtime tests were run for these Markdown-only changes.
+
+The earlier conceptual closure is preserved as history. The current working
+edition has been reconciled, but PAY-Q-020 is still unanswered and implementation
+is paused. Employer-specific operating procedures and detailed statutory
+issuance remain explicitly deferred under the agreed scope. Subsequent
+refinements are tracked in the active gap-closure worksheet without treating the earlier edition as an implementation release.

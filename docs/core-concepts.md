@@ -118,7 +118,7 @@ components rather than just one net amount.
 The **draft ledger** holds the proposed entries before they are committed.
 It gives the system a concrete set of amounts to inspect and approve. Its
 monetary proposal is distinct from the source entitlement and instructions
-that produced it. In the current code, new entries can be appended while the
+that produced it. In the inspected browser lab, new entries can be appended while the
 draft is open. The current PAY-CORE-006-C decision retains fixed monetary content
 from complete creation, with cancellation and rebuilding for corrections;
 the appendable open draft is an implementation gap.
@@ -246,9 +246,11 @@ business logic can determine the repayment schedule that it represents.
 
 This example assumes the five scheduled applications occur normally. A
 five-calendar-month window and five successful deductions can diverge when a
-payroll is skipped. The user has not selected a representation or catch-up rule
-for that case. Expiry is agreed; end-date encoding, installment-count semantics,
-boundary inclusivity, early cessation, and extension rules remain open.
+payroll is skipped. The core respects the supplied lifetime; it does not
+extend it automatically to collect a missing installment. A changed repayment
+arrangement belongs to manager/business input. End-date encoding is engineering
+work; exceptional installment behavior is outside the ordinary contract.
+See [instruction eligibility](payroll-operation-contracts.md#instruction-eligibility-and-application).
 
 ### Rationale and consequences of expiry
 
@@ -349,9 +351,12 @@ duplicate September deductions.
 
 The conceptual record is that this instruction has already been applied for
 this employee and month, with a link to the committed result. This does not
-prescribe a new table, field name, or locking strategy. It also does not decide
-how changed instruction versions, split applications, skipped months, or
-corrections affect that record.
+prescribe a new table, field name, or locking strategy. Version/application identity is an implementation matter constrained by the
+same monthly guard. A replacement of the same ordinary monthly instruction
+cannot by itself authorize a second application. Splitting and skipped-installment
+business policy are not adopted; subsequent-month corrections do not automatically
+restore earlier applications. Payroll does not infer whether two distinct
+instructions express duplicate business intent.
 
 The current lab marks one-time consumption but has no general monthly
 application check in `commitDraft`. Its single guided preparation does not
@@ -400,8 +405,9 @@ This is not authorization to reopen a closed period, duplicate a committed
 application, or change an approved result. Those operations retain their own
 rules. It does not automatically move a missed installment into February,
 extend expiry until five deductions succeed, or settle early termination and
-instruction-version history. Date versus installment-count expiry, exact
-boundary encoding, catch-up policy, and correction mechanics remain open.
+instruction-version storage. Exact boundary encoding is engineering work;
+a revised repayment schedule comes from the producing layer. PAY-CORE-011/013
+subsequently settle subsequent-month correction and the after-exit boundary.
 
 The existing code already distinguishes source effective fields from a draft's
 period and ledger date, but its fixed demo selection does not implement this
@@ -421,7 +427,7 @@ correction treatment; those boundaries are not still-open core questions.
 **Status: superseded by approved PAY-CORE-006-B under PAY-Q-008.** The user
 approved freezing relevant sources and draft monetary entries from creation
 through commit or cancellation. The
-[agreed source-freeze chapter](draft-source-freeze.md) records that shape and
+[historical source-freeze chapter](draft-source-freeze.md) records that shape and
 its rationale. The original proposal below is preserved as superseded history.
 The later [PAY-CORE-006-C reconciliation model](source-reconciliation.md)
 is now approved and supersedes the long-lived source freeze as well.

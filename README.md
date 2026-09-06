@@ -5,11 +5,12 @@ The working handbook begins with [the payroll concepts already expressed in code
 its opening page records the intended outcome, completion criteria, and current
 discussion point. See [what was incorporated](docs/incorporation-record.md) for
 the mapping from existing agreements and code descriptions into the handbook.
-The [conceptual edition checkpoint review](docs/handbook-review.md#edition-checkpoints)
-records the completed walkthrough and explicitly deferred work. The
-[gap-resolution audit](docs/gap-resolution-audit.md) distinguishes agreed concepts
-from unresolved specifications and code gaps. Future proposals require discussion
-and agreement.
+**Current: handbook reconciliation; implementation paused.** The
+[current review](docs/handbook-review.md#current-consolidated-review) records
+reviewed coverage and the unanswered PAY-Q-020. The earlier conceptual edition
+is historical, not current implementation approval. The
+[baseline reconciliation](docs/baseline-reconciliation.md) separates Core main,
+the payroll hub, browser-lab evidence and local unmerged fixes.
 
 ## Existing browser lab
 

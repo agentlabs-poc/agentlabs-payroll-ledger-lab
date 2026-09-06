@@ -262,6 +262,33 @@ No shared branch or deployed database was changed. This handbook update changes
 documentation only; the browser lab runtime and its separate gap list remain
 unchanged. PAY-Q-020 remains unapproved.
 
+## Consolidated handbook correction — 2026-09-06
+
+The user required handbook completion before more implementation. This pass
+pauses code work, preserves the local Core candidate, and corrects the use of
+historical conceptual-edition closure as current readiness. The current review
+and navigation agree that PAY-Q-020 is unanswered; no proposed rule is adopted.
+
+The new [baseline reconciliation](baseline-reconciliation.md) compares later
+user decisions with the hub's layered architecture, merged Core main `3a87931`,
+browser-lab revision `737465d`, and local Core candidate `5bc0b1a`. It records
+retained public API/CLI acceptance requirements, later employee commit and
+liability rules, existing Core approval separation, and future work boundaries.
+The historical eight-gap audit is labeled as such rather than rewritten to
+claim current Core lacks its already merged payroll controls.
+
+Stale decision-row notes about source replacement, corrections and consumption
+are aligned with subsequent approvals. Four acceptance cases make already
+agreed batch, association, contribution and capability outcomes explicit.
+Rationale: decisions govern implementation; local code and passed tests are
+evidence to assess, not a way to settle an unanswered handbook question.
+
+Only handbook Markdown is changed in this pass. No Core/runtime, hub ticket,
+PR, deployment or remote branch is changed. The documentation check covered
+all 27 Markdown files and 253 local links/anchors, fence balance and the worked
+payroll, contribution, settlement and annual arithmetic. All passed; the pending
+PAY-Q-020 answer remains a closure dependency.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

@@ -95,15 +95,16 @@ Creating this handbook does not itself authorize payroll implementation changes.
 
 ## Reading path
 
-**Conceptual edition 1 — 2026-09-06.** The final walkthrough and documentation
-closure are recorded in the [checkpoint review](handbook-review.md#edition-checkpoints).
-At edition closure no named proposal awaited an answer. The later
-[gap-closure work](gap-closure-work.md) records PAY-Q-017 approved as PAY-CORE-016:
-the unpaid remainder after a partial remittance stays a liability.
-[The gap audit](gap-resolution-audit.md)
-distinguishes agreed concepts from unresolved details and implementation gaps. Employer-specific
-operations, implementation specifications, and complete statutory issuance are
-explicitly deferred there; the pinned charter above remains the broader goal.
+**Current: consolidated handbook review; implementation paused.** The
+[current review](handbook-review.md#current-consolidated-review) supersedes the
+historical conceptual-edition closure as the readiness statement. Approved
+concepts remain intact. PAY-Q-020 on withdrawal of approval from an unchanged
+draft is the one recorded unanswered lifecycle proposal.
+
+The [baseline reconciliation](baseline-reconciliation.md) separates the merged
+Core Layer-1 system, the browser experiment, later handbook decisions and local
+unmerged fixes. Employer-specific procedures and detailed statutory issuance
+remain deferred; the broader pinned charter above is preserved.
 
 Start with the five ledgers below, then follow one monthly payroll through
 preparation, commit, and a subsequent-month adjustment. The agreed model is
@@ -421,29 +422,26 @@ and the settled subsequent-month correction rule, are not open questions.
 
 ## Resume here
 
-The [remaining-item classification](gap-closure-work.md#remaining-item-classification)
-now separates engineering work from unresolved behavior. PAY-Q-020 asks about
-approval withdrawal with unchanged draft amounts. The [database-table review](database-table-review.md)
-examines HRMS Core schema fit, constraints, and index duplication; no runtime
-or schema changes are included.
+Implementation is paused while this handbook is completed. Follow the
+[current consolidated review](handbook-review.md#current-consolidated-review)
+and the [remaining-item classification](gap-closure-work.md#remaining-item-classification).
+PAY-Q-020 awaits an answer on withdrawing approval from an unchanged draft.
+After the answer, align the lifecycle and examples and close this review before
+returning to implementation.
 
-**Active: [gap-closure work](gap-closure-work.md).** Existing rules now have
-[operation contracts](payroll-operation-contracts.md) and acceptance cases.
-PAY-Q-017 is approved as PAY-CORE-016: the unpaid remainder after a partial
-remittance stays a liability. PAY-Q-018 is approved as PAY-ARCH-005; the
-[annual package and handoff](annual-payroll-package.md) is specified. Runtime
-implementation gaps remain open.
-
-The conceptual edition has passed the final walkthrough and documentation
-closure checkpoints. See [the checkpoint results](handbook-review.md#edition-checkpoints)
-and explicit deferred work before beginning a further scope of work.
+The [database-table review](database-table-review.md) records both original Core
+findings and subsequent local fixes. Those fixes are preserved on a separate
+branch, not merged into Core main. The [baseline reconciliation](baseline-reconciliation.md)
+explains which hub contracts and later handbook decisions guide future review.
+PAY-CORE-016 settles partial remittance; PAY-ARCH-005 specifies the
+[annual package and handoff](annual-payroll-package.md). These remain approved.
 
 The [review record](handbook-review.md) maps incorporated coverage, consistency
 checks, and remaining work. The [continuous walkthrough](payroll-scenarios.md#end-to-end-payroll-and-liability-walkthrough)
 now includes employer-contribution entries, employee-month association,
 commit/application, employer liabilities, and remittance/proof closure.
 
-The latest clarification is PAY-CORE-015: all payroll for an employee and month
+PAY-CORE-015 remains agreed: all payroll for an employee and month
 is tied together, without a prescribed ID-generation method. The
 [lifecycle consolidation](payroll-lifecycle.md) now explains operation outcomes
 and the approved-stale-draft cancellation gap. PAY-Q-009 is now approved:

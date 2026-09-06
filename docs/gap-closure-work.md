@@ -10,6 +10,11 @@ information, preconditions, outcomes, rejection/recovery behavior, liability
 balances, and annual data-selection cases. PAY-Q-018 is approved as PAY-ARCH-005;
 the [annual package](annual-payroll-package.md) now specifies the selected scope.
 
+**Current gate:** finish the consolidated handbook review before resuming code.
+[Baseline reconciliation](baseline-reconciliation.md) separates Core main and
+local fixes from the browser-lab gaps below. The recorded contracts already
+resolve the ordinary cases; PAY-Q-020 is the remaining named lifecycle question.
+
 ## Remaining-item classification
 
 This pass separates implementation choices from matters still needing a payroll
@@ -65,6 +70,10 @@ not executed tests, new state names, API contracts, or newly approved rules.
 | AC-11: correction after exit | A correction arises after employee exit | External accounting handles it; payroll does not change the prior result or create the rejected former-employee adjustment flow | GAP-006, PAY-CORE-013 |
 | AC-12: corresponding full settlement | A liability has a corresponding full remittance with retained proof | Close that obligation while preserving history; unrelated or duplicate allocations cannot falsely close another liability or reuse the same remitted amount | GAP-007, PAY-CORE-012, PAY-ARCH-004 |
 | AC-13: partial then final settlement | Against INR 10,000 owed, record INR 6,000 remitted with proof, then the remaining INR 4,000 with its proof | First show INR 6,000 settled and INR 4,000 outstanding; then INR 10,000 settled and zero outstanding. Close only after the balance is settled; retain both remittances and original obligation | GAP-007, PAY-CORE-016 |
+| AC-14: one stale employee in a batch | 100 exact employee drafts are approved; one employee's basis changes | The other 99 may commit after their own checks. The stale draft cannot commit and needs rebuild/fresh approval; batch status retains the outstanding outcome | PAY-ARCH-002 |
+| AC-15: employee-month association | Two payroll results belong to the same employee/month; another belongs to a different employee or month | Preserve the correct association without merging draft identities, transferring approval, or bypassing application guards; no prescribed number generator | PAY-CORE-015 |
+| AC-16: employer contribution | Salary 50,000 and employer contribution 1,000 are supplied | Draft and posted gross 51,000, deductions 1,000, net 50,000; one corresponding 1,000 employer obligation follows payroll, not two | PAY-CORE-014 |
+| AC-17: authority and exact review | A caller can maintain inputs but lacks draft approval or commit capability | Input acceptance grants neither payroll approval nor posting. A granted commit still requires the exact draft's approval and protected reconciliation | PAY-ARCH-003 |
 
 Rationale: these cases make existing decisions reviewable without selecting a
 storage schema, identifier generator, database lock strategy, or source-origin
