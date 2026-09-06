@@ -163,15 +163,15 @@ choice within payroll scope, identify that choice and ask before adopting it.
 
 ## Implementation checkpoint status
 
-Implementation status following the reviewed CP-2 merge on 2026-09-06:
+Implementation status on 2026-09-06, after CP-4 annual and CLI subset reviews:
 
 | Checkpoint | Recorded result |
 |---|---|
 | CP-0 — conformance and boundaries | [Core PR #173](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/173) merged into the draft hub |
 | CP-1 — source/API/application integrity | [Core PR #174](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/174) reviewed and merged into the draft hub |
 | CP-2 — explicit contributions and generic liabilities | [Core PR #175](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/175) reviewed, fixed and merged into the draft hub |
-| CP-3 — draft controls and policy-aware employee commit | Sol-medium implementation underway in a separate branch |
-| CP-4 — annual package, CLI and authenticated evidence | Annual API implementation underway; CLI integration awaits accepted controls; live evidence remains open |
+| CP-3 — draft controls and policy-aware employee commit | [Core PR #177](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/177): local tests passed; seven independent review findings in consolidated fix round 1; unmerged |
+| CP-4 — annual package, CLI and authenticated evidence | [Core PR #176](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/176): annual API and liability/remittance/annual CLI subsets reviewed; control CLI and full authenticated evidence remain; unmerged |
 | CP-5 — integrated conformance and whole-branch review | Pending |
 
 The current integrated hub commit is
@@ -185,6 +185,23 @@ CP-2's scoped fix verification ran 83 top-level PostgreSQL tests and 40 subtests
 with zero failures or skips, at code/test commit
 `385f0d3ce5a86b4a384c7fe6e6427377ced9e363`; final reviewed commit
 `fd30fe3b68588ddee3cfbd82bae8ac635adf11fc` adds conformance documentation only.
+
+CP-4 annual API is reviewed at
+`b5827f48c15a4490a896c0da8f8d194d6ad4229b`: the final annual PostgreSQL suite
+passed 9 top-level tests and 14 subtests with zero failures/skips, including
+unbounded aggregate precision. The liability/remittance/annual CLI subset is
+reviewed at `eca76d56ab35a9a05cdbf9c680acb6099320131e`: 450 named CLI tests/subtests
+and 7 targeted transport/database tests/subtests passed, all with zero
+failures/skips. These are accepted subsets in an open checkpoint PR, not yet
+integrated into the hub.
+
+[E2E companion PR #61](https://github.com/agentlabs-poc/agentlabs-hrms-e2e/pull/61)
+has a reviewed identity/evidence foundation at
+`43b667a89999033816fbf024b74368875fbfd1e7`. The full journey and live acceptance
+remain open. Its 99-of-100 scenario needs an explicitly supplied 100-employee
+scope in a disposable tenant; the existing S03/S03C baseline contains one
+employee. No deployed environment or authenticated live result is claimed.
+
 The Core checkpoint PR and conformance record describe the verification
 and the five review fixes. This local evidence does not certify the pending
 controls, annual package, CLI or authenticated live journey. No new payroll
