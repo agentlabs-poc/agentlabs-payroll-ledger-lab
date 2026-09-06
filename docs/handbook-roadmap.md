@@ -37,6 +37,14 @@ material behavior choices from engineering, deployment and future policy work.
 Browser-lab gaps and local Core findings have separate evidence and must not be
 used as a percentage of handbook completion.
 
+## Proposed implementation plan
+
+The [handbook compatibility plan](superpowers/plans/2026-09-06-payroll-handbook-compatibility.md)
+now defines CP-0 through CP-5, four implementation packages, repository scope,
+file ownership and acceptance evidence. Coding is assigned to `gpt-5.6-sol` at
+medium reasoning, with primary-agent integration/review. This records the user's
+requested plan and execution preference; no coding starts in this planning pass.
+
 ## Incorporated coverage
 
 - [Main handbook](handbook.md#reading-path): five ledgers, manager handoff,

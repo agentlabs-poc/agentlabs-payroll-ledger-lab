@@ -353,6 +353,26 @@ balance and the worked payroll arithmetic; `git diff --check` passed. The
 source review confirmed the cited Go/SQL controls and unchanged Core head.
 No new runtime test result is claimed.
 
+## Handbook compatibility implementation plan — 2026-09-06
+
+The user requested a plan and selected Sol-medium coding subagents. The
+[master plan](superpowers/plans/2026-09-06-payroll-handbook-compatibility.md)
+and four linked packages define repository/branch scope, file ownership,
+proposed interfaces, dependency order, acceptance cases and CP-0 through CP-5.
+The plan extends beyond the six database findings to verify source lifetime,
+fixed draft semantics, corrections, annual package scope and public acceptance.
+The existing E2E S03/S03C signoff harness is the integration starting point.
+
+Coding agents are specified as `gpt-5.6-sol` with medium reasoning; the primary
+agent retains integration and review. This planning pass changes only handbook
+Markdown. Core and E2E code remain unchanged, and no coding agent is started.
+New schema/API names are proposed engineering choices; no organizational rule
+or superseded question is adopted by writing the plan.
+The planning checks covered 36 Markdown files and 341 local links/anchors,
+fence balance and worked arithmetic. A self-review checked contract coverage,
+package dependencies, named interfaces, coding-model instructions and placeholder
+absence. No runtime verification is claimed for this documentation-only pass.
+
 ## Verification
 
 Review this change against the discussion snapshot above. Verify all local

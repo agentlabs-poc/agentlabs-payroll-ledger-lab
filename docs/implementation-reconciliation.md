@@ -200,3 +200,13 @@ Recommended checkpoints when implementation resumes:
 These checkpoints recommend the next work; they do not resume it. This pass
 changes only handbook Markdown. Core code and its branch head, database contents,
 runtime, hub tickets and remote repositories remain unchanged.
+
+## Implementation plan derived from this reconciliation
+
+The [compatibility plan](superpowers/plans/2026-09-06-payroll-handbook-compatibility.md)
+turns these dispositions into source/application, contribution/liability,
+draft-control and annual/public-acceptance packages. It also verifies unchanged
+Core contracts before claiming whole-handbook compatibility. The user selected
+Sol at medium reasoning for coding subagents. Proposed schema/API details in
+the plan are engineering choices for review; this report's historical evidence
+and the handbook's approved concepts remain distinct.
