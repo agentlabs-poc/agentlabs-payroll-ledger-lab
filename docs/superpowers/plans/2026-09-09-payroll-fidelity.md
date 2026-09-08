@@ -8,6 +8,13 @@
 
 **Spec:** [Fidelity study](../../design/simulation-fidelity-review.md), [canonical identity contract](../../design/canonical-identities.md), Core payroll-operation-contracts and hrms-payroll-policy chapters.
 
+**Latest user constraint:** this is demo work; do not expand regressions or run
+extended review cycles. Validate by executing the actual walkthrough, checking
+canonical keys, money and meaningful transitions, and building the HTML. The
+original regression/review checklist below is superseded by this narrower
+validation workflow; completed checks may be retained, but they must not delay
+the working demonstration. Keep necessary compatibility edits small.
+
 **Baseline:** Lab 5d421f6 on docs/payroll-handbook-compat. Only disposable fresh SQLite databases; no migration of user data. Root owns docs/ and diagrams; implementers own assigned code/tests/exports. No implementation worker subagents.
 
 ## Execution decisions and rationale

@@ -1,7 +1,7 @@
 {
-  "status": "Employee earning key contract includes employee identity; other employee-owned key families remain under review.",
+  "status": "Canonical employee-owned identity map pinned and demonstrated in the six-month SQLite flow.",
   "identity_rule": "The complete key must uniquely identify a record within its tenant. Every employee-owned record must include the employee identity in its key. Key identity and JSON identity must agree.",
-  "prototype_notice": "Earning keys must include employee identity and preserve the earning ID and revision. Other employee-owned snapshot key families still require reconciliation. Physical key1–key10 columns are not implemented.",
+  "prototype_notice": "Employee-owned records require employee identity in their canonical key. The SQLite demonstration uses employee-scoped rows and exact references. Generic key1–key10 columns remain a storage preview, not an implemented physical schema.",
   "open_decision": {
     "id": "earning_cardinality",
     "question": "Whether to restrict an employee/component to one earning stream is not settled. Existing earning IDs are retained; this does not block employee identity in earning keys."
@@ -39,70 +39,118 @@
       "layer": "L1",
       "owner": "Tenant",
       "meaning": "A reusable payroll component definition, such as Basic or HRA, with its earning, deduction or employer-contribution meaning. It does not hold an employee amount.",
-      "identity": "Component identity and immutable revision; no employee scope for shared definitions."
+      "identity": "payroll.component:<component_id>:<revision>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "component_id",
+        "revision"
+      ]
     },
     {
       "type": "payroll.earning",
       "layer": "L1",
       "owner": "Employee",
       "meaning": "An employee entitlement to an amount for one payroll component, valid over an effective period.",
-      "identity": "payroll.earning:<employee-id>:<earning-id>:<revision>. Within the tenant, employee, earning ID and revision identify the record and must match its JSON. No new employee/component uniqueness policy is introduced."
+      "identity": "payroll.earning:<employee_id>:<earning_id>:<revision>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "earning_id",
+        "revision"
+      ]
     },
     {
       "type": "payroll.instruction",
       "layer": "L1",
       "owner": "Employee",
       "meaning": "An employee payroll instruction with an amount, component, monthly or one-time cadence, and applicability or expiry.",
-      "identity": "Employee scope is required. Final business identity and encoding must be reconciled before key changes."
+      "identity": "payroll.instruction:<employee_id>:<instruction_id>:<revision>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "instruction_id",
+        "revision"
+      ]
     },
     {
       "type": "payroll.draft",
       "layer": "L1",
       "owner": "Employee",
       "meaning": "The fixed identity and metadata of one employee draft: month, exact selected sources, content hash and totals. Monetary lines live in payroll_draft_ledger.",
-      "identity": "Employee scope is required. Distinct drafts must retain distinct identities; month alone is not sufficient."
+      "identity": "payroll.draft:<employee_id>:<draft_id>:<revision>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "draft_id",
+        "revision"
+      ]
     },
     {
       "type": "payroll.draft.control",
       "layer": "L1",
       "owner": "Employee, through the draft",
       "meaning": "An immutable revision of the hold or cancellation control for an exact draft. It does not change draft amounts.",
-      "identity": "Employee and exact draft identity are required; successive control revisions remain distinct."
+      "identity": "payroll.draft.control:<employee_id>:<draft_id>:<revision>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "draft_id",
+        "revision"
+      ]
     },
     {
       "type": "payroll.draft.review",
       "layer": "L1",
       "owner": "Employee, through the draft",
       "meaning": "A recorded review bound to exact draft content and control context. Whether review is required is a consuming-layer policy.",
-      "identity": "Employee and exact draft identity are required; each review is separately identifiable."
+      "identity": "payroll.draft.review:<employee_id>:<draft_id>:<review_id>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "draft_id",
+        "review_id"
+      ]
     },
     {
       "type": "payroll.instruction.resolution",
       "layer": "L1",
       "owner": "Employee, through the draft",
       "meaning": "Evidence of how an instruction was treated in a draft and the resulting draft effects. This does not consume the instruction.",
-      "identity": "Employee, exact draft and resolution identity must agree with the referenced instruction and effects."
+      "identity": "payroll.instruction.resolution:<employee_id>:<draft_id>:<resolution_id>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "draft_id",
+        "resolution_id"
+      ]
     },
     {
       "type": "payroll.instruction.application",
       "layer": "L1",
       "owner": "Employee",
       "meaning": "Permanent evidence of an instruction applied by committed payroll, linking the instruction and posted effects.",
-      "identity": "Employee scope and stable instruction identity are required; monthly and one-time consumption scopes remain distinct."
+      "identity": "payroll.instruction.application:<employee_id>:<instruction_id>:<application_id>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "instruction_id",
+        "application_id"
+      ]
     },
     {
       "type": "payroll.operation.receipt",
       "layer": "L1",
       "owner": "Same owner as the operation",
       "meaning": "Durable domain-operation evidence binding executor, retry identity, request and outcome. It is not proof of exact HTTP response bytes.",
-      "identity": "Employee operations require employee scope in the receipt key. Other identities follow the operation being recorded."
+      "identity": "payroll.operation.receipt:<employee_id>:<subject_id>:<receipt_id>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner. This map covers the employee operations implemented in the simulation; other operation scopes need their own contract.",
+      "key_fields": [
+        "employee_id",
+        "subject_id",
+        "receipt_id"
+      ]
     },
     {
       "type": "payroll.employee.settings",
       "layer": "L2",
       "owner": "Employee",
       "meaning": "Auxiliary employee payroll preferences and an opaque policy reference. Settings do not authorize commit or define earnings.",
-      "identity": "Employee identity and immutable revision identify the displayed settings record."
+      "identity": "payroll.employee.settings:<employee_id>:<revision>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "revision"
+      ]
     }
   ],
   "storage_contract": {
@@ -133,6 +181,6 @@
     },
     "meaning_rule": "Canonical JSON remains the representation. Decode its serialized key into generic key1 through key10 columns for indexing. The registered contract defines segment meaning and order; key and columns must agree. Separately, earning keys are corrected to include the required employee identity; value fields remain unchanged.",
     "indexing_rule": "Matching composite indexes support prefix filtering and fetching. This is index grouping, not physical table partitioning. Actual speed gains remain to be measured.",
-    "prototype_notice": "The timeline uses serialized-key SQLite rows; generic columns are a storage preview. Earning keys require employee scope. Other employee-owned key families and physical column DDL remain pending."
+    "prototype_notice": "The timeline uses serialized-key SQLite rows. Decoded generic columns are a storage preview. Employee keys follow the canonical identity map; the physical column migration is separate."
   }
 }

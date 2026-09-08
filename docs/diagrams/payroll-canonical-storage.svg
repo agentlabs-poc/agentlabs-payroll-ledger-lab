@@ -46,37 +46,38 @@
 <text x="589" y="451" font-size="11.5" font-weight="400" fill="#52647A">employer contributions</text>
 <rect x="853" y="348" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
 <text x="866" y="377" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.earning</text>
-<text x="866" y="407" font-size="13" font-weight="600" fill="#172B46">Earning / revision</text>
+<text x="866" y="407" font-size="13" font-weight="600" fill="#172B46">Employee / earning / revision</text>
 <text x="866" y="434" font-size="11.5" font-weight="400" fill="#52647A">Entitlement, amount, effective dates</text>
 <rect x="1130" y="348" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
 <text x="1143" y="377" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.instruction</text>
-<text x="1143" y="407" font-size="13" font-weight="600" fill="#172B46">Instruction / revision</text>
+<text x="1143" y="407" font-size="13" font-weight="600" fill="#172B46">Employee / instruction / revision</text>
 <text x="1143" y="434" font-size="11.5" font-weight="400" fill="#52647A">Cadence, amount, expiry</text>
 <rect x="576" y="484" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
 <text x="589" y="513" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.draft</text>
-<text x="589" y="543" font-size="13" font-weight="600" fill="#172B46">Draft / fixed revision</text>
+<text x="589" y="543" font-size="13" font-weight="600" fill="#172B46">Employee / draft / fixed revision</text>
 <text x="589" y="570" font-size="11.5" font-weight="400" fill="#52647A">Exact sources, hash and totals</text>
 <rect x="853" y="484" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
 <text x="866" y="513" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.draft.control</text>
-<text x="866" y="543" font-size="13" font-weight="600" fill="#172B46">Draft / control revision</text>
+<text x="866" y="543" font-size="13" font-weight="600" fill="#172B46">Employee / draft / control revision</text>
 <text x="866" y="570" font-size="11.5" font-weight="400" fill="#52647A">Hold or release, actor and reason</text>
 <rect x="1130" y="484" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
 <text x="1143" y="513" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.draft.review</text>
-<text x="1143" y="543" font-size="13" font-weight="600" fill="#172B46">Draft / review ID</text>
+<text x="1143" y="543" font-size="13" font-weight="600" fill="#172B46">Employee / draft / review ID</text>
 <text x="1143" y="570" font-size="11.5" font-weight="400" fill="#52647A">Exact content and control decision</text>
 <rect x="576" y="620" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
 <text x="589" y="649" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.instruction.resolution</text>
-<text x="589" y="679" font-size="13" font-weight="600" fill="#172B46">Draft / resolution ID</text>
+<text x="589" y="679" font-size="13" font-weight="600" fill="#172B46">Employee / draft / resolution ID</text>
 <text x="589" y="706" font-size="11.5" font-weight="400" fill="#52647A">Instruction treatment in the draft</text>
 <rect x="853" y="620" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
 <text x="866" y="649" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.instruction.application</text>
-<text x="866" y="679" font-size="13" font-weight="600" fill="#172B46">Version / application ID</text>
+<text x="866" y="679" font-size="13" font-weight="600" fill="#172B46">Employee / instruction / application</text>
 <text x="866" y="706" font-size="11.5" font-weight="400" fill="#52647A">Permanent consumption and effects</text>
 <rect x="1130" y="620" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
 <text x="1143" y="649" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.operation.receipt</text>
-<text x="1143" y="679" font-size="13" font-weight="600" fill="#172B46">Subject / receipt ID</text>
+<text x="1143" y="679" font-size="13" font-weight="600" fill="#172B46">Employee / subject / receipt ID</text>
 <text x="1143" y="706" font-size="11.5" font-weight="400" fill="#52647A">Retry identity and durable outcome</text>
-<text x="580" y="798" font-size="14" font-weight="400" fill="#52647A" font-family="DejaVu Sans Mono, monospace">Shared envelope: tenant | key | value (JSON) | ts | state</text>
+<text x="580" y="798" font-size="14" font-weight="400" fill="#52647A" font-family="DejaVu Sans Mono, monospace">JSON key projects to key1–key10; tenant, value, ts and state stay.</text>
+<text x="580" y="820" font-size="12" fill="#52647A">Current SQLite stores the serialized key; decoded columns are a preview.</text>
 <text x="48" y="879" font-size="15" font-weight="700" fill="#52647A">L2  /  REUSABLE AUXILIARY DATA</text>
 <rect x="48" y="901" width="1384" height="137" rx="16" fill="#F2F0FA" stroke="#E0DBEF"/>
 <text x="72" y="941" font-size="21" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll_l2_records</text>

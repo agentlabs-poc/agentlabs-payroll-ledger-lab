@@ -15,7 +15,7 @@ The earlier SQLite/browser keys such as `payroll.earning:EARN-BASIC:1` violate
 this ownership rule. The user explicitly requested correction of the employee
 earning example. The scoped correction below retains the existing earning ID
 and revision and adds employee identity through the authoritative key contract.
-Other employee-owned record families still require reconciliation.
+The complete employee-owned identity map below governs the remaining families.
 
 ## Generic segment columns — agreed storage direction
 
@@ -109,7 +109,7 @@ from this pin. The current simulation remains evidence for the earlier layout.
 
 ## Employee earning identity
 
-**Correction target; implementation paused for the whole-flow fidelity study.**
+**Correction target implemented in the six-month SQLite demonstration.**
 
 Meaning: an employee's entitlement to an amount for one payroll
 component, valid over an effective period.
@@ -156,19 +156,44 @@ The Basic ₹30,000 and HRA ₹20,000 example demonstrates component definitions
 employee amounts; it does not resolve earning-stream identity or establish an
 organizational compensation policy.
 
-## Subsequent reconciliation
+## Complete canonical identity map
 
-Apply the same definition-first method next to
-instructions, draft metadata, controls, reviews, resolutions, applications,
-operation receipts and employee settings. Record which are employee-owned and
-which are shared; employee ownership must be explicit rather than inferred from
-an arbitrary ID. Resolve references and query/index dimensions from those
-identities, then update the simulation, JSON, examples and diagrams together.
+The user approved fixing the studied gaps. Keep local subject identities and
+include the employee for every employee-owned family. This map governs the
+simulation correction; implementation acceptance is tracked in the
+[fidelity plan](../superpowers/plans/2026-09-09-payroll-fidelity.md).
 
-The three canonical ledger tables and the separation of shared components from
-employee earnings remain unchanged by this discussion. Existing proof results
-describe the earlier key contract; they do not establish compliance with this
-new ownership requirement.
+| Canonical type | Fields after the dotted type |
+|---|---|
+| payroll.component | component_id, revision |
+| payroll.earning | employee_id, earning_id, revision |
+| payroll.instruction | employee_id, instruction_id, revision |
+| payroll.draft | employee_id, draft_id, revision |
+| payroll.draft.control | employee_id, draft_id, revision |
+| payroll.draft.review | employee_id, draft_id, review_id |
+| payroll.instruction.resolution | employee_id, draft_id, resolution_id |
+| payroll.instruction.application | employee_id, instruction_id, application_id |
+| payroll.operation.receipt | employee_id, subject_id, receipt_id |
+| payroll.employee.settings | employee_id, revision |
+
+Current receipts represent employee operations. Employer-wide receipt variants
+are not invented by this map. Shared components retain tenant ownership and no
+employee field. Existing JSON fields remain the representation; owner identity
+must agree with direct employee fields or exact referenced records. Instruction
+applications retain version references in JSON while their key uses the stable
+instruction identity. Employee/month association still does not impose one draft
+per month or a canonical ID-generation algorithm.
+
+Each dotted namespace token and each decoded identity field occupies one key
+column. A control key `payroll.draft.control:E101:D1:2` therefore maps to payroll,
+draft, control, E101, D1, 2 in key1 through key6. Dots inside an opaque ID remain
+literal under the existing registered grammar. Canonical JSON remains unchanged
+by physical projection; the employee-ownership correction changes formerly
+incorrect key strings and their exact references, not monetary values.
+
+The three canonical ledger tables and the source/component distinction remain
+unchanged. Historical proof results do not prove this new identity map; the
+current demonstration exercises two employees over six months using the corrected identities. Validation follows the demo-only scope in the implementation plan.
 
 ## Shared definition source
 

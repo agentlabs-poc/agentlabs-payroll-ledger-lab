@@ -189,3 +189,9 @@ unselected input changes; it does not infer overlap or trace external origins.
 
 The [implementation plan](superpowers/plans/2026-09-09-payroll-fidelity.md)
 records the canonical map, remaining implementation choices and finite checks.
+
+The user then clarified that this is demo work and asked not to get into
+regression work. Further validation is therefore limited to executing the actual
+walkthrough, checking canonical keys, amounts and meaningful transitions, and
+building the HTML. Completed checks are retained; no further regression expansion
+or prolonged review cycle is part of this demo task.
