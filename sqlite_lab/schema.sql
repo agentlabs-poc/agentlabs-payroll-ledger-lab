@@ -24,7 +24,7 @@ ON payroll_l1_records (
     json_extract(value, '$.component_id'),
     CAST(json_extract(value, '$.revision') AS INTEGER) DESC
 )
-WHERE key LIKE 'payroll.component/%';
+WHERE key LIKE 'payroll.component:%';
 
 CREATE INDEX l1_receipt_replay
 ON payroll_l1_records (
@@ -34,7 +34,7 @@ ON payroll_l1_records (
     json_extract(value, '$.subject_id'),
     json_extract(value, '$.idempotency_key')
 )
-WHERE key LIKE 'payroll.operation.receipt/%';
+WHERE key LIKE 'payroll.operation.receipt:%';
 
 CREATE UNIQUE INDEX l1_monthly_application_once
 ON payroll_l1_records (
@@ -43,7 +43,7 @@ ON payroll_l1_records (
     json_extract(value, '$.employee_id'),
     json_extract(value, '$.payroll_month')
 )
-WHERE key LIKE 'payroll.instruction.application/%'
+WHERE key LIKE 'payroll.instruction.application:%'
   AND json_extract(value, '$.cadence') = 'monthly';
 
 CREATE UNIQUE INDEX l1_one_time_application_once
@@ -52,7 +52,7 @@ ON payroll_l1_records (
     json_extract(value, '$.instruction_id'),
     json_extract(value, '$.employee_id')
 )
-WHERE key LIKE 'payroll.instruction.application/%'
+WHERE key LIKE 'payroll.instruction.application:%'
   AND json_extract(value, '$.cadence') = 'one_time';
 
 CREATE INDEX l1_application_reverse
@@ -62,7 +62,7 @@ ON payroll_l1_records (
     json_extract(value, '$.employee_id'),
     json_extract(value, '$.payroll_month')
 )
-WHERE key LIKE 'payroll.instruction.application/%';
+WHERE key LIKE 'payroll.instruction.application:%';
 
 CREATE INDEX l2_settings_effective
 ON payroll_l2_records (
@@ -71,7 +71,7 @@ ON payroll_l2_records (
     json_extract(value, '$.effective_from') DESC,
     CAST(json_extract(value, '$.revision') AS INTEGER) DESC
 )
-WHERE key LIKE 'payroll.employee.settings/%';
+WHERE key LIKE 'payroll.employee.settings:%';
 
 CREATE TRIGGER l1_immutable_update BEFORE UPDATE ON payroll_l1_records
 BEGIN SELECT RAISE(ABORT, 'L1 records are immutable'); END;

@@ -75,7 +75,7 @@ class Payroll:
                         component_id, amount_minor, cadence, start_month, end_month=None):
         for value, label in ((instruction_id, "instruction"), (version_id, "instruction version"),
                              (employee_id, "employee"), (component_id, "component")):
-            _identifier(value, label)
+            _identifier(value, label, identity=True)
         if cadence not in {"monthly", "one_time"} or not MONTH.fullmatch(start_month):
             raise PayrollError("invalid instruction cadence or month")
         if end_month is not None and (not MONTH.fullmatch(end_month) or end_month < start_month):
@@ -115,7 +115,7 @@ class Payroll:
     def add_instruction_version(self, instruction_id, version_id, revision, component_id, amount_minor):
         for value, label in ((instruction_id, "instruction"), (version_id, "instruction version"),
                              (component_id, "component")):
-            _identifier(value, label)
+            _identifier(value, label, identity=True)
         if isinstance(revision, bool) or not isinstance(revision, int) or revision <= 0:
             raise PayrollError("revision must be a positive integer")
         if isinstance(amount_minor, bool) or not isinstance(amount_minor, int) or amount_minor < 0:
@@ -154,7 +154,7 @@ class Payroll:
                      salary_minor, instruction_version_ids, employer_contribution_minor=0):
         for value, label in ((calculation_id, "calculation"), (draft_id, "draft"),
                              (employee_id, "employee")):
-            _identifier(value, label)
+            _identifier(value, label, identity=True)
         if not MONTH.fullmatch(payroll_month):
             raise PayrollError("invalid payroll month")
         for amount in (salary_minor, employer_contribution_minor):
@@ -288,7 +288,8 @@ class Payroll:
             if approval_required:
                 review = self.connection.execute(
                     "SELECT 1 FROM payroll_l1_records WHERE tenant=? "
-                    "AND key LIKE 'payroll.draft.review/' || ? || '/%' "
+                    "AND key LIKE 'payroll.draft.review:%' "
+                    "AND json_extract(value,'$.draft_id')=? "
                     "AND json_extract(value,'$.draft_content_hash')=? "
                     "AND json_extract(value,'$.control_revision')=? "
                     "AND json_extract(value,'$.decision')='approved'",
@@ -318,7 +319,8 @@ class Payroll:
                     liability_entry_id = posted_id
             resolutions = self.connection.execute(
                 "SELECT value FROM payroll_l1_records WHERE tenant=? "
-                "AND key LIKE 'payroll.instruction.resolution/' || ? || '/%'",
+                "AND key LIKE 'payroll.instruction.resolution:%' "
+                "AND json_extract(value,'$.draft_id')=?",
                 (self.tenant, draft_id),
             ).fetchall()
             for row in resolutions:
@@ -370,7 +372,7 @@ class Payroll:
     def instruction_application(self, instruction_id, employee_id, payroll_month):
         row = self.connection.execute(
             "SELECT tenant,key,value,ts,state FROM payroll_l1_records WHERE tenant=? "
-            "AND key LIKE 'payroll.instruction.application/%' "
+            "AND key LIKE 'payroll.instruction.application:%' "
             "AND json_extract(value,'$.instruction_id')=? "
             "AND json_extract(value,'$.employee_id')=? "
             "AND json_extract(value,'$.payroll_month')=?",
@@ -449,7 +451,7 @@ class Payroll:
     def _receipt(self, operation, subject_id, idempotency_key):
         row = self.connection.execute(
             "SELECT tenant,key,value,ts,state FROM payroll_l1_records WHERE tenant=? "
-            "AND key LIKE 'payroll.operation.receipt/%' "
+            "AND key LIKE 'payroll.operation.receipt:%' "
             "AND json_extract(value,'$.executor')=? AND json_extract(value,'$.operation')=? "
             "AND json_extract(value,'$.subject_id')=? AND json_extract(value,'$.idempotency_key')=?",
             (self.tenant, self.actor, operation, subject_id, idempotency_key),

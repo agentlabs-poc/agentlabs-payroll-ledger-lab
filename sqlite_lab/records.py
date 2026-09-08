@@ -49,8 +49,15 @@ SCHEMAS = {
 }
 
 
-def _identifier(value, label="identifier"):
-    if not isinstance(value, str) or not IDENTIFIER.fullmatch(value):
+def _identifier(value, label="identifier", identity=False):
+    valid = isinstance(value, str) and 1 <= len(value) <= 64 and value[0].isalnum()
+    if identity:
+        valid = valid and value.isascii() and all(
+            character.isalnum() or character in "._-:\\" for character in value
+        )
+    else:
+        valid = valid and bool(IDENTIFIER.fullmatch(value))
+    if not valid:
         raise RecordError(f"invalid {label}")
     return value
 
@@ -64,12 +71,17 @@ def _revision(value):
 def canonical_key(record_type: str, subject: str, record) -> str:
     if record_type not in SCHEMAS:
         raise RecordError("unknown record type")
-    _identifier(subject, "subject")
+    subject = _encode_identity(subject, "subject")
     if SCHEMAS[record_type].get("revision"):
         record = str(_revision(record if isinstance(record, int) else _parse_revision(record)))
     else:
-        _identifier(record, "record")
-    return f"{record_type}/{subject}/{record}"
+        record = _encode_identity(record, "record")
+    return f"{record_type}:{subject}:{record}"
+
+
+def _encode_identity(value, label):
+    _identifier(value, label, identity=True)
+    return value.replace("\\", "\\\\").replace(":", "\\:")
 
 
 def _parse_revision(value):
@@ -79,16 +91,33 @@ def _parse_revision(value):
 
 
 def parse_key(key: str):
-    if not isinstance(key, str) or key.count("/") != 2:
+    if not isinstance(key, str) or ":" not in key:
         raise RecordError("invalid canonical key")
-    record_type, subject, record = key.split("/")
+    record_type, encoded = key.split(":", 1)
     if record_type not in SCHEMAS:
         raise RecordError("unknown record type")
-    _identifier(subject, "subject")
+    segments = [""]
+    index = 0
+    while index < len(encoded):
+        character = encoded[index]
+        if character == "\\":
+            index += 1
+            if index >= len(encoded) or encoded[index] not in {":", "\\"}:
+                raise RecordError("unknown or trailing identity escape")
+            segments[-1] += encoded[index]
+        elif character == ":":
+            segments.append("")
+        else:
+            segments[-1] += character
+        index += 1
+    if len(segments) != 2:
+        raise RecordError("canonical key must contain three segments")
+    subject, record = segments
+    _identifier(subject, "subject", identity=True)
     if SCHEMAS[record_type].get("revision"):
         parsed_record = _parse_revision(record)
     else:
-        _identifier(record, "record")
+        _identifier(record, "record", identity=True)
         parsed_record = record
     return record_type, subject, parsed_record
 
@@ -128,7 +157,7 @@ def _validate(record_type, subject, record, value):
         if value["kind"] not in {"earning", "deduction", "employer_contribution"}:
             raise RecordError("invalid component kind")
         for name in ("component_id", "code", "country_code"):
-            _identifier(value[name], name)
+            _identifier(value[name], name, identity=name == "component_id")
         if not isinstance(value["label"], str) or not value["label"]:
             raise RecordError("label is required")
     elif record_type == "payroll.employee.settings":
@@ -137,7 +166,7 @@ def _validate(record_type, subject, record, value):
         policy = value["policy_ref"]
         if not isinstance(policy, dict) or set(policy) != {"id", "revision"}:
             raise RecordError("invalid policy reference")
-        _identifier(policy["id"], "policy id")
+        _identifier(policy["id"], "policy id", identity=True)
         _revision(policy["revision"])
         if not isinstance(value["payslip_locale"], str) or not value["payslip_locale"]:
             raise RecordError("locale is required")
@@ -203,11 +232,16 @@ class RecordStore:
         return self._get("payroll_l2_records", tenant, key)
 
     def history_l1(self, tenant, record_type, subject):
-        prefix = canonical_key(record_type, subject, 1).rsplit("/", 1)[0] + "/"
+        if record_type not in SCHEMAS or not SCHEMAS[record_type].get("revision"):
+            raise RecordError("history requires a versioned record type")
+        _identifier(subject, "subject", identity=True)
+        subject_field = SCHEMAS[record_type]["subject"]
         return [_row(row) for row in self.connection.execute(
-            "SELECT tenant,key,value,ts,state FROM payroll_l1_records "
-            "WHERE tenant=? AND key LIKE ? ORDER BY CAST(json_extract(value,'$.revision') AS INTEGER)",
-            (tenant, prefix + "%"),
+            f"SELECT tenant,key,value,ts,state FROM payroll_l1_records "
+            f"WHERE tenant=? AND key LIKE '{record_type}:%' "
+            f"AND json_extract(value,'$.{subject_field}')=? "
+            "ORDER BY CAST(json_extract(value,'$.revision') AS INTEGER)",
+            (tenant, subject),
         )]
 
     def current_l1(self, tenant, record_type, subject):
@@ -230,7 +264,7 @@ class RecordStore:
             raise RecordError("invalid payroll month")
         row = _row(self.connection.execute(
             "SELECT tenant,key,value,ts,state FROM payroll_l2_records "
-            "WHERE tenant=? AND key LIKE 'payroll.employee.settings/%' "
+            "WHERE tenant=? AND key LIKE 'payroll.employee.settings:%' "
             "AND json_extract(value,'$.employee_id')=? "
             "AND json_extract(value,'$.effective_from')<=? "
             "ORDER BY json_extract(value,'$.effective_from') DESC, "

@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from sqlite_lab.records import RecordError, RecordStore, canonical_key, connect
+from sqlite_lab.records import RecordError, RecordStore, canonical_key, connect, parse_key
 
 
 class RecordStoreTest(unittest.TestCase):
@@ -22,18 +22,37 @@ class RecordStoreTest(unittest.TestCase):
             "schema_version": 1,
             "component_id": component_id,
             "revision": revision,
-            "code": component_id.lower(),
+            "code": component_id.replace(":", "-").replace("\\", "-"),
             "label": label or component_id,
             "kind": "earning",
             "country_code": "IN",
         }
 
-    def test_canonical_key_rejects_separator_and_preserves_case(self):
-        self.assertEqual(canonical_key("payroll.component", "AbC_9", 10),
-                         "payroll.component/AbC_9/10")
+    def test_canonical_key_escapes_identity_colon_and_backslash_and_preserves_case(self):
+        key = canonical_key("payroll.component", "Ab:C\\D.x_9", 10)
+        self.assertEqual(key, "payroll.component:Ab\\:C\\\\D.x_9:10")
+        self.assertEqual(parse_key(key), ("payroll.component", "Ab:C\\D.x_9", 10))
+        review_key = canonical_key("payroll.draft.review", "D:1", "R\\2:west")
+        self.assertEqual(review_key, "payroll.draft.review:D\\:1:R\\\\2\\:west")
+        self.assertEqual(parse_key(review_key),
+                         ("payroll.draft.review", "D:1", "R\\2:west"))
+
+    def test_canonical_key_rejects_malformed_segments_and_unnecessary_escapes(self):
         for invalid in ("", "E/101", "white space", "../E101"):
             with self.subTest(invalid=invalid), self.assertRaises(RecordError):
                 canonical_key("payroll.component", invalid, 1)
+        malformed_keys = (
+            "payroll.component:subject",
+            "payroll.component::1",
+            "payroll.component:subject:",
+            "payroll.component:subject:1:extra",
+            "payroll.component:sub\\.ject:1",
+            "payroll.component:subject\\:1",
+            "payroll.component:subject:1/",
+        )
+        for key in malformed_keys:
+            with self.subTest(key=key), self.assertRaises(RecordError):
+                parse_key(key)
 
     def test_l1_and_l2_are_separate_scopes_and_l1_has_no_public_generic_write(self):
         key = canonical_key("payroll.component", "E101", 1)
@@ -76,6 +95,36 @@ class RecordStoreTest(unittest.TestCase):
                 "T1", canonical_key("payroll.component", "C1", "0"),
                 self.component("C1", 0),
             )
+
+    def test_escaped_subject_history_orders_revisions_numerically(self):
+        component_id = "C:East\\Legacy.1"
+        for revision in (10, 2):
+            self.store._put_l1(
+                "T1", canonical_key("payroll.component", component_id, revision),
+                self.component(component_id, revision),
+            )
+        self.assertEqual(
+            [row["value"]["revision"] for row in
+             self.store.history_l1("T1", "payroll.component", component_id)],
+            [2, 10],
+        )
+
+    def test_history_subject_match_is_case_sensitive_and_not_a_like_pattern(self):
+        for component_id in ("C1", "c1", "C_1", "CA1"):
+            self.store._put_l1(
+                "T1", canonical_key("payroll.component", component_id, 1),
+                self.component(component_id, 1),
+            )
+        self.assertEqual(
+            [row["value"]["component_id"] for row in
+             self.store.history_l1("T1", "payroll.component", "C1")],
+            ["C1"],
+        )
+        self.assertEqual(
+            [row["value"]["component_id"] for row in
+             self.store.history_l1("T1", "payroll.component", "C_1")],
+            ["C_1"],
+        )
 
     def test_duplicate_identity_is_rejected_even_when_content_matches(self):
         key = canonical_key("payroll.component", "C1", 1)

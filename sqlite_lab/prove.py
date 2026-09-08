@@ -102,25 +102,25 @@ def _run(database: Path):
     query_plans = {
         "component_history": _plan(connection,
             "SELECT key FROM payroll_l1_records WHERE tenant=? "
-            "AND key LIKE 'payroll.component/%' AND json_extract(value,'$.component_id')=? "
+            "AND key LIKE 'payroll.component:%' AND json_extract(value,'$.component_id')=? "
             "ORDER BY CAST(json_extract(value,'$.revision') AS INTEGER) DESC",
             ("T1", "LOAN")),
         "effective_employee_settings": _plan(connection,
             "SELECT key FROM payroll_l2_records WHERE tenant=? "
-            "AND key LIKE 'payroll.employee.settings/%' "
+            "AND key LIKE 'payroll.employee.settings:%' "
             "AND json_extract(value,'$.employee_id')=? AND json_extract(value,'$.effective_from')<=? "
             "ORDER BY json_extract(value,'$.effective_from') DESC, "
             "CAST(json_extract(value,'$.revision') AS INTEGER) DESC LIMIT 1",
             ("T1", "E101", "2026-11")),
         "instruction_application_reverse_lookup": _plan(connection,
             "SELECT key FROM payroll_l1_records WHERE tenant=? "
-            "AND key LIKE 'payroll.instruction.application/%' "
+            "AND key LIKE 'payroll.instruction.application:%' "
             "AND json_extract(value,'$.instruction_id')=? "
             "AND json_extract(value,'$.employee_id')=? AND json_extract(value,'$.payroll_month')=?",
             ("T1", "I-LOAN", "E101", "2026-11")),
         "operation_replay": _plan(connection,
             "SELECT key FROM payroll_l1_records WHERE tenant=? "
-            "AND key LIKE 'payroll.operation.receipt/%' "
+            "AND key LIKE 'payroll.operation.receipt:%' "
             "AND json_extract(value,'$.executor')=? AND json_extract(value,'$.operation')=? "
             "AND json_extract(value,'$.subject_id')=? AND json_extract(value,'$.idempotency_key')=?",
             ("T1", "U7", "payroll.commit", "D1", "commit-e101-nov26")),
@@ -137,11 +137,11 @@ def _run(database: Path):
 
     def evidence_keys(record_type):
         return [row[0] for row in connection.execute(
-            "SELECT key FROM payroll_l1_records WHERE key LIKE ? ORDER BY key", (record_type + "/%",)
+            "SELECT key FROM payroll_l1_records WHERE key LIKE ? ORDER BY key", (record_type + ":%",)
         )]
     def receipt_keys(operation_prefix):
         return [row[0] for row in connection.execute(
-            "SELECT key FROM payroll_l1_records WHERE key LIKE 'payroll.operation.receipt/%' "
+            "SELECT key FROM payroll_l1_records WHERE key LIKE 'payroll.operation.receipt:%' "
             "AND json_extract(value,'$.operation') LIKE ? ORDER BY key",
             (operation_prefix + "%",),
         )]

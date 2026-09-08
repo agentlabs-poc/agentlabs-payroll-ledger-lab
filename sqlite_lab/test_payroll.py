@@ -64,7 +64,7 @@ class PayrollTest(unittest.TestCase):
         self.assertEqual(versioned["status"], "version_created")
         receipts = [json.loads(row[0]) for row in self.connection.execute(
             "SELECT value FROM payroll_l1_records "
-            "WHERE tenant='T1' AND key LIKE 'payroll.operation.receipt/%' "
+            "WHERE tenant='T1' AND key LIKE 'payroll.operation.receipt:%' "
             "AND json_extract(value,'$.operation') LIKE 'payroll.instruction.%' "
             "ORDER BY json_extract(value,'$.operation')"
         )]
@@ -73,6 +73,28 @@ class PayrollTest(unittest.TestCase):
         self.assertEqual(new_version["executor"], "U7")
         self.assertEqual(new_version["before"]["latest_revision"], 1)
         self.assertEqual(new_version["after"]["latest_revision"], 2)
+
+    def test_escaped_identities_work_through_component_instruction_draft_and_commit(self):
+        component_id = "LOAN:West\\Legacy.1"
+        instruction_id = "I:ESC\\1"
+        version_id = "IV:ESC\\1"
+        draft_id = "D:ESC\\1"
+        self.payroll.define_component(component_id, 1, "escaped.loan", "Escaped loan", "deduction", "IN")
+        self.payroll.add_instruction(
+            instruction_id, version_id, 1, "E:101\\A", component_id, 123_456,
+            "monthly", "2026-11", "2026-11",
+        )
+        draft = self.payroll.create_draft(
+            "CAL:ESC\\1", draft_id, "E:101\\A", "2026-11", 1_000_000, [version_id]
+        )
+        outcome = self.payroll.commit(draft_id, "commit:escaped\\1", 1)
+        self.assertEqual(draft["net_minor"], 876_544)
+        self.assertEqual(outcome["status"], "committed")
+        application = self.payroll.instruction_application(
+            instruction_id, "E:101\\A", "2026-11"
+        )
+        self.assertEqual(application["value"]["draft_id"], draft_id)
+        self.assertIn("payroll.instruction.application:IV\\:ESC\\\\1:", application["key"])
 
     def test_loan_applies_at_both_endpoints_and_expires_after_february(self):
         october = self.make_draft("2026-10", "D-OCT", "CAL-OCT")
@@ -104,10 +126,10 @@ class PayrollTest(unittest.TestCase):
         outcome = self.payroll.commit("D1", "commit-nov", 1)
         self.assertEqual(len(outcome["posted_entry_ids"]), 2)
         application = self.connection.execute(
-            "SELECT value FROM payroll_l1_records WHERE tenant='T1' AND key LIKE 'payroll.instruction.application/%'"
+            "SELECT value FROM payroll_l1_records WHERE tenant='T1' AND key LIKE 'payroll.instruction.application:%'"
         ).fetchone()
         receipt = self.connection.execute(
-            "SELECT value FROM payroll_l1_records WHERE tenant='T1' AND key LIKE 'payroll.operation.receipt/%'"
+            "SELECT value FROM payroll_l1_records WHERE tenant='T1' AND key LIKE 'payroll.operation.receipt:%'"
         ).fetchone()
         self.assertIsNotNone(application)
         self.assertIsNotNone(receipt)
@@ -119,7 +141,7 @@ class PayrollTest(unittest.TestCase):
         self.make_draft()
         self.connection.execute(
             "CREATE TRIGGER fail_receipt BEFORE INSERT ON payroll_l1_records "
-            "WHEN NEW.key LIKE 'payroll.operation.receipt/%' "
+            "WHEN NEW.key LIKE 'payroll.operation.receipt:%' "
             "BEGIN SELECT RAISE(ABORT, 'injected receipt failure'); END"
         )
         with self.assertRaises(sqlite3.IntegrityError):
@@ -128,7 +150,7 @@ class PayrollTest(unittest.TestCase):
             "SELECT COUNT(*) FROM payroll_ledger_entries WHERE tenant='T1'"
         ).fetchone()[0], 0)
         self.assertEqual(self.connection.execute(
-            "SELECT COUNT(*) FROM payroll_l1_records WHERE key LIKE 'payroll.instruction.application/%'"
+            "SELECT COUNT(*) FROM payroll_l1_records WHERE key LIKE 'payroll.instruction.application:%'"
         ).fetchone()[0], 0)
         self.assertEqual(self.connection.execute(
             "SELECT status FROM payroll_calculations WHERE tenant='T1' AND calculation_id='CAL1'"
@@ -183,7 +205,7 @@ class PayrollTest(unittest.TestCase):
         ).fetchone()[0], 2)
         self.assertEqual(self.connection.execute(
             "SELECT COUNT(*) FROM payroll_l1_records WHERE tenant='T1' "
-            "AND key LIKE 'payroll.operation.receipt/%' "
+            "AND key LIKE 'payroll.operation.receipt:%' "
             "AND json_extract(value,'$.operation')='payroll.commit'"
         ).fetchone()[0], 1)
 
