@@ -30,6 +30,21 @@ Publication order: merge Core hub PR #172 before this forwarding PR so the canon
 
 The [independent handbook review](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/review-2026-09-08.md) records the resolved documentation findings. Reviewed implementation is integrated in [Core draft hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172); complete authenticated handbook acceptance remains pending in [E2E PR #61](https://github.com/agentlabs-poc/agentlabs-hrms-e2e/pull/61).
 
+## Python CLI and persistent SQLite
+
+The [CLI guide](docs/design/python-cli.md) lists all implemented L1 and L2
+primitives and runnable commands. L3 consumer Python scripts invoke the CLI;
+the CLI calls the existing primitives in process. Production HRMS core remains Go.
+
+```sh
+python3 -m sqlite_lab.cli --help
+python3 -m sqlite_lab.cli_demo --db /tmp/payroll-cli-walkthrough.sqlite
+```
+
+Use a fresh database path. The walkthrough retains it for subsequent CLI queries.
+Generated IDs follow the [prefixed Snowflake Base36 direction](docs/design/canonical-generated-ids.md);
+current demo IDs are supplied fixtures and generator wiring remains separate.
+
 ## Canonical HTML simulation
 
 The browser shows a guided playback of **actual SQLite simulation rows**. It uses
@@ -54,10 +69,11 @@ Regenerate the browser fixture from the executable Python simulation:
 python3 -m sqlite_lab.demo --output public/canonical-flow.json
 ```
 
-The connected example is E101, November 2026: Basic ₹30,000 + HRA ₹20,000, employer
-contribution ₹3,000 and loan deduction ₹2,000. Gross is ₹53,000, deductions
-₹5,000 and net ₹48,000. An employer obligation of ₹3,000 remains outstanding
-when a ₹2,000 remittance is recorded; allocating that payment leaves ₹1,000 due.
+The connected example covers E101 and E102 over October 2026–March 2027 in
+18 stages, including a five-month loan, future-effective earnings, draft policy
+choices and subsequent-month corrections. Employer obligations total ₹36,000;
+explicit remittance allocations demonstrate partial and complete settlement.
+All three monetary ledgers appear as tables, with original JSON expandable.
 
 Only these are canonical ledgers:
 

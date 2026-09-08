@@ -1,6 +1,6 @@
 {
   "status": "Canonical employee-owned identity map pinned and demonstrated in the six-month SQLite flow.",
-  "identity_rule": "The complete key must uniquely identify a record within its tenant. Every employee-owned record must include the employee identity in its key. Key identity and JSON identity must agree.",
+  "identity_rule": "The complete key must uniquely identify a record within its tenant. Every employee-owned record must include the employee identity in its key. Key identity and JSON identity must agree. Generated opaque IDs use a canonical type prefix followed by underscore and Snowflake encoded in lowercase Base36; demo ID conversion is pending.",
   "prototype_notice": "Employee-owned records require employee identity in their canonical key. The SQLite demonstration uses employee-scoped rows and exact references. Generic key1–key10 columns remain a storage preview, not an implemented physical schema.",
   "open_decision": {
     "id": "earning_cardinality",
@@ -182,5 +182,15 @@
     "meaning_rule": "Canonical JSON remains the representation. Decode its serialized key into generic key1 through key10 columns for indexing. The registered contract defines segment meaning and order; key and columns must agree. Separately, earning keys are corrected to include the required employee identity; value fields remain unchanged.",
     "indexing_rule": "Matching composite indexes support prefix filtering and fetching. This is index grouping, not physical table partitioning. Actual speed gains remain to be measured.",
     "prototype_notice": "The timeline uses serialized-key SQLite rows. Decoded generic columns are a storage preview. Employee keys follow the canonical identity map; the physical column migration is separate."
+  },
+  "generated_id_contract": {
+    "name": "Prefixed Snowflake Base36",
+    "encoding": "<canonical-type-prefix>_<lowercase-base36>, no leading zeros in numeric suffix",
+    "range": "positive 63-bit Snowflake integer",
+    "example": "earning_9do1sj396nf9",
+    "scope": "Generated opaque IDs; semantic component codes and existing external employee IDs retain their identities.",
+    "status": "Accepted format; generator configuration and demo conversion pending.",
+    "definition": "canonical-generated-ids.md",
+    "max_suffix_characters": 13
   }
 }

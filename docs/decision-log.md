@@ -195,3 +195,17 @@ regression work. Further validation is therefore limited to executing the actual
 walkthrough, checking canonical keys, amounts and meaningful transitions, and
 building the HTML. Completed checks are retained; no further regression expansion
 or prolonged review cycle is part of this demo task.
+
+## 2026-09-09 — Snowflake Base36 generated IDs
+
+The user selected lowercase Base36-encoded Snowflake as the canonical generated
+ID format. Rationale: compact lowercase identifiers with time-based generation.
+Employee ownership and revisions remain explicit; readable semantic component
+codes remain unchanged. Worker coordination, clock/restart handling and a fixed
+epoch are prerequisites to generator implementation. This records the decision;
+existing demo identifiers are not yet converted.
+
+The user additionally required a prefix to signify meaning. The format is
+`<canonical-type-prefix>_<snowflake-base36>`, e.g. `earning_9do1sj396nf9`.
+Prefixes describe stable entity types; the 13-character limit applies only to
+the numeric suffix. This preserves meaning when an ID is copied out of its key.

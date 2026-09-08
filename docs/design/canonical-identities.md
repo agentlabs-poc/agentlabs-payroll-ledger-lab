@@ -182,7 +182,7 @@ employee field. Existing JSON fields remain the representation; owner identity
 must agree with direct employee fields or exact referenced records. Instruction
 applications retain version references in JSON while their key uses the stable
 instruction identity. Employee/month association still does not impose one draft
-per month or a canonical ID-generation algorithm.
+per month. Generated ID format is now pinned in the Snowflake Base36 contract below.
 
 Each dotted namespace token and each decoded identity field occupies one key
 column. A control key `payroll.draft.control:E101:D1:2` therefore maps to payroll,
@@ -203,3 +203,9 @@ five storage tables from the ten record types and explicitly marks the unresolve
 earning-cardinality question separately from the required employee identity.
 Editing a display label is not a substitute for correcting actual stored keys
 and their references.
+
+## Accepted generated ID format
+
+Generated opaque IDs use **a canonical type prefix, underscore, and Snowflake encoded in lowercase Base36**, for example `earning_9do1sj396nf9`. See
+[canonical generated IDs](canonical-generated-ids.md) for representation, scope,
+generator requirements and the current demo implementation boundary.
