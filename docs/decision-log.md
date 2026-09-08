@@ -164,3 +164,28 @@ independent. Leaving the latter open must not delay the former. The generic
 key-column projection remains a display/storage design; this correction does not
 implement its physical schema. Other employee-owned record families remain
 explicitly pending and production code is unchanged.
+
+## 2026-09-09 — Execute the simulation fidelity corrections
+
+After reviewing the whole-flow study, the user said “fix them”. The authorized
+scope is the SQLite simulation and its HTML/documents: canonical employee-owned
+identities, period-effective sources, terminal draft controls, protected optional
+freshness, retained/fresh review selection, instruction retries, subsequent-month
+correction relations and complete employer-liability correspondence. Production
+HRMS APIs/schema/CLI and physical key-column performance work remain separate.
+
+The implementation preserves local IDs and adds employee scope to every
+employee-owned key family. Applicable source authority is the highest revision
+whose effective start is at or before the payroll month, followed by state/expiry
+checks without falling back through an eligible disabled or expired replacement.
+This permits a future salary revision without blocking prior-month payroll.
+
+A review caught that comparing selected sources alone would miss newly applicable
+inputs. The optional freshness guard therefore captures the full accepted
+employee-period source basis in existing draft metadata and compares it inside
+the commit transaction. Input selection and business meaning remain with the
+producer. This guard can conservatively require rebuilding when an accepted but
+unselected input changes; it does not infer overlap or trace external origins.
+
+The [implementation plan](superpowers/plans/2026-09-09-payroll-fidelity.md)
+records the canonical map, remaining implementation choices and finite checks.

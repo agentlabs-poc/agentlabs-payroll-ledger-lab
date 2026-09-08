@@ -1,7 +1,8 @@
 # Simulation fidelity review
 
 Status: read-only study requested after the user identified employee-less earning
-keys in the HTML. Implementation is paused. The executable baseline is Lab
+keys in the HTML. The user subsequently approved fixing these findings; execution
+is tracked in the [fidelity implementation plan](../superpowers/plans/2026-09-09-payroll-fidelity.md). The executable baseline is Lab
 `2d2203b`; the uncommitted earning-key correction notes are a target, not delivered
 behavior. Two independent traces and disposable SQLite probes support this review.
 No production code, API, schema, browser fixture or simulation code was changed
@@ -96,5 +97,6 @@ The existing tests prove specific cases of these properties, not the whole handb
    the corrected actual flow; do not hand-edit displayed monetary history.
 
 These checkpoints are a proposed execution sequence, not blanket acceptance of
-new schemas or organizational rules. The immediate outcome of this study is a
-coherent correction scope. Implementation remains paused for review of this picture.
+new schemas or organizational rules. The outcome of this study is a coherent correction scope. The user approved
+implementation after reviewing this picture; the plan distinguishes acceptance
+checks from additional organizational policy.
