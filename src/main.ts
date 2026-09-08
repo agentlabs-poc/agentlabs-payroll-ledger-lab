@@ -4,13 +4,13 @@ import { decodeKeyColumns } from './key-columns';
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 type Row = Record<string, Json>;
 type Summary = {
-  payroll: { gross_minor: number; deductions_minor: number; net_minor: number };
+  payroll: { gross_minor: number; deductions_minor: number; net_minor: number } | null;
   liability: { due_minor: number; paid_minor: number; allocated_minor: number; outstanding_minor: number };
 };
-type Stage = { id: string; title: string; explanation: string; outcome: Row; summary: Summary; tables: Record<string, Row[]> };
+type Stage = { id: string; title: string; explanation: string; context: { employee_id: string | null; payroll_month: string | null; draft_key?: string }; outcome: Row; summary: Summary; tables: Record<string, Row[]> };
 type Flow = {
   source: { revision: string; sha256: Record<string, string> };
-  fixture: Record<string, Json>;
+  fixture: { tenant: string; employees: string[]; months: string[]; currency: string; unit: string };
   catalogue: { record_types: string[]; ledger_kinds: string[] };
   stages: Stage[];
 };
@@ -45,6 +45,9 @@ const escapeHtml = (value: unknown): string => String(value)
 const money = (minor: number): string => new Intl.NumberFormat('en-IN', {
   style: 'currency', currency: 'INR', minimumFractionDigits: 2,
 }).format(minor / 100);
+const monthLabel = (month: string | null): string => month
+  ? new Intl.DateTimeFormat('en-IN', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${month}-01T00:00:00Z`))
+  : 'Shared / source scope';
 const rowId = (row: Row): string => String(row.key ?? row.entry_id ?? row.ledger_entry_id);
 const recordType = (row: Row): string => flow.catalogue.record_types.find((type) => String(row.key).startsWith(`${type}:`)) ?? 'unknown';
 
@@ -120,17 +123,28 @@ function definitionsPanel(): string {
 
 function render(focusSelector?: string): void {
   const stage = flow.stages[selected];
+  const context = stage.context;
+  const employees = flow.fixture.employees;
+  const months = flow.fixture.months;
   const p = stage.summary.payroll;
   const l = stage.summary.liability;
+  const contextLabel = context.employee_id
+    ? `${context.employee_id} · ${monthLabel(context.payroll_month)}`
+    : monthLabel(null);
+  const payrollSummary = p ? `
+        <div><span>Gross</span><b>${money(p.gross_minor)}</b><small>${p.gross_minor.toLocaleString('en-IN')} minor</small></div>
+        <div><span>Deductions</span><b>${money(p.deductions_minor)}</b><small>${p.deductions_minor.toLocaleString('en-IN')} minor</small></div>
+        <div><span>Net</span><b>${money(p.net_minor)}</b><small>${p.net_minor.toLocaleString('en-IN')} minor</small></div>`
+    : '<div class="shared-summary"><span>Payroll totals</span><b>Shared / source stage</b><small>No employee draft selected</small></div>';
   app.innerHTML = `
     <header>
       <div class="eyebrow">PAYROLL LEDGER LAB · ACTUAL SQLITE SNAPSHOTS</div>
-      <div class="title-row"><div><h1>Three ledgers. One connected payroll.</h1><p>Browser playback of captured rows from a fresh SQLite run — this page is not a live database.</p></div><div class="fixture"><b>E101</b><span>November 2026 · INR minor units</span></div></div>
+      <div class="title-row"><div><h1>Three ledgers. One connected payroll.</h1><p>Browser playback of captured rows from a fresh SQLite run — this page is not a live database.</p></div><div class="fixture"><b>${employees.join(' + ')}</b><span>${monthLabel(months[0] ?? null)}${months.length > 1 ? `–${monthLabel(months.at(-1) ?? null)}` : ''} · ${flow.fixture.currency} ${flow.fixture.unit} units</span></div></div>
       <nav class="stage-rail" aria-label="Simulation stages">${flow.stages.map((item, index) => `<button data-stage="${index}" class="${index === selected ? 'active' : ''} ${index < selected ? 'done' : ''}" aria-current="${index === selected ? 'step' : 'false'}"><span>${index + 1}</span>${escapeHtml(item.title)}</button>`).join('')}</nav>
     </header>
     <main>
       <section class="stage-card" aria-live="polite">
-        <div><span class="step">Stage ${selected + 1} of ${flow.stages.length}</span><h2>${escapeHtml(stage.title)}</h2><p>${escapeHtml(stage.explanation)}</p></div>
+        <div><span class="step">Stage ${selected + 1} of ${flow.stages.length}</span><h2>${escapeHtml(stage.title)}</h2><p class="stage-context">${escapeHtml(contextLabel)}${context.draft_key ? ` · ${escapeHtml(context.draft_key)}` : ''}</p><p>${escapeHtml(stage.explanation)}</p></div>
         <div class="controls">
           <label>Jump to stage<select id="stage-select">${flow.stages.map((item, index) => `<option value="${index}" ${index === selected ? 'selected' : ''}>${index + 1}. ${escapeHtml(item.title)}</option>`).join('')}</select></label>
           <button id="previous" ${selected === 0 ? 'disabled' : ''}>← Previous</button><button id="next" ${selected === flow.stages.length - 1 ? 'disabled' : ''}>Next →</button>
@@ -139,10 +153,8 @@ function render(focusSelector?: string): void {
         <details class="outcome"><summary>Operation outcome</summary><pre>${escapeHtml(JSON.stringify(stage.outcome, null, 2))}</pre></details>
       </section>
       <section class="summary" aria-label="Selected snapshot totals">
-        <div><span>Gross</span><b>${money(p.gross_minor)}</b><small>${p.gross_minor.toLocaleString('en-IN')} minor</small></div>
-        <div><span>Deductions</span><b>${money(p.deductions_minor)}</b><small>${p.deductions_minor.toLocaleString('en-IN')} minor</small></div>
-        <div><span>Net</span><b>${money(p.net_minor)}</b><small>${p.net_minor.toLocaleString('en-IN')} minor</small></div>
-        <div class="liability"><span>Employer liability</span><b>${money(l.outstanding_minor)} outstanding</b><small>due ${money(l.due_minor)} · paid ${money(l.paid_minor)} · allocated ${money(l.allocated_minor)}</small></div>
+        ${payrollSummary}
+        <div class="liability"><span>Cumulative employer liability</span><b>${money(l.outstanding_minor)} outstanding</b><small>due ${money(l.due_minor)} · paid ${money(l.paid_minor)} · allocated ${money(l.allocated_minor)}</small></div>
       </section>
       <section class="concepts panel">
         <h2>How the records connect</h2>

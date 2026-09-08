@@ -29,6 +29,7 @@ main { width: min(1560px, 100%); margin: auto; padding: 18px clamp(14px, 3vw, 40
 .stage-card { display: grid; grid-template-columns: 1fr auto; gap: 18px; padding: 20px; border: 1px solid #315c4b; border-radius: 12px; background: #0d1d17; box-shadow: 0 18px 50px #0005; }
 .step { color: #71e6aa; font: 500 10px DM Mono, monospace; letter-spacing: .1em; text-transform: uppercase; }
 .stage-card h2 { margin: 5px 0; font-size: 24px; }
+.stage-context { margin-bottom: 4px; color: #8de7b9; font: 500 11px DM Mono, monospace; overflow-wrap: anywhere; }
 .controls { display: flex; align-items: end; justify-content: end; gap: 7px; flex-wrap: wrap; max-width: 670px; }
 .controls label { display: grid; gap: 4px; color: #779188; font-size: 10px; }
 select { min-width: 180px; border: 1px solid #2d5546; border-radius: 7px; padding: 8px 28px 8px 9px; color: #e8f2ed; background: #132a21; }
@@ -44,6 +45,7 @@ pre { max-width: 100%; margin: 9px 0 0; padding: 12px; overflow: auto; border-ra
 .summary small { color: #678177; font: 400 10px DM Mono, monospace; }
 .summary .liability { border-color: #665d2c; background: #18180e; }
 .summary .liability b { color: #ead86b; }
+.summary .shared-summary { grid-column: span 3; }
 .panel { overflow: hidden; border: 1px solid #1e392f; border-radius: 11px; background: #0c1814; box-shadow: 0 14px 40px #0004; }
 .concepts { padding: 18px; }
 .concepts h2 { margin-bottom: 7px; }
@@ -143,6 +145,7 @@ footer pre { text-align: left; }
 @media (max-width: 560px) {
   header { padding-inline: 14px; }
   .summary { grid-template-columns: 1fr; }
+  .summary .shared-summary { grid-column: auto; }
   .controls, .controls button, .controls label, select { width: 100%; }
   .definitions-head { display: block; }
   .definitions-head a { display: inline-block; margin-top: 8px; }
