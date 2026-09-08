@@ -84,3 +84,6 @@ payroll manager. It has no business reference and creates no monetary state.
 After review, its displayed rows can be materialised into the draft payroll
 ledger, which is the first canonical monetary object. Committing marks consumed
 one-time inputs while monthly standing inputs remain effective for future periods.
+
+The [SQLite record-folding proof](docs/evidence/sqlite-record-fold/README.md)
+retains executable validation, measured evidence and seven full record examples.

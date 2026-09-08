@@ -601,3 +601,12 @@ This chapter pins design and rationale only. Existing component and instruction
 APIs, the CLI, migrations and data are unchanged. Run/compensation deprecations
 remain. It does not fill the Salary Earning Ledger representation gap, approve
 new APIs, establish overall merge readiness or authorize merging pending PRs.
+
+## Executable prototype examples
+
+The [SQLite proof result](../evidence/sqlite-record-fold/README.md) retains
+[seven complete stored rows](../evidence/sqlite-record-fold/record-examples.json)
+using the pinned vocabulary and key grammar. The examples above explain the
+design; the retained rows show the exact prototype field sets, including record
+identity, integer minor units and availability state. These are not accepted
+production payload schemas.

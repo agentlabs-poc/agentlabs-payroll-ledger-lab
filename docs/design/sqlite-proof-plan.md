@@ -3,7 +3,8 @@
 **Pinned sequence, 2026-09-08.** The user proposed proving the model with SQLite
 before touching actual production code. This plan belongs to the existing lab
 design work and [Lab #1](https://github.com/agentlabs-poc/agentlabs-payroll-ledger-lab/pull/1).
-It is not a report of a completed prototype or a new production implementation.
+The executable prototype now lives in `sqlite_lab/`; this page remains the
+plan and acceptance boundary, not a production implementation claim.
 
 The contract under test is [123 Architecture](123-architecture.md): core canonical
 tables plus one canonical key/value table per software-owned domain/layer
@@ -83,5 +84,9 @@ into Core's handbook before implementing them. Production acceptance still
 requires PostgreSQL-specific indexes/constraints, authority, concurrency,
 migration/data compatibility and runtime regression proof.
 
-This plan pins the order of work. No SQLite database, prototype implementation,
-successful test result or production change is created by this documentation.
+This plan pins the order of work. The separate executable proof records its
+observed results and limitations; documentation alone does not establish them.
+
+The [retained proof result](../evidence/sqlite-record-fold/README.md) records the
+executed subset of these checkpoints and their limits. All 16 roles have a
+disposition; exact HTTP replay remains unproved.
