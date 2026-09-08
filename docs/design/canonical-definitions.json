@@ -1,10 +1,10 @@
 {
-  "status": "Meaning and ownership definitions pinned; employee-owned key identity is under review.",
+  "status": "Employee earning key contract includes employee identity; other employee-owned key families remain under review.",
   "identity_rule": "The complete key must uniquely identify a record within its tenant. Every employee-owned record must include the employee identity in its key. Key identity and JSON identity must agree.",
-  "prototype_notice": "The displayed SQLite snapshots use the earlier key layout. Employee-owned keys without an employee segment are not the accepted final identity contract. Key/schema changes wait for canonical identity definitions.",
+  "prototype_notice": "Earning keys must include employee identity and preserve the earning ID and revision. Other employee-owned snapshot key families still require reconciliation. Physical key1–key10 columns are not implemented.",
   "open_decision": {
-    "id": "earning_identity",
-    "question": "Does employee + component identify one earning stream with successive versions, or may multiple independent earnings for that component coexist?"
+    "id": "earning_cardinality",
+    "question": "Whether to restrict an employee/component to one earning stream is not settled. Existing earning IDs are retained; this does not block employee identity in earning keys."
   },
   "tables": [
     {
@@ -46,7 +46,7 @@
       "layer": "L1",
       "owner": "Employee",
       "meaning": "An employee entitlement to an amount for one payroll component, valid over an effective period.",
-      "identity": "Employee scope is required. Whether employee + component defines one earning stream, or an independent earning ID is needed, remains open."
+      "identity": "payroll.earning:<employee-id>:<earning-id>:<revision>. Within the tenant, employee, earning ID and revision identify the record and must match its JSON. No new employee/component uniqueness policy is introduced."
     },
     {
       "type": "payroll.instruction",
@@ -131,8 +131,8 @@
         "BASIC"
       ]
     },
-    "meaning_rule": "Canonical JSON remains unchanged. Decode its serialized key into generic key1 through key10 columns for indexing. The registered contract defines segment meanings, ordering and serialization; key and columns must agree. This projection does not resolve the separate employee-identity decision.",
+    "meaning_rule": "Canonical JSON remains the representation. Decode its serialized key into generic key1 through key10 columns for indexing. The registered contract defines segment meaning and order; key and columns must agree. Separately, earning keys are corrected to include the required employee identity; value fields remain unchanged.",
     "indexing_rule": "Matching composite indexes support prefix filtering and fetching. This is index grouping, not physical table partitioning. Actual speed gains remain to be measured.",
-    "prototype_notice": "Timeline rows still use the previous serialized-key SQLite layout. This example shows segmentation, not a complete revisioned row. Earning identity and exact DDL remain unresolved."
+    "prototype_notice": "The timeline uses serialized-key SQLite rows; generic columns are a storage preview. Earning keys require employee scope. Other employee-owned key families and physical column DDL remain pending."
   }
 }

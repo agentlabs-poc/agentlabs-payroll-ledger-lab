@@ -137,3 +137,7 @@ is also rendered in the HTML timeline.
 
 The [agreed generic segment columns](canonical-identities.md#generic-segment-columns--agreed-storage-direction)
 keep canonical meaning outside column names and define the next SQLite proof checkpoints.
+
+The [simulation fidelity study](simulation-fidelity-review.md) distinguishes current
+workflow gaps from the earlier record-kind coverage proof and proposes finite
+checkpoints before further implementation.

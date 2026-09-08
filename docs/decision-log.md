@@ -148,3 +148,19 @@ The user then explicitly clarified: keep canonical JSON unchanged and document
 that the key is decoded into columns. The columns are a storage/index projection
 of that key, not a new payload format or independently writable identity. This
 refinement does not itself settle the earlier employee-owned key correction.
+
+## 2026-09-08 — Correct employee earning keys in the actual simulation
+
+The user identified that the HTML still showed employee-less earning keys despite
+the agreed ownership rule. A prototype warning did not satisfy that requirement.
+Correct `payroll.earning:EARN-BASIC:1` to
+`payroll.earning:E101:EARN-BASIC:1` through the SQLite key contract, validation,
+employee-scoped history and source references, then regenerate the browser data.
+Retain existing earning IDs and revisions; no new employee/component cardinality
+rule is introduced. JSON value fields and payroll amounts remain unchanged.
+
+Rationale: employee ownership and the question of multiple earning streams are
+independent. Leaving the latter open must not delay the former. The generic
+key-column projection remains a display/storage design; this correction does not
+implement its physical schema. Other employee-owned record families remain
+explicitly pending and production code is unchanged.

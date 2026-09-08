@@ -11,10 +11,11 @@ to encode its key. Key identity and JSON identity must agree. Shared component
 definitions belong to the tenant; an employee's amount belongs to an
 employee-owned earning record that references a component definition.
 
-The current SQLite/browser prototype predates this ownership rule. Its keys such
-as `payroll.earning:EARN-BASIC:1` are not the accepted final identity contract.
-The prior three-segment grammar must be reconciled after domain identities are
-settled. Do not repair examples by concatenating employee IDs ad hoc.
+The earlier SQLite/browser keys such as `payroll.earning:EARN-BASIC:1` violate
+this ownership rule. The user explicitly requested correction of the employee
+earning example. The scoped correction below retains the existing earning ID
+and revision and adds employee identity through the authoritative key contract.
+Other employee-owned record families still require reconciliation.
 
 ## Generic segment columns — agreed storage direction
 
@@ -44,7 +45,7 @@ This example demonstrates segmentation, not a decision to remove immutable
 revision identity. A versioned component row still needs its revision in the
 complete identity; its proposed extension is `key4 = "1"` for revision 1.
 Every employee-owned record must similarly carry employee identity in an assigned
-key slot. The earning identity question below remains open.
+key slot. The earning-cardinality question below remains open; it does not block employee ownership in keys.
 
 ### Meaning, flexibility and serialization
 
@@ -106,9 +107,11 @@ queries; implement and verify the isolated SQLite fold; regenerate the row map,
 HTML snapshots and diagrams together. No production schema or API change follows
 from this pin. The current simulation remains evidence for the earlier layout.
 
-## Earning definition under discussion
+## Employee earning identity
 
-Proposed meaning: an employee's entitlement to an amount for one payroll
+**Correction target; implementation paused for the whole-flow fidelity study.**
+
+Meaning: an employee's entitlement to an amount for one payroll
 component, valid over an effective period.
 
 | Property | Meaning |
@@ -118,12 +121,36 @@ component, valid over an effective period.
 | Value | Amount, currency and effective dates |
 | History | Changes create immutable versions |
 
-The unresolved identity decision is whether one employee/component pair identifies
-one earning stream with successive versions, or whether multiple independent
-earnings for that component may coexist. The former may make a separate
-`earning_id` unnecessary. The latter needs a canonical way to distinguish those
-independent earnings. No key encoding or schema change is approved by these
-alternatives alone.
+The employee is required regardless of how many earning streams a component may
+have. Preserve the existing earning ID and immutable revision; do not introduce
+a new employee/component uniqueness policy merely to correct ownership.
+
+```text
+payroll.earning:<employee-id>:<earning-id>:<revision>
+payroll.earning:E101:EARN-BASIC:1
+```
+
+| Column | Meaning | Example |
+|---|---|---|
+| key1 | Domain namespace | payroll |
+| key2 | Canonical record type token | earning |
+| key3 | Owning employee | E101 |
+| key4 | Existing earning identity within that employee | EARN-BASIC |
+| key5 | Immutable revision | 1 |
+| key6–key10 | Unused | Representation remains a storage decision |
+
+Within a tenant, two employees may use the same earning ID and revision without
+colliding. Key employee, earning ID and revision must agree with the JSON value.
+History/current selection must include employee scope. A draft must reject an
+earning owned by another employee, and all exact source references must retain
+the complete employee-qualified key.
+
+The separate question of whether a consuming organization allows multiple earnings
+for one employee/component does not justify omitting employee ownership. This
+correction retains existing earning IDs and does not add such a restriction or
+claim it has been agreed. The JSON value's fields and payroll amounts are unchanged;
+the corrected key propagates through actual source references and regenerated
+SQLite snapshots, rather than only changing a browser label.
 
 The Basic ₹30,000 and HRA ₹20,000 example demonstrates component definitions and
 employee amounts; it does not resolve earning-stream identity or establish an
@@ -131,7 +158,7 @@ organizational compensation policy.
 
 ## Subsequent reconciliation
 
-After earning identity is settled, apply the same definition-first method to
+Apply the same definition-first method next to
 instructions, draft metadata, controls, reviews, resolutions, applications,
 operation receipts and employee settings. Record which are employee-owned and
 which are shared; employee ownership must be explicit rather than inferred from
@@ -148,5 +175,6 @@ new ownership requirement.
 The [canonical definition register](canonical-definitions.json) is the shared
 meaning/ownership source displayed by the HTML timeline. It distinguishes the
 five storage tables from the ten record types and explicitly marks the unresolved
-earning identity decision. Editing a display example is not a substitute for
-resolving this contract.
+earning-cardinality question separately from the required employee identity.
+Editing a display label is not a substitute for correcting actual stored keys
+and their references.

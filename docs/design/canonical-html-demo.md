@@ -47,8 +47,11 @@ monthly cadence permits subsequent eligible months through expiry.
 The middle segment is an opaque component ID; the final segment is its revision.
 Neither definition carries E101's salary amount.
 
-`payroll.earning:EARN-BASIC:1` links E101 to the exact Basic component version
-with amount `3000000` and effective dates. HRA has its own earning record for
+The current snapshot still uses the incorrect employee-less key
+`payroll.earning:EARN-BASIC:1` for E101, with amount `3000000` and effective dates.
+The correction target is `payroll.earning:E101:EARN-BASIC:1`, including E101
+before the existing earning ID and revision. Implementation is paused for the
+[whole-flow study](simulation-fidelity-review.md). HRA has its own earning record for
 `2000000`. These produce separate draft lines and separate committed lines.
 The combined ₹50,000 is a salary total, not another component or source ledger.
 The amounts are illustrative, not a fixed compensation rule.
@@ -67,7 +70,8 @@ stored. A control revision does not mutate the fixed draft metadata.
 `payroll.instruction.application` proves committed consumption. A held or
 uncommitted draft can have a resolution without an application.
 
-Keys follow `<type>:<subject>:<record>`. Dots separate type tokens. Within opaque
+The earning correction target is `<type>:<employee>:<earning-id>:<revision>`.
+Current snapshots still follow `<type>:<subject>:<record>`. Dots separate type tokens. Within opaque
 identity segments, a backslash escapes a literal colon or backslash. JSON adds
 its own string escaping. Use the shared encoder rather than concatenating IDs.
 
@@ -106,6 +110,7 @@ records pending employee identities and the remaining SQLite proof checkpoints.
 Expanded L1/L2 timeline records also show a decoded key-column preview alongside
 the unchanged captured JSON. All ten generic slots are visible; unused slots are
 labelled without choosing a physical null/empty representation. This preview is
-derived from each existing snapshot key, so it does not invent missing employee
-identity or claim the new storage schema has been implemented. Monetary ledger
+derived from each actual snapshot key. The employee-owned key corrections remain
+pending, including earnings. The preview does not claim physical key-column
+storage has been implemented. Monetary ledger
 rows retain their original representation.
