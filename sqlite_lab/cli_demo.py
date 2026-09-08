@@ -1,7 +1,7 @@
 """Run an illustrative Karnataka payroll through separate CLI processes."""
 from __future__ import annotations
 
-import argparse, json, shlex, subprocess, sys, time
+import argparse, json, os, shlex, subprocess, sys, time
 from pathlib import Path
 
 
@@ -43,16 +43,17 @@ def main(argv=None):
     parser.add_argument("--tax-regime", choices=("old", "new"), default="new", help="illustrative L2 tax choice (default: new)")
     parser.add_argument("--settle", action="store_true", help="append supplied remittances and allocations; default leaves obligations unpaid")
     args = parser.parse_args(argv)
-    if args.db.exists():
-        parser.error("--db must name a fresh path")
-
+    args.db = args.db.resolve()
     root = Path(__file__).parents[1]
-    base = [sys.executable, "-m", "sqlite_lab.cli", "--db", str(args.db), "--tenant", "T1", "--actor", "payroll-admin"]
+    launcher_path = root / "payroll-cli"
+    launcher = ["payroll-cli"] if os.access(launcher_path, os.X_OK) else [sys.executable, str(launcher_path)]
+    config = args.db.with_suffix(".cli.json")
+    environment = {**os.environ, "PATH": str(root) + os.pathsep + os.environ.get("PATH", ""), "PAYROLL_CLI_CONFIG": str(config)}
     timings = []
     started_all = time.perf_counter_ns()
 
     def invoke(arguments, payload=None, output_format="json"):
-        command = [*base]
+        command = [*launcher]
         if output_format != "json": command += ["--format", output_format]
         command += arguments
         if args.step:
@@ -63,26 +64,43 @@ def main(argv=None):
                 print(json.dumps(payload, indent=2, sort_keys=True)); print("JSON")
             input("Press Enter to run… ")
         started = time.perf_counter_ns()
-        result = subprocess.run(command, cwd=root, text=True, input=None if payload is None else json.dumps(payload), capture_output=True)
+        result = subprocess.run(command, cwd=root, env=environment, text=True, input=None if payload is None else json.dumps(payload), capture_output=True)
         timings.append({"command": " ".join(arguments[:2]), "elapsed_ms": round((time.perf_counter_ns() - started) / 1_000_000, 3)})
         if args.step: print((result.stdout if result.returncode == 0 else result.stderr).rstrip())
         if result.returncode: raise RuntimeError(result.stderr.strip())
         return json.loads(result.stdout) if output_format == "json" else result.stdout.rstrip()
 
-    def l1(operation, **payload): return invoke(["l1", operation, "--input", "-"], payload)
-    def rejected_l1(operation, **payload):
-        try: l1(operation, **payload)
+    def operation(noun, verb, **payload): return invoke([noun, verb, "--input", "-"], payload)
+    def rejected_operation(noun, verb, **payload):
+        try: operation(noun, verb, **payload)
         except RuntimeError as error: return json.loads(str(error))
         raise AssertionError("operation should have been rejected")
 
-    invoke(["init"])
+    expected_config = {"database": str(args.db.resolve()), "tenant": "T1", "actor": "payroll-admin", "format": "json"}
+    if config.exists() and json.loads(config.read_text()) != expected_config:
+        parser.error(f"refusing to overwrite unrelated config: {config}")
+    if args.step:
+        print(f"export PATH={shlex.quote(str(root))}:$PATH")
+        print(f"export PAYROLL_CLI_CONFIG={shlex.quote(str(config))}")
+    if not config.exists():
+        invoke(["configure", "--db", str(args.db.resolve()), "--tenant", "T1", "--actor", "payroll-admin"])
+    if not args.db.exists():
+        invoke(["init"])
+    else:
+        checks = (["records", "l1"], ["records", "l2"], ["ledger", "draft"], ["ledger", "payroll"], ["ledger", "liability"])
+        try:
+            populated = any(json.loads(subprocess.run([*launcher, *command], cwd=root, env=environment, text=True, capture_output=True, check=True).stdout) for command in checks)
+        except (subprocess.CalledProcessError, json.JSONDecodeError) as error:
+            parser.error(f"--db must be an initialized canonical payroll database: {error}")
+        if populated:
+            parser.error("--db must be fresh or reset to an empty payroll database")
     employee = "E101"
-    invoke(["l2", "put_l2_settings", "--input", "-"], {"value": {
+    operation("settings", "set", value={
         "schema_version": 1, "employee_id": employee, "revision": 1, "effective_from": "2026-11",
         "policy_ref": {"id": "KARNATAKA-PAYROLL-DEMO", "revision": 1}, "payslip_locale": "en-IN",
         "tax": {"jurisdiction": "IN", "financial_year": "2026-27", "regime": args.tax_regime},
-    }})
-    settings = invoke(["l2", "effective_l2_settings", "--input", "-"], {"employee_id": employee, "payroll_month": "2026-11"})
+    })
+    settings = operation("settings", "effective", employee_id=employee, payroll_month="2026-11")
     tax = _tax_projection(settings["value"]["tax"]["regime"])
     if args.step:
         print("\nIllustrative L3 annual projection (prior withholding supplied)")
@@ -96,7 +114,7 @@ def main(argv=None):
     )
     components = {}
     for code, kind, payable in component_specs:
-        components[code] = l1("define_component", component_id=code, revision=1, code=code, label=code.replace("_", " ").title(), kind=kind, country_code="IN", authority_payable=payable)["key"]
+        components[code] = operation("component", "define", component_id=code, revision=1, code=code, label=code.replace("_", " ").title(), kind=kind, country_code="IN", authority_payable=payable)["key"]
 
     earning_specs = (
         ("earning_9do1sj396nf9", "BASIC", 7_500_000),
@@ -105,7 +123,7 @@ def main(argv=None):
         ("earning_9do1sj396nfc", "EPF_EMPLOYER", 55_000),
         ("earning_9do1sj396nfd", "EPS_EMPLOYER", 125_000),
     )
-    earnings = [l1("define_earning", earning_id=eid, revision=1, employee_id=employee, component_key=components[code], amount_minor=amount, effective_from="2026-11")["key"] for eid, code, amount in earning_specs]
+    earnings = [operation("earning", "define", earning_id=eid, revision=1, employee_id=employee, component_key=components[code], amount_minor=amount, effective_from="2026-11")["key"] for eid, code, amount in earning_specs]
     instruction_specs = (
         ("instruction_9do1sj396nfe", "EPF-V1", "EPF_EMPLOYEE", 180_000, "monthly", "2026-11", "2027-03"),
         ("instruction_9do1sj396nff", "PT-NOV-V1", "PROFESSIONAL_TAX_KA", 20_000, "monthly", "2026-11", "2027-01"),
@@ -113,17 +131,17 @@ def main(argv=None):
         ("instruction_9do1sj396nfh", "LOAN-V1", "LOAN", 200_000, "monthly", "2026-11", "2027-03"),
         ("instruction_9do1sj396nfi", "BONUS-V1", "BONUS", 500_000, "one_time", "2026-11", "2026-11"),
     )
-    instructions = [l1("add_instruction", instruction_id=iid, version_id=vid, revision=1, employee_id=employee, component_key=components[code], amount_minor=amount, cadence=cadence, start_month=start, end_month=end) for iid, vid, code, amount, cadence, start, end in instruction_specs]
+    instructions = [operation("instruction", "add", instruction_id=iid, version_id=vid, revision=1, employee_id=employee, component_key=components[code], amount_minor=amount, cadence=cadence, start_month=start, end_month=end) for iid, vid, code, amount, cadence, start, end in instruction_specs]
 
     draft_id = "draft_9do1sj396nfj"
-    draft = l1("create_draft", draft_id=draft_id, employee_id=employee, payroll_month="2026-11", earning_keys=earnings, instruction_version_ids=[row["value"]["version_id"] for row in instructions])
-    l1("set_draft_control", draft_id=draft_id, employee_id=employee, held=True, cancelled=False, reason="manager hold", expected_revision=1)
-    held = rejected_l1("commit", draft_id=draft_id, employee_id=employee, idempotency_key="held-probe", expected_control_revision=2)
+    draft = operation("draft", "create", draft_id=draft_id, employee_id=employee, payroll_month="2026-11", earning_keys=earnings, instruction_version_ids=[row["value"]["version_id"] for row in instructions])
+    operation("draft", "control", draft_id=draft_id, employee_id=employee, held=True, cancelled=False, reason="manager hold", expected_revision=1)
+    held = rejected_operation("draft", "commit", draft_id=draft_id, employee_id=employee, idempotency_key="held-probe", expected_control_revision=2)
     assert held["message"] == "draft held or cancelled"
-    l1("set_draft_control", draft_id=draft_id, employee_id=employee, held=False, cancelled=False, reason="manager release", expected_revision=2)
-    l1("review_draft", draft_id=draft_id, employee_id=employee, review_id="review_9do1sj396nfk", content_hash=draft["content_hash"], control_revision=3, decision="approved")
+    operation("draft", "control", draft_id=draft_id, employee_id=employee, held=False, cancelled=False, reason="manager release", expected_revision=2)
+    operation("draft", "review", draft_id=draft_id, employee_id=employee, review_id="review_9do1sj396nfk", content_hash=draft["content_hash"], control_revision=3, decision="approved")
     commit_input = {"draft_id": draft_id, "employee_id": employee, "idempotency_key": "karnataka-demo-commit", "expected_control_revision": 3, "approval_required": True, "fresh_review_required": True}
-    committed = l1("commit", **commit_input); assert committed == l1("commit", **commit_input)
+    committed = operation("draft", "commit", **commit_input); assert committed == operation("draft", "commit", **commit_input)
 
     posted = invoke(["ledger", "payroll_ledger", "--employee", employee, "--month", "2026-11"])
     posted_by_id = {row["ledger_entry_id"]: row for row in posted}
@@ -137,18 +155,18 @@ def main(argv=None):
     for obligation_id, posted_id in zip(obligation_ids, committed["payable_entry_ids"]):
         row = posted_by_id[posted_id]
         obligations.append((obligation_id, authority[row["component_key"]], row["amount_minor"]))
-        l1("record_obligation", entry_id=obligation_id, posted_liability_entry_id=posted_id, amount_minor=row["amount_minor"], employer_id="EMPLOYER-KA-DEMO", authority_id=authority[row["component_key"]], reporting_period="2026-11")
-    outstanding_before = sum(l1("elr_outstanding", obligation_id=oid) for oid, _, _ in obligations)
+        operation("liability", "obligation", entry_id=obligation_id, posted_liability_entry_id=posted_id, amount_minor=row["amount_minor"], employer_id="EMPLOYER-KA-DEMO", authority_id=authority[row["component_key"]], reporting_period="2026-11")
+    outstanding_before = sum(operation("liability", "outstanding", obligation_id=oid) for oid, _, _ in obligations)
 
     if args.settle:
         remittance_ids = dict(zip(("EPFO", "KA_COMMERCIAL_TAX", "INCOME_TAX"), ("liabilityentry_9do1sj396nfr", "liabilityentry_9do1sj396nfs", "liabilityentry_9do1sj396nft")))
         allocation_ids = iter(f"liabilityentry_9do1sj396n{suffix}" for suffix in ("fu", "fv", "fw", "fx", "fy"))
         for name, remittance_id in remittance_ids.items():
             amount = sum(value for _, owner, value in obligations if owner == name)
-            l1("record_remittance", entry_id=remittance_id, amount_minor=amount, proof_ref=f"challan:{name.lower()}:demo", employer_id="EMPLOYER-KA-DEMO", authority_id=name, reporting_period="2026-11")
+            operation("liability", "remittance", entry_id=remittance_id, amount_minor=amount, proof_ref=f"challan:{name.lower()}:demo", employer_id="EMPLOYER-KA-DEMO", authority_id=name, reporting_period="2026-11")
         for obligation_id, name, amount in obligations:
-            l1("allocate_remittance", entry_id=next(allocation_ids), obligation_id=obligation_id, remittance_id=remittance_ids[name], amount_minor=amount)
-    outstanding_after = sum(l1("elr_outstanding", obligation_id=oid) for oid, _, _ in obligations)
+            operation("liability", "allocate", entry_id=next(allocation_ids), obligation_id=obligation_id, remittance_id=remittance_ids[name], amount_minor=amount)
+    outstanding_after = sum(operation("liability", "outstanding", obligation_id=oid) for oid, _, _ in obligations)
 
     expected_deductions = 580_000 + tax["current_tds_minor"]
     assert (draft["gross_minor"], draft["deductions_minor"], draft["net_minor"]) == (15_680_000, expected_deductions, 15_680_000 - expected_deductions)
@@ -166,7 +184,8 @@ def main(argv=None):
         "outstanding_minor": outstanding_after, **timing, "commands": timings,
     }, indent=2, sort_keys=True))
     for ledger in ("payroll_draft_ledger", "payroll_ledger", "payroll_employer_liability_ledger"):
-        print(f"\n{ledger}"); result = invoke(["ledger", ledger], output_format="table")
+        short = {"payroll_draft_ledger": "draft", "payroll_ledger": "payroll", "payroll_employer_liability_ledger": "liability"}[ledger]
+        print(f"\n{ledger}"); result = invoke(["ledger", short], output_format="table")
         if not args.step: print(result)
     return 0
 
