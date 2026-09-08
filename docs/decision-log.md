@@ -1,5 +1,10 @@
 # HRMS Payroll Handbook — decision log
 
+New design discussion is pinned locally in [Payroll design pins](design/README.md):
+123 Architecture, canonical ledger tables, domain-owned key/value storage and
+candidate entries. This preserves the user's subsequent lab-design direction;
+the migrated handbook decision history below still belongs to Core.
+
 This chapter has moved to HRMS Core, the canonical payroll documentation source.
 
 [Read the canonical chapter](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/decision-log.md). The original edition and its rationale are preserved in Git history and Core’s [migration record](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/migration-record.md).

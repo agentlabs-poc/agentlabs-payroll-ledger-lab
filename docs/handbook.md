@@ -1,5 +1,9 @@
 # HRMS Payroll Handbook — working edition
 
+For the current lab design discussion, see [Payroll design pins](design/README.md),
+including canonical tables and the domain-owned key/value record proposal. The
+accepted handbook continues at the Core location below.
+
 This chapter has moved to HRMS Core, the canonical payroll documentation source.
 
 [Read the canonical chapter](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/handbook.md). The original edition and its rationale are preserved in Git history and Core’s [migration record](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/migration-record.md).

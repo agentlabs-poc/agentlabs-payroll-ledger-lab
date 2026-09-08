@@ -1,6 +1,20 @@
 # Payroll Ledger Lab
 
-The payroll handbook, contracts, decisions, and rationale now live in [HRMS Core](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/handbook.md). Core is the canonical documentation source; the lab retains this browser experiment and forwarding pages for existing links.
+The payroll handbook, contracts, decisions, and rationale now live in [HRMS Core](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/handbook.md). Core is the canonical accepted handbook source. The lab retains the browser experiment, forwarding pages for migrated chapters, and the [current design pins](docs/design/README.md) requested by the user.
+
+## Current design pins
+
+- [123 Architecture and canonical vocabulary](docs/design/123-architecture.md)
+- [Canonical ledger tables and existing support-table inventory](docs/design/canonical-ledger-tables.md)
+- [Domain-owned payroll key/value records, JSON examples, state and indexing](docs/design/payroll-records.md)
+
+The proposed shape is one supporting-record table per domain, with `tenant`,
+`key`, `value` and `ts`, plus a proposed `state` column. Payroll owns its canonical
+terms and indexes; other domains may reuse the shape with their own contracts.
+The pins contain full design content and distinguish accepted direction from
+remaining proposals. They do not change the browser or production schema.
+
+## Migrated handbook
 
 Publication order: merge Core hub PR #172 before this forwarding PR so the canonical `main` targets exist.
 
@@ -15,7 +29,7 @@ documentation edition does not change the runtime.
 Throwaway, in-memory browser experiment for discovering the smallest useful
 Layer-1 payroll ledger primitives.
 
-This repository is **not** a canonical HRMS design, production dependency,
+This browser experiment is **not** a canonical HRMS design, production dependency,
 API commitment, release candidate, or source of changes to HRMS Design PR #44.
 
 ```bash
