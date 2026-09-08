@@ -112,6 +112,16 @@ a { color: #9eebc6; font-size: 12px; }
 .json-row summary span { color: #8da69b; font-size: 10px; text-align: right; }
 .json-row summary b { padding: 2px 5px; border-radius: 4px; color: #b8f3d6; background: #275b43; font-size: 8px; text-transform: uppercase; }
 .json-row pre { margin: 0 12px 12px; }
+.key-preview { margin: 0 12px 12px; padding: 10px; border: 1px solid #315c4b; border-radius: 7px; background: #0a1511; }
+.key-preview > div:first-child { display: flex; justify-content: space-between; gap: 12px; }
+.key-preview b { color: #9eebc6; font-size: 11px; }
+.key-preview small { color: #718d81; font-size: 10px; text-align: right; }
+.key-preview-columns { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; margin-top: 8px; }
+.key-column { min-width: 0; padding: 6px; border-radius: 5px; background: #10231c; }
+.key-column span, .key-column code, .key-column em { display: block; }
+.key-column span { color: #718d81; font-size: 9px; }
+.key-column code { margin-top: 2px; color: #cfe6dc; font-size: 11px; overflow-wrap: anywhere; }
+.key-column em { margin-top: 2px; color: #587267; font-size: 10px; font-style: normal; }
 .empty { padding: 24px 14px; color: #506a5f; text-align: center; font: 400 11px DM Mono, monospace; }
 footer { display: flex; justify-content: space-between; gap: 16px; padding: 20px 3px 0; color: #516a60; font: 400 10px DM Mono, monospace; }
 footer details { text-align: right; }
@@ -127,6 +137,7 @@ footer pre { text-align: left; }
   .outcome { margin-top: 14px; }
   .summary { grid-template-columns: repeat(2, 1fr); }
   .definition-notices { grid-template-columns: 1fr; }
+  .key-preview-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .timeline-title { display: block; }
 }
 @media (max-width: 560px) {
@@ -138,6 +149,8 @@ footer pre { text-align: left; }
   .definition-list { grid-template-columns: 1fr; }
   .definition-list span { float: none; display: block; margin-top: 3px; }
   .key-example { grid-template-columns: 1fr; }
+  .key-preview > div:first-child { display: block; }
+  .key-preview small { display: block; margin-top: 3px; text-align: left; }
   .timeline::before { left: 13px; }
   .timeline-title { margin-left: 38px; }
   .timeline-step { grid-template-columns: 28px minmax(0, 1fr); gap: 8px; }

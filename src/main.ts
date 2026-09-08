@@ -1,4 +1,5 @@
 import './styles.css';
+import { decodeKeyColumns } from './key-columns';
 
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 type Row = Record<string, Json>;
@@ -50,9 +51,15 @@ const recordType = (row: Row): string => flow.catalogue.record_types.find((type)
 function jsonDetails(row: Row, isNew: boolean): string {
   const value = row.value as Row | undefined;
   const label = value?.label ?? value?.operation ?? value?.direction ?? row.row_kind ?? rowId(row);
+  const columns = typeof row.key === 'string' ? decodeKeyColumns(row.key) : [];
+  const preview = columns.length ? `<div class="key-preview"><div><b>Decoded key columns · storage preview</b><small>Existing snapshot key; final employee identity is pending.</small></div><div class="key-preview-columns">${Array.from({ length: 10 }, (_, index) => {
+    const column = `key${index + 1}`;
+    return `<div class="key-column" data-column="${column}"><span>${column}</span>${columns[index] === undefined ? '<em>unused</em>' : `<code>${escapeHtml(columns[index])}</code>`}</div>`;
+  }).join('')}</div></div>` : '';
   return `<details class="json-row${isNew ? ' new' : ''}">
     <summary><code>${escapeHtml(rowId(row))}</code><span>${escapeHtml(label)}</span>${isNew ? '<b>new</b>' : ''}</summary>
     <pre>${escapeHtml(JSON.stringify(row, null, 2))}</pre>
+    ${preview}
   </details>`;
 }
 
