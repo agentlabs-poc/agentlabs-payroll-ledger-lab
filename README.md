@@ -6,11 +6,13 @@ The payroll handbook, contracts, decisions, and rationale now live in [HRMS Core
 
 - [123 Architecture and canonical vocabulary](docs/design/123-architecture.md)
 - [Canonical ledger tables and existing support-table inventory](docs/design/canonical-ledger-tables.md)
-- [Domain-owned payroll key/value records, JSON examples, state and indexing](docs/design/payroll-records.md)
+- [Payroll key/value records by domain and layer, wrappers, JSON, state and indexes](docs/design/payroll-records.md)
 
-The proposed shape is one supporting-record table per domain, with `tenant`,
+The proposed shape is one key/value table per domain and owning layer (L1/L2/L3), with `tenant`,
 `key`, `value` and `ts`, plus a proposed `state` column. Payroll owns its canonical
 terms and indexes; other domains may reuse the shape with their own contracts.
+Domain-specific APIs and general wrappers can operate owned records while
+preserving L1 domain operations and authority boundaries.
 The pins contain full design content and distinguish accepted direction from
 remaining proposals. They do not change the browser or production schema.
 

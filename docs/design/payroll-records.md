@@ -37,8 +37,9 @@ An existing table, handler or workflow name does not establish a canonical
 concept. Review every supporting responsibility; combine duplicates and put
 information on the owning ledger when that is its natural home.
 
-Target one supporting-record table **per domain**, with a reusable storage
-shape. The four-column baseline is:
+Target one key/value record table **per domain and owning layer**, with a reusable
+storage shape. L1's table consolidates core supporting records; L2 and L3 have
+their own stores for their data. The four-column baseline is:
 
 | Column | Contract |
 |---|---|
@@ -47,23 +48,66 @@ shape. The four-column baseline is:
 | `value` | JSONB object conforming to the record type's versioned schema. |
 | `ts` | Database-recorded creation timestamp; not business effective time, revision identity or commit ordering. |
 
-### Domain-owned tables
+### Tables owned by domain and layer
 
-**Pinned refinement, 2026-09-08:** the user proposed that “each domain can have
-its own key value table”. Share the envelope and validation/indexing approach;
-each domain owns its terms, schemas, permissions, lifecycle and indexes.
+**Pinned refinements, 2026-09-08:** the user first proposed that “each domain can
+have its own key value table”, then required storage for L1, L2 and L3 and
+suggested domain-specific or general wrappers to operate it. The refined target
+is one key/value table per domain and owning layer where storage is needed.
+Share the envelope and tools; each domain/layer owns its terms, schemas,
+permissions, lifecycle and indexes. Do not create one table per canonical key.
 
-For payroll, the working table name is `payroll_records`; the physical name is
-not yet a migration contract. Attendance or leave could use separate domain-owned
-tables if justified. Their table names, records and implementation are not
-prescribed here. This proposal does not introduce one application-wide store
-into which all domains write, or a table per canonical key.
+| Payroll layer | Proposed table name | Records and ownership |
+|---|---|---|
+| L1 | `payroll_l1_records` | Core supporting records and evidence, governed by canonical domain operations; target for justified consolidation of the 16 existing supporting tables. |
+| L2 | `payroll_l2_records` | Reusable software-owned auxiliary data, such as a reviewed compensation-package definition. Exact keys/contracts remain to be specified. |
+| L3 | `payroll_l3_records` | Application/AI composition state, such as selected employees, pending steps and per-employee operation references. It is not authority that payroll committed. |
 
-Domain and architecture layer are different dimensions. Separate domain tables
-do not promote L2/L3 policy into L1, require new services or remove atomicity from
-payroll commit. Client tooling can reuse the four/five-column envelope while
-validating each domain's own software-owned contract. Core payroll money stays
-in the canonical ledgers; this table consolidates supporting records.
+These are working names, not accepted physical schemas. They refine the earlier
+single working name `payroll_records`. No other domain's tables are prescribed.
+L2/L3 data storage may belong with its owning application/service; this logical
+design does not require all three tables in hrms-core or three separate services.
+Tenant, domain, layer and key jointly determine a record's scope. Equal tenant/key
+values in different layer stores do not refer to the same record.
+
+Core payroll money stays in the canonical ledgers. L1 supporting storage remains
+one table target; providing L2/L3 storage does not add organization-specific policy
+to it. Existing deprecated compensation/run structures are not reinstated by
+calling them L2/L3. Each replacement contract still needs individual review.
+
+### Domain-specific and general wrappers
+
+Both interface styles can operate the same owned storage. A domain-specific API
+expresses an operation such as committing one employee draft or recording a
+component definition. A shared key/value wrapper can provide lookup, permitted
+listing and contract-governed mutation without making clients reimplement storage
+mechanics. Reusable client wrappers and validators can use the same definitions.
+
+For L1, writes must execute the canonical domain operation and all its required
+effects atomically. A general transport, if provided, must dispatch to that
+operation; a free-form set/delete of ledger evidence cannot substitute for commit,
+instruction consumption or controlled history. Read wrappers still enforce scope.
+Domain APIs and general wrappers cannot be separate ways to bypass each other.
+
+For L2/L3, generic record operations may be appropriate within authorized
+namespaces and their schema/lifecycle contracts. Software owns the supported
+storage protocol even when an application or AI owns L3 composition content.
+The exact permitted key space, payload flexibility, mutation operations and
+retention rules need definition per owning layer. No public route or API list
+is approved by these examples.
+
+Server-side routing and permissions enforce domain/layer/tenant ownership;
+a caller cannot gain L1 write authority by choosing a table or setting a layer
+field. L2/L3 use L1 operations for core changes and retain their returned outcome
+references. Composition progress is not commit authority, and there is no new
+cross-employee atomicity promise. Version/retry identity and state transitions
+remain contract-governed for all three layers.
+
+Common wrappers should reuse validation, authorization integration, retry and
+query-building mechanics, while domain handlers own invariants. Indexes are
+selected separately for each table's actual access patterns; copying every L1
+index onto L2/L3 is not the design. The wrappers and table DDL remain proposals;
+this pin implements neither.
 
 ### Proposed fifth column: `state`
 
@@ -127,6 +171,56 @@ record revision. `C101` is an illustrative identifier and `1` its revision.
 No ID-generation algorithm is prescribed. Key grammar, escaping, maximum
 length, and agreement between key and payload identity must be finalized before
 implementation. A timestamp alone cannot distinguish concurrent revisions.
+
+### Canonical key construction and index contract
+
+**Pinned requirement, 2026-09-08:** the user required “canonical way of defining
+keys for right indexing”. A key definition is part of the canonical record
+contract, shared by client wrappers and the authoritative server. Callers must
+not invent incompatible key strings for the same concept.
+
+Each registered record type must define its type token, subject identity,
+record/revision identity, encoding, uniqueness scope, payload consistency rules
+and supported lookup patterns. A shared encoder/validator should implement that
+definition; namespacing is not an authorization mechanism.
+
+Proposed common shape, consistent with the examples in this chapter:
+
+```text
+<canonical-type>/<subject-id>/<record-id>
+
+payroll.component/C101/1
+payroll.draft.control/D1/2
+```
+
+The type token expresses the canonical meaning. Subject identifies the owning
+component, exact draft or other approved scope. Record identity is a revision
+for a versioned definition/control, or another stable identifier for an event
+or receipt. Exact accepted tokens, separators, escaping and length limits remain
+to be finalized; this example does not prescribe an ID-generation algorithm.
+
+The owning table establishes domain/layer; the tenant column establishes tenant
+scope. Those scopes need not be repeated as ad hoc key segments. References
+between stores must carry enough domain/layer/tenant/key context to identify
+their target unambiguously. Preserve opaque identifier case; normalize only
+fields whose canonical contract explicitly defines normalization.
+
+| Contract requirement | Index/query consequence |
+|---|---|
+| A record has one canonical locator in its tenant/store. | Tenant/key uniqueness and exact lookup; required tenant/key values and platform-shared scope need explicit handling. |
+| Key and JSON describe the same subject/revision. | Validate their agreement on write; conflicting duplicate identity fields are invalid. |
+| A type/subject prefix has a specified grammar. | Prefix queries use a documented delimiter and matching index/operator/collation; a bare substring search is not the contract. |
+| Versioned records expose a typed numeric revision. | Order numerically using a targeted JSON expression index; text suffix `10` must not sort before `2` as the current-revision rule. |
+| Employee/month and reverse-link queries have canonical JSON paths/types. | Use targeted expression indexes for those dimensions rather than encode every filter into one long key. |
+| Retry identity is stable in the operation's authorized scope. | Canonical construction plus domain uniqueness checks; timestamps or fresh random keys do not establish retry equivalence. |
+| Disabled/deleted records retain identity and required evidence. | Availability filtering must not free uniqueness or instruction/retry protection. |
+
+A key layout enables predictable access but does not replace indexes, foreign
+reference enforcement or atomic domain checks. Do not presume one composite
+index serves every ordering, and do not parse arbitrary key substrings in each
+caller. Canonical examples and scripts should verify encoding/round-trip behavior,
+schema agreement, numeric revision ordering, scope isolation and retry identity.
+Index DDL and those scripts remain implementation work after contract review.
 
 Retain immutable revisions where history is required. The record-type contract
 defines the current revision and atomic stale-write protection; uniqueness of
@@ -305,6 +399,52 @@ sharing their format does not make those scopes interchangeable. Whether they
 can share one receipt instance requires an operation-by-operation mapping.
 Commit outcome durability must not depend on a disposable HTTP-cache lifetime.
 No cross-employee batch resource follows from this receipt type.
+
+### `payroll.employee.settings` (L2 candidate)
+
+An employee's reusable payroll preferences or assignment to a reusable payroll
+policy can be stored in the domain's L2 key/value table. The user asked whether
+employee payroll settings can have a canonical key, then asked to pin this
+direction. Employee preferences/policy assignment is pinned as an L2 use case;
+the exact field schema and lifecycle remain proposals. Proposed location:
+`payroll_l2_records`; example key: `payroll.employee.settings/E101/1`.
+
+```json
+{
+  "schema_version": 1,
+  "employee_id": "E101",
+  "revision": 1,
+  "effective_from": "2026-11",
+  "policy_ref": {
+    "id": "standard-payroll",
+    "revision": 1
+  },
+  "payslip_locale": "en-IN"
+}
+```
+
+This is a candidate type and payload, not approval of an unbounded settings bag.
+Define every supported field's meaning, validation, default/absence behavior and
+owner. The example policy reference identifies a separately defined reusable
+policy; it does not make the settings row an approval or commit authority.
+Policy schemas, applicability and permissions remain to be specified.
+
+Salary entitlement, earning amounts, deductions and instruction consumption
+remain in their L1 canonical records. An application wizard's temporary choices
+belong to L3. Do not copy those facts into settings and create conflicting
+authorities. Changes to settings do not rewrite fixed monetary drafts or posted
+payroll; any binding to new drafts or permitted control changes is explicit.
+
+Required queries include exact employee-settings revision, effective settings
+for an employee/month, and policy-reference lookup if required by a supported
+operation. Numeric revision and effective month have different meanings; newest
+does not necessarily mean applicable. Define uniqueness, effective interval/
+precedence rules, current availability and policy-reference integrity before
+implementing their expression indexes.
+
+This example extends the candidate vocabulary for L2. It is not an additional
+one of the 16 existing L1 supporting tables and does not reinstate deprecated
+employee compensation-plan workflows.
 
 ## All 16 existing supporting tables: review map
 
