@@ -14,11 +14,11 @@ CREATE TABLE payroll_l2_records (
 );
 
 CREATE INDEX l1_component_revision ON payroll_l1_records(tenant,json_extract(value,'$.component_id'),CAST(json_extract(value,'$.revision') AS INTEGER) DESC) WHERE key LIKE 'payroll.component:%';
-CREATE INDEX l1_earning_effective ON payroll_l1_records(tenant,json_extract(value,'$.employee_id'),json_extract(value,'$.effective_from'),json_extract(value,'$.effective_until')) WHERE key LIKE 'payroll.earning:%';
-CREATE UNIQUE INDEX l1_instruction_version ON payroll_l1_records(tenant,json_extract(value,'$.version_id')) WHERE key LIKE 'payroll.instruction:%';
-CREATE INDEX l1_instruction_effective ON payroll_l1_records(tenant,json_extract(value,'$.employee_id'),json_extract(value,'$.effective_from'),json_extract(value,'$.effective_until')) WHERE key LIKE 'payroll.instruction:%';
+CREATE INDEX l1_earning_effective ON payroll_l1_records(tenant,json_extract(value,'$.employee_id'),json_extract(value,'$.earning_id'),CAST(json_extract(value,'$.revision') AS INTEGER) DESC,json_extract(value,'$.effective_from')) WHERE key LIKE 'payroll.earning:%';
+CREATE UNIQUE INDEX l1_instruction_version ON payroll_l1_records(tenant,json_extract(value,'$.employee_id'),json_extract(value,'$.version_id')) WHERE key LIKE 'payroll.instruction:%';
+CREATE INDEX l1_instruction_effective ON payroll_l1_records(tenant,json_extract(value,'$.employee_id'),json_extract(value,'$.instruction_id'),CAST(json_extract(value,'$.revision') AS INTEGER) DESC,json_extract(value,'$.effective_from')) WHERE key LIKE 'payroll.instruction:%';
 CREATE INDEX l1_draft_employee_month ON payroll_l1_records(tenant,json_extract(value,'$.employee_id'),json_extract(value,'$.payroll_month')) WHERE key LIKE 'payroll.draft:%';
-CREATE INDEX l1_receipt_replay ON payroll_l1_records(tenant,json_extract(value,'$.executor'),json_extract(value,'$.operation'),json_extract(value,'$.subject_id'),json_extract(value,'$.idempotency_key')) WHERE key LIKE 'payroll.operation.receipt:%';
+CREATE INDEX l1_receipt_replay ON payroll_l1_records(tenant,json_extract(value,'$.employee_id'),json_extract(value,'$.executor'),json_extract(value,'$.operation'),json_extract(value,'$.subject_id'),json_extract(value,'$.idempotency_key')) WHERE key LIKE 'payroll.operation.receipt:%';
 CREATE UNIQUE INDEX l1_monthly_application_once ON payroll_l1_records(tenant,json_extract(value,'$.instruction_id'),json_extract(value,'$.employee_id'),json_extract(value,'$.payroll_month')) WHERE key LIKE 'payroll.instruction.application:%' AND json_extract(value,'$.cadence')='monthly';
 CREATE UNIQUE INDEX l1_one_time_application_once ON payroll_l1_records(tenant,json_extract(value,'$.instruction_id'),json_extract(value,'$.employee_id')) WHERE key LIKE 'payroll.instruction.application:%' AND json_extract(value,'$.cadence')='one_time';
 CREATE INDEX l1_application_reverse ON payroll_l1_records(tenant,json_extract(value,'$.instruction_id'),json_extract(value,'$.employee_id'),json_extract(value,'$.payroll_month')) WHERE key LIKE 'payroll.instruction.application:%';

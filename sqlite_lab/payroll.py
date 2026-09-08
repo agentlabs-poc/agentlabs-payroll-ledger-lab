@@ -60,38 +60,38 @@ class Payroll:
         with _write(self.connection):
             self._component(component_key, require_available=True)
             _money(amount_minor)
-            return self.records._put_l1(self.tenant,canonical_key("payroll.earning",earning_id,revision),value)
+            return self.records._put_l1(self.tenant,canonical_key("payroll.earning",employee_id,earning_id,revision),value)
 
     def add_instruction(self,instruction_id,version_id,revision,employee_id,component_key,amount_minor,cadence,start_month,end_month=None):
         value={"schema_version":1,"instruction_id":instruction_id,"revision":revision,"version_id":version_id,"employee_id":employee_id,"component_key":component_key,"amount_minor":amount_minor,"cadence":cadence,"effective_from":start_month,"effective_until":end_month}
         request_hash=_hash(value)
         with _write(self.connection):
-            prior=self._receipt("payroll.instruction.create",instruction_id,version_id)
+            prior=self._receipt(employee_id,"payroll.instruction.create",instruction_id,version_id)
             if prior:
                 if prior["value"]["request_hash"]!=request_hash: raise Conflict("instruction retry changed input")
                 return self.records.get_l1(self.tenant,prior["value"]["outcome"]["instruction_key"])
             self._component(component_key, True)
             _money(amount_minor)
-            row=self.records._put_l1(self.tenant,canonical_key("payroll.instruction",instruction_id,revision),value)
+            row=self.records._put_l1(self.tenant,canonical_key("payroll.instruction",employee_id,instruction_id,revision),value)
             outcome={"status":"created","instruction_key":row["key"],"version_id":version_id}
-            self._store_receipt("payroll.instruction.create",instruction_id,version_id,request_hash,outcome,{"instruction_exists":False},{"instruction_key":row["key"]})
+            self._store_receipt(employee_id,"payroll.instruction.create",instruction_id,version_id,request_hash,outcome,{"instruction_exists":False},{"instruction_key":row["key"]})
             return row
 
-    def add_instruction_version(self,instruction_id,version_id,revision,component_key,amount_minor):
-        history=self.records.history_l1(self.tenant,"payroll.instruction",instruction_id)
+    def add_instruction_version(self,instruction_id,version_id,revision,employee_id,component_key,amount_minor):
+        history=self.records.history_l1(self.tenant,"payroll.instruction",employee_id,instruction_id)
         if not history or revision!=history[-1]["value"]["revision"]+1: raise Conflict("instruction revision is not next")
         old=history[-1]["value"]
         value={**old,"revision":revision,"version_id":version_id,"component_key":component_key,"amount_minor":amount_minor}
         request_hash=_hash(value)
         with _write(self.connection):
-            prior=self._receipt("payroll.instruction.version",instruction_id,version_id)
+            prior=self._receipt(employee_id,"payroll.instruction.version",instruction_id,version_id)
             if prior:
                 if prior["value"]["request_hash"]!=request_hash: raise Conflict("instruction version retry changed input")
                 return self.records.get_l1(self.tenant,prior["value"]["outcome"]["instruction_key"])
             self._component(component_key, True)
             _money(amount_minor)
-            row=self.records._put_l1(self.tenant,canonical_key("payroll.instruction",instruction_id,revision),value)
-            self._store_receipt("payroll.instruction.version",instruction_id,version_id,request_hash,{"status":"version_created","instruction_key":row["key"],"version_id":version_id},{"latest_revision":revision-1},{"latest_revision":revision})
+            row=self.records._put_l1(self.tenant,canonical_key("payroll.instruction",employee_id,instruction_id,revision),value)
+            self._store_receipt(employee_id,"payroll.instruction.version",instruction_id,version_id,request_hash,{"status":"version_created","instruction_key":row["key"],"version_id":version_id},{"latest_revision":revision-1},{"latest_revision":revision})
             return row
 
     def create_draft(self,draft_id,employee_id,payroll_month,earning_keys,instruction_version_ids):
@@ -106,7 +106,7 @@ class Payroll:
                 )
             instruction_keys=[]
             for identity in instruction_version_ids:
-                key=self._instruction_key(identity)
+                key=self._instruction_key(employee_id,identity)
                 record=self._source(key,"payroll.instruction",employee_id,payroll_month,allow_expired=True)
                 if payroll_month<record["effective_from"] or (record["effective_until"] and payroll_month>record["effective_until"]): continue
                 sources.append((record, True))
@@ -119,13 +119,14 @@ class Payroll:
                 amount = source["amount_minor"]
                 source_key = canonical_key(
                     "payroll.instruction" if is_instruction else "payroll.earning",
+                    employee_id,
                     source["instruction_id"] if is_instruction else source["earning_id"],
                     source["revision"],
                 )
                 directions=("employer_expense","employer_liability") if kind=="employer_contribution" else (("deduction",) if kind=="deduction" else ("earning",))
                 effect_ids=[]
                 for direction in directions:
-                    entry_id = _stable("DE", draft_id, source_key, direction)
+                    entry_id = _stable("DE", employee_id, draft_id, source_key, direction)
                     effect_ids.append(entry_id)
                     lines.append({"entry_id":entry_id,"source_key":source_key,"component_key":source["component_key"],"direction":direction,"amount_minor":amount})
                 if is_instruction: resolutions.append((source,effect_ids))
@@ -134,38 +135,38 @@ class Payroll:
             content={"employee_id":employee_id,"payroll_month":payroll_month,"earning_keys":list(earning_keys),"instruction_keys":instruction_keys,"lines":lines}
             value={"schema_version":1,"draft_id":draft_id,"revision":1,"employee_id":employee_id,"payroll_month":payroll_month,"earning_keys":list(earning_keys),"instruction_keys":instruction_keys,"content_hash":_hash(content),"gross_minor":gross,"deductions_minor":deductions,"net_minor":gross-deductions}
             draft = self.records._put_l1(
-                self.tenant, canonical_key("payroll.draft", draft_id, 1), value
+                self.tenant, canonical_key("payroll.draft", employee_id, draft_id, 1), value
             )
             for line in lines:
                 self.connection.execute("INSERT INTO payroll_draft_ledger(tenant,draft_key,entry_id,employee_id,payroll_month,source_key,component_key,direction,amount_minor,currency) VALUES(?,?,?,?,?,?,?,?,?,'INR')",(self.tenant,draft["key"],line["entry_id"],employee_id,payroll_month,line["source_key"],line["component_key"],line["direction"],line["amount_minor"]))
             control={"schema_version":1,"draft_id":draft_id,"revision":1,"employee_id":employee_id,"payroll_month":payroll_month,"actor":self.actor,"held":False,"cancelled":False,"reason":"created"}
-            self.records._put_l1(self.tenant,canonical_key("payroll.draft.control",draft_id,1),control)
+            self.records._put_l1(self.tenant,canonical_key("payroll.draft.control",employee_id,draft_id,1),control)
             for index,(source,effect_ids) in enumerate(resolutions,1):
                 effects=[{"draft_entry_id":eid,"amount_minor":source["amount_minor"],"currency":"INR"} for eid in effect_ids]
-                value2={"schema_version":1,"resolution_id":f"RES{index}","draft_id":draft_id,"instruction_id":source["instruction_id"],"instruction_key":canonical_key("payroll.instruction",source["instruction_id"],source["revision"]),"disposition":"applied","effects":effects}
-                self.records._put_l1(self.tenant,canonical_key("payroll.instruction.resolution",draft_id,f"RES{index}"),value2)
+                value2={"schema_version":1,"employee_id":employee_id,"resolution_id":f"RES{index}","draft_id":draft_id,"instruction_id":source["instruction_id"],"instruction_key":canonical_key("payroll.instruction",employee_id,source["instruction_id"],source["revision"]),"disposition":"applied","effects":effects}
+                self.records._put_l1(self.tenant,canonical_key("payroll.instruction.resolution",employee_id,draft_id,f"RES{index}"),value2)
             return {**draft,**value,"entries":lines}
 
-    def set_draft_control(self,draft_id,held,cancelled,reason,expected_revision):
+    def set_draft_control(self,draft_id,employee_id,held,cancelled,reason,expected_revision):
         with _write(self.connection):
-            h=self.records.history_l1(self.tenant,"payroll.draft.control",draft_id)
+            h=self.records.history_l1(self.tenant,"payroll.draft.control",employee_id,draft_id)
             if not h or h[-1]["value"]["revision"]!=expected_revision: raise Conflict("stale control revision")
             value={**h[-1]["value"],"revision":expected_revision+1,"actor":self.actor,"held":bool(held),"cancelled":bool(cancelled),"reason":reason}
-            return self.records._put_l1(self.tenant,canonical_key("payroll.draft.control",draft_id,value["revision"]),value)["value"]
+            return self.records._put_l1(self.tenant,canonical_key("payroll.draft.control",employee_id,draft_id,value["revision"]),value)["value"]
 
-    def review_draft(self,draft_id,review_id,content_hash,control_revision,decision):
+    def review_draft(self,draft_id,employee_id,review_id,content_hash,control_revision,decision):
         if decision not in {"approved","rejected"}: raise PayrollError("invalid review")
         with _write(self.connection):
-            draft = self._draft(draft_id)
+            draft = self._draft(employee_id,draft_id)
             control = self.records.current_l1(
-                self.tenant, "payroll.draft.control", draft_id
+                self.tenant, "payroll.draft.control", employee_id, draft_id
             )
             if draft["content_hash"]!=content_hash: raise PayrollError("review does not bind draft")
             if not control or control["value"]["revision"]!=control_revision: raise Conflict("stale review control")
-            value={"schema_version":1,"review_id":review_id,"draft_id":draft_id,"draft_content_hash":content_hash,"control_revision":control_revision,"actor":self.actor,"decision":decision}
-            return self.records._put_l1(self.tenant,canonical_key("payroll.draft.review",draft_id,review_id),value)
+            value={"schema_version":1,"employee_id":employee_id,"review_id":review_id,"draft_id":draft_id,"draft_content_hash":content_hash,"control_revision":control_revision,"actor":self.actor,"decision":decision}
+            return self.records._put_l1(self.tenant,canonical_key("payroll.draft.review",employee_id,draft_id,review_id),value)
 
-    def commit(self,draft_id,idempotency_key,expected_control_revision,approval_required=False):
+    def commit(self,draft_id,employee_id,idempotency_key,expected_control_revision,approval_required=False):
         request = {
             "draft_id": draft_id,
             "idempotency_key": idempotency_key,
@@ -174,18 +175,18 @@ class Payroll:
         }
         request_hash = _hash(request)
         with _write(self.connection):
-            prior=self._receipt("payroll.commit",draft_id,idempotency_key)
+            prior=self._receipt(employee_id,"payroll.commit",draft_id,idempotency_key)
             if prior:
                 if prior["value"]["request_hash"] != request_hash:
                     raise Conflict("retry changed input")
                 return prior["value"]["outcome"]
-            draft = self._draft(draft_id)
-            draft_key = canonical_key("payroll.draft", draft_id, 1)
+            draft = self._draft(employee_id,draft_id)
+            draft_key = canonical_key("payroll.draft", employee_id, draft_id, 1)
             if self.connection.execute("SELECT 1 FROM payroll_ledger WHERE tenant=? AND draft_key=?",(self.tenant,draft_key)).fetchone(): raise Conflict("draft already committed")
-            control=self.records.current_l1(self.tenant,"payroll.draft.control",draft_id)
+            control=self.records.current_l1(self.tenant,"payroll.draft.control",employee_id,draft_id)
             if not control or control["value"]["revision"]!=expected_control_revision: raise Conflict("control changed")
             if control["value"]["held"] or control["value"]["cancelled"]: raise PayrollError("draft held or cancelled")
-            if approval_required and not self.connection.execute("SELECT 1 FROM payroll_l1_records WHERE tenant=? AND key LIKE 'payroll.draft.review:%' AND json_extract(value,'$.draft_id')=? AND json_extract(value,'$.draft_content_hash')=? AND json_extract(value,'$.control_revision')=? AND json_extract(value,'$.decision')='approved'",(self.tenant,draft_id,draft["content_hash"],expected_control_revision)).fetchone(): raise PayrollError("approval required")
+            if approval_required and not self.connection.execute("SELECT 1 FROM payroll_l1_records WHERE tenant=? AND key LIKE 'payroll.draft.review:%' AND json_extract(value,'$.employee_id')=? AND json_extract(value,'$.draft_id')=? AND json_extract(value,'$.draft_content_hash')=? AND json_extract(value,'$.control_revision')=? AND json_extract(value,'$.decision')='approved'",(self.tenant,employee_id,draft_id,draft["content_hash"],expected_control_revision)).fetchone(): raise PayrollError("approval required")
             rows = self.connection.execute(
                 "SELECT * FROM payroll_draft_ledger "
                 "WHERE tenant=? AND draft_key=? ORDER BY rowid",
@@ -195,13 +196,13 @@ class Payroll:
             mapping = {}
             liability = None
             for row in rows:
-                posted_id = _stable("PE", draft_id, row["entry_id"])
+                posted_id = _stable("PE", employee_id, draft_id, row["entry_id"])
                 mapping[row["entry_id"]] = posted_id
                 posted.append(posted_id)
                 self.connection.execute("INSERT INTO payroll_ledger(tenant,ledger_entry_id,draft_key,draft_entry_id,employee_id,payroll_month,source_key,component_key,direction,amount_minor,currency) VALUES(?,?,?,?,?,?,?,?,?,?,'INR')",(self.tenant,posted_id,draft_key,row["entry_id"],row["employee_id"],row["payroll_month"],row["source_key"],row["component_key"],row["direction"],row["amount_minor"]))
                 if row["direction"] == "employer_liability":
                     liability = posted_id
-            for rr in self.connection.execute("SELECT value FROM payroll_l1_records WHERE tenant=? AND key LIKE 'payroll.instruction.resolution:%' AND json_extract(value,'$.draft_id')=?",(self.tenant,draft_id)):
+            for rr in self.connection.execute("SELECT value FROM payroll_l1_records WHERE tenant=? AND key LIKE 'payroll.instruction.resolution:%' AND json_extract(value,'$.employee_id')=? AND json_extract(value,'$.draft_id')=?",(self.tenant,employee_id,draft_id)):
                 resolution = json.loads(rr[0])
                 instruction = self.records.get_l1(
                     self.tenant, resolution["instruction_key"]
@@ -209,10 +210,11 @@ class Payroll:
                 effects=[{"ledger_entry_id":mapping[e["draft_entry_id"]],"amount_minor":e["amount_minor"],"currency":"INR"} for e in resolution["effects"]]
                 aid=_stable("APP",instruction["instruction_id"],draft["employee_id"],draft["payroll_month"] if instruction["cadence"]=="monthly" else "one-time")
                 app={"schema_version":1,"application_id":aid,"instruction_id":instruction["instruction_id"],"instruction_key":resolution["instruction_key"],"version_id":instruction["version_id"],"employee_id":draft["employee_id"],"payroll_month":draft["payroll_month"],"draft_id":draft_id,"cadence":instruction["cadence"],"effects":effects}
-                try: self.records._put_l1(self.tenant,canonical_key("payroll.instruction.application",instruction["version_id"],aid),app)
+                try: self.records._put_l1(self.tenant,canonical_key("payroll.instruction.application",employee_id,instruction["instruction_id"],aid),app)
                 except sqlite3.IntegrityError as exc: raise Conflict("instruction already consumed") from exc
             outcome={"status":"committed","draft_id":draft_id,"draft_key":draft_key,"posted_entry_ids":posted,"employer_liability_entry_id":liability}
             self._store_receipt(
+                employee_id,
                 "payroll.commit",
                 draft_id,
                 idempotency_key,
@@ -268,33 +270,37 @@ class Payroll:
             if not current or current["key"]!=key: raise PayrollError("component not currently available")
         return row
     def _source(self,key,kind,employee,month,allow_expired=False):
-        record_type, subject, _ = parse_key(key)
+        parsed = parse_key(key)
+        if len(parsed) != 4:
+            raise PayrollError("source reference identity mismatch")
+        record_type, owner, subject, _ = parsed
         if record_type!=kind: raise PayrollError("source reference type mismatch")
+        if owner!=employee: raise PayrollError("source outside employee scope")
         row=self.records.get_l1(self.tenant,key)
-        if not row or row["state"]!="enabled": raise PayrollError("missing source")
-        current = self.records.current_l1(self.tenant, kind, subject)
-        if not current or current["key"] != key:
-            raise PayrollError("source is not current authority")
+        eligible = self.records.effective_l1_source(self.tenant,kind,employee,subject,month)
+        if not row or not eligible or eligible["key"] != key:
+            raise PayrollError("source is not applicable authority")
+        if eligible["state"]!="enabled": raise PayrollError("missing source")
         value=row["value"]
-        if value["employee_id"]!=employee: raise PayrollError("source outside employee scope")
         if not allow_expired and (month<value["effective_from"] or (value["effective_until"] and month>value["effective_until"])): raise PayrollError("earning outside effective period")
         return value
-    def _instruction_key(self,identity):
+    def _instruction_key(self,employee_id,identity):
         _identifier(identity, "instruction version", True)
-        row=self.connection.execute("SELECT key FROM payroll_l1_records WHERE tenant=? AND key LIKE 'payroll.instruction:%' AND json_extract(value,'$.version_id')=?",(self.tenant,identity)).fetchone()
+        row=self.connection.execute("SELECT key FROM payroll_l1_records WHERE tenant=? AND key LIKE 'payroll.instruction:%' AND json_extract(value,'$.employee_id')=? AND json_extract(value,'$.version_id')=?",(self.tenant,employee_id,identity)).fetchone()
         if not row: raise PayrollError("unknown instruction version")
         return row[0]
-    def _draft(self,draft_id):
-        row=self.records.get_l1(self.tenant,canonical_key("payroll.draft",draft_id,1))
+    def _draft(self,employee_id,draft_id):
+        row=self.records.get_l1(self.tenant,canonical_key("payroll.draft",employee_id,draft_id,1))
         if not row: raise PayrollError("unknown draft")
         return row["value"]
-    def _receipt(self,operation,subject,idempotency):
-        row=self.connection.execute("SELECT value FROM payroll_l1_records WHERE tenant=? AND key LIKE 'payroll.operation.receipt:%' AND json_extract(value,'$.executor')=? AND json_extract(value,'$.operation')=? AND json_extract(value,'$.subject_id')=? AND json_extract(value,'$.idempotency_key')=?",(self.tenant,self.actor,operation,subject,idempotency)).fetchone()
+    def _receipt(self,employee_id,operation,subject,idempotency):
+        row=self.connection.execute("SELECT value FROM payroll_l1_records WHERE tenant=? AND key LIKE 'payroll.operation.receipt:%' AND json_extract(value,'$.employee_id')=? AND json_extract(value,'$.executor')=? AND json_extract(value,'$.operation')=? AND json_extract(value,'$.subject_id')=? AND json_extract(value,'$.idempotency_key')=?",(self.tenant,employee_id,self.actor,operation,subject,idempotency)).fetchone()
         return None if not row else {"value":json.loads(row[0])}
-    def _store_receipt(self,operation,subject,idempotency,request_hash,outcome,before,after):
-        rid = _stable("RCPT", self.tenant, self.actor, operation, subject, idempotency)
+    def _store_receipt(self,employee_id,operation,subject,idempotency,request_hash,outcome,before,after):
+        rid = _stable("RCPT", self.tenant, employee_id, self.actor, operation, subject, idempotency)
         value = {
             "schema_version": 1,
+            "employee_id": employee_id,
             "receipt_id": rid,
             "operation": operation,
             "subject_id": subject,
@@ -305,4 +311,4 @@ class Payroll:
             "before": before,
             "after": after,
         }
-        self.records._put_l1(self.tenant,canonical_key("payroll.operation.receipt",subject,rid),value)
+        self.records._put_l1(self.tenant,canonical_key("payroll.operation.receipt",employee_id,subject,rid),value)

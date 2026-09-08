@@ -22,7 +22,7 @@ class PayrollTest(unittest.TestCase):
 
     def test_explicit_sources_and_fixed_draft_metadata(self):
         draft=self.make_draft()
-        self.assertEqual(draft["key"],"payroll.draft:D1:1")
+        self.assertEqual(draft["key"],"payroll.draft:E101:D1:1")
         self.assertEqual(draft["value"]["earning_keys"],[self.salary_earning])
         self.assertEqual(draft["value"]["instruction_keys"],[self.loan_instruction])
         self.assertEqual(self.connection.execute("SELECT COUNT(*) FROM payroll_draft_ledger WHERE tenant='T1' AND draft_key=?",(draft["key"],)).fetchone()[0],2)
@@ -35,6 +35,45 @@ class PayrollTest(unittest.TestCase):
         self.assertEqual((draft["gross_minor"],draft["deductions_minor"],draft["net_minor"]),(5_300_000,500_000,4_800_000))
         self.assertEqual([x["direction"] for x in draft["entries"]],["earning","employer_expense","employer_liability","deduction"])
 
+    def test_two_employees_can_reuse_local_source_and_draft_ids(self):
+        other_earning=self.payroll.define_earning("EARN-SALARY",1,"E102",self.salary,700_000,"2026-01")["key"]
+        other_instruction=self.payroll.add_instruction("I-LOAN","IV-E102-LOAN-1",1,"E102",self.loan,10_000,"monthly","2026-01")["key"]
+        first=self.payroll.create_draft("D1","E101","2026-11",[self.salary_earning],[self.loan_version_id])
+        second=self.payroll.create_draft("D1","E102","2026-11",[other_earning],["IV-E102-LOAN-1"])
+        self.assertEqual(first["key"],"payroll.draft:E101:D1:1")
+        self.assertEqual(second["key"],"payroll.draft:E102:D1:1")
+        self.assertNotEqual(first["entries"][0]["entry_id"],second["entries"][0]["entry_id"])
+        self.assertEqual(self.payroll.commit("D1","E101","commit",1)["status"],"committed")
+        self.assertEqual(self.payroll.commit("D1","E102","commit",1)["status"],"committed")
+        self.assertIn(":E102:I-LOAN:1",other_instruction)
+
+    def test_cross_owner_sources_and_draft_operations_are_rejected(self):
+        other=self.payroll.define_earning("EARN-SALARY",1,"E102",self.salary,700_000,"2026-01")["key"]
+        with self.assertRaises(PayrollError):
+            self.payroll.create_draft("D-X","E101","2026-11",[other],[])
+        self.make_draft(instructions=[])
+        for operation in (
+            lambda: self.payroll.set_draft_control("D1","E102",True,False,"wrong owner",1),
+            lambda: self.payroll.review_draft("D1","E102","R-X","missing",1,"approved"),
+            lambda: self.payroll.commit("D1","E102","wrong-owner",1),
+        ):
+            with self.assertRaises(PayrollError):
+                operation()
+
+    def test_future_source_revision_applies_only_from_its_month_without_disabled_fallback(self):
+        first=self.payroll.define_earning("PERIOD",1,"E101",self.salary,100_000,"2026-01")
+        future=self.payroll.define_earning("PERIOD",2,"E101",self.salary,200_000,"2026-12")
+        november=self.payroll.create_draft("D-NOV","E101","2026-11",[first["key"]],[])
+        self.assertEqual(november["gross_minor"],100_000)
+        with self.assertRaises(PayrollError):
+            self.payroll.create_draft("D-WRONG","E101","2026-11",[future["key"]],[])
+        december=self.payroll.create_draft("D-DEC","E101","2026-12",[future["key"]],[])
+        self.assertEqual(december["gross_minor"],200_000)
+        disabled={**future["value"],"revision":3,"effective_from":"2027-01"}
+        self.payroll.records._put_l1("T1",canonical_key("payroll.earning","E101","PERIOD",3),disabled,"disabled")
+        with self.assertRaises(PayrollError):
+            self.payroll.create_draft("D-JAN","E101","2027-01",[future["key"]],[])
+
     def test_monthly_instruction_endpoints_and_expiry(self):
         self.assertEqual(self.make_draft("2026-10","D-OCT")["net_minor"],4_800_000)
         self.assertEqual(self.make_draft("2027-02","D-FEB")["net_minor"],4_800_000)
@@ -45,58 +84,58 @@ class PayrollTest(unittest.TestCase):
         first=self.payroll.add_instruction("I-BONUS","IV-BONUS-1",1,"E101",bonus,50_000,"one_time","2026-11","2026-11")
         draft=self.make_draft(draft_id="D-B1",instructions=[first["value"]["version_id"]])
         self.assertEqual((draft["gross_minor"],draft["deductions_minor"],draft["net_minor"]),(5_050_000,0,5_050_000))
-        self.payroll.commit("D-B1","bonus-first",1)
-        second=self.payroll.add_instruction_version("I-BONUS","IV-BONUS-2",2,bonus,50_000)
+        self.payroll.commit("D-B1","E101","bonus-first",1)
+        second=self.payroll.add_instruction_version("I-BONUS","IV-BONUS-2",2,"E101",bonus,50_000)
         self.make_draft(draft_id="D-B2",instructions=[second["value"]["version_id"]])
-        with self.assertRaises(Conflict): self.payroll.commit("D-B2","bonus-second",1)
+        with self.assertRaises(Conflict): self.payroll.commit("D-B2","E101","bonus-second",1)
 
     def test_hold_release_optional_exact_review_and_immutable_draft(self):
         draft=self.make_draft()
         with self.assertRaises(sqlite3.IntegrityError): self.connection.execute("UPDATE payroll_draft_ledger SET amount_minor=1")
-        self.payroll.set_draft_control("D1",True,False,"check",1)
-        with self.assertRaises(PayrollError): self.payroll.commit("D1","held",2)
-        self.payroll.set_draft_control("D1",False,False,"release",2)
-        with self.assertRaises(PayrollError): self.payroll.commit("D1","review",3,True)
-        self.payroll.review_draft("D1","R1",draft["content_hash"],3,"approved")
-        self.assertEqual(self.payroll.commit("D1","review",3,True)["status"],"committed")
+        self.payroll.set_draft_control("D1","E101",True,False,"check",1)
+        with self.assertRaises(PayrollError): self.payroll.commit("D1","E101","held",2)
+        self.payroll.set_draft_control("D1","E101",False,False,"release",2)
+        with self.assertRaises(PayrollError): self.payroll.commit("D1","E101","review",3,True)
+        self.payroll.review_draft("D1","E101","R1",draft["content_hash"],3,"approved")
+        self.assertEqual(self.payroll.commit("D1","E101","review",3,True)["status"],"committed")
 
     def test_commit_is_atomic_on_injected_receipt_failure(self):
         self.make_draft(); self.connection.execute("CREATE TRIGGER fail_receipt BEFORE INSERT ON payroll_l1_records WHEN NEW.key LIKE 'payroll.operation.receipt:%' BEGIN SELECT RAISE(ABORT,'injected'); END")
-        with self.assertRaises(sqlite3.IntegrityError): self.payroll.commit("D1","fail",1)
+        with self.assertRaises(sqlite3.IntegrityError): self.payroll.commit("D1","E101","fail",1)
         self.assertEqual(self.connection.execute("SELECT COUNT(*) FROM payroll_ledger").fetchone()[0],0)
         self.assertEqual(self.connection.execute("SELECT COUNT(*) FROM payroll_l1_records WHERE key LIKE 'payroll.instruction.application:%'").fetchone()[0],0)
 
     def test_commit_reopen_replay_and_changed_retry(self):
-        self.make_draft(); first=self.payroll.commit("D1","durable",1); self.connection.close(); self.connection=connect(self.path)
-        reopened=Payroll(self.connection,"T1","U7"); self.assertEqual(reopened.commit("D1","durable",1),first)
-        with self.assertRaises(Conflict): reopened.commit("D1","durable",1,True)
+        self.make_draft(); first=self.payroll.commit("D1","E101","durable",1); self.connection.close(); self.connection=connect(self.path)
+        reopened=Payroll(self.connection,"T1","U7"); self.assertEqual(reopened.commit("D1","E101","durable",1),first)
+        with self.assertRaises(Conflict): reopened.commit("D1","E101","durable",1,True)
 
     def test_two_connections_commit_one_posted_set(self):
         self.make_draft(); barrier=threading.Barrier(2); results=[]
         def attempt(actor):
             c=connect(self.path); p=Payroll(c,"T1",actor); barrier.wait()
-            try: results.append(("ok",p.commit("D1","race-"+actor,1)))
+            try: results.append(("ok",p.commit("D1","E101","race-"+actor,1)))
             except Exception as exc: results.append(("error",type(exc).__name__))
             finally: c.close()
         threads=[threading.Thread(target=attempt,args=(x,)) for x in ("U8","U9")]
         [x.start() for x in threads]; [x.join() for x in threads]
         self.assertEqual(sorted(x[0] for x in results),["error","ok"])
-        self.assertEqual(self.connection.execute("SELECT COUNT(*) FROM payroll_ledger WHERE draft_key='payroll.draft:D1:1'").fetchone()[0],2)
+        self.assertEqual(self.connection.execute("SELECT COUNT(*) FROM payroll_ledger WHERE draft_key='payroll.draft:E101:D1:1'").fetchone()[0],2)
 
     def test_stale_control_disabled_component_and_reference_guards(self):
-        self.make_draft(); self.payroll.set_draft_control("D1",True,False,"held",1)
-        with self.assertRaises(Conflict): self.payroll.set_draft_control("D1",False,False,"stale",1)
+        self.make_draft(); self.payroll.set_draft_control("D1","E101",True,False,"held",1)
+        with self.assertRaises(Conflict): self.payroll.set_draft_control("D1","E101",False,False,"stale",1)
         self.payroll.disable_component("LOAN",1)
         with self.assertRaises(PayrollError): self.make_draft(draft_id="D2")
         with self.assertRaises(PayrollError): self.payroll.define_earning("BAD",1,"E101",self.loan_instruction,1,"2026-01")
-        with self.assertRaises(sqlite3.IntegrityError): self.connection.execute("INSERT INTO payroll_draft_ledger(tenant,draft_key,entry_id,employee_id,payroll_month,source_key,component_key,direction,amount_minor,currency) VALUES('T2','payroll.draft:D1:1','X','E101','2026-11',?,?,'earning',1,'INR')",(self.salary_earning,self.salary))
+        with self.assertRaises(sqlite3.IntegrityError): self.connection.execute("INSERT INTO payroll_draft_ledger(tenant,draft_key,entry_id,employee_id,payroll_month,source_key,component_key,direction,amount_minor,currency) VALUES('T2','payroll.draft:E101:D1:1','X','E101','2026-11',?,?,'earning',1,'INR')",(self.salary_earning,self.salary))
 
     def test_disabled_current_earning_and_instruction_cannot_resurrect_history(self):
         earning_v1=self.payroll.define_earning("OLD-EARNING",1,"E101",self.salary,10_000,"2026-01")
         earning_v2={**earning_v1["value"],"revision":2}
-        self.payroll.records._put_l1("T1",canonical_key("payroll.earning","OLD-EARNING",2),earning_v2,"disabled")
+        self.payroll.records._put_l1("T1",canonical_key("payroll.earning","E101","OLD-EARNING",2),earning_v2,"disabled")
         instruction_v2={**self.payroll.records.get_l1("T1",self.loan_instruction)["value"],"revision":2,"version_id":"IV-LOAN-2"}
-        self.payroll.records._put_l1("T1",canonical_key("payroll.instruction","I-LOAN",2),instruction_v2,"disabled")
+        self.payroll.records._put_l1("T1",canonical_key("payroll.instruction","E101","I-LOAN",2),instruction_v2,"disabled")
         with self.assertRaises(PayrollError):
             self.payroll.create_draft("D-OLD-E","E101","2026-11",[earning_v1["key"]],[])
         with self.assertRaises(PayrollError):
@@ -106,10 +145,10 @@ class PayrollTest(unittest.TestCase):
         self.make_draft(instructions=[])
         old=self.payroll.records.get_l1("T1",self.salary_earning)["value"]
         self.payroll.records._put_l1(
-            "T1",canonical_key("payroll.earning",old["earning_id"],2),
+            "T1",canonical_key("payroll.earning","E101",old["earning_id"],2),
             {**old,"revision":2},"disabled",
         )
-        self.assertEqual(self.payroll.commit("D1","snapshot",1)["status"],"committed")
+        self.assertEqual(self.payroll.commit("D1","E101","snapshot",1)["status"],"committed")
 
     def test_instruction_selection_is_strictly_by_opaque_version_id(self):
         prefix_id="payroll.instruction:opaque\\:version"
@@ -154,19 +193,19 @@ class PayrollTest(unittest.TestCase):
         earning=self.payroll.define_earning("EARN:ID\\1",1,"EMP:1\\A",component["key"],123_456,"2026-01")
         draft=self.payroll.create_draft("D:1\\A","EMP:1\\A","2026-11",[earning["key"]],[])
         self.assertEqual(draft["net_minor"],123_456)
-        self.assertEqual(self.payroll.commit("D:1\\A","escaped",1)["status"],"committed")
+        self.assertEqual(self.payroll.commit("D:1\\A","EMP:1\\A","escaped",1)["status"],"committed")
 
     def test_elr_one_remittance_spans_obligations_and_caps(self):
-        one=self.make_draft("2026-11","D1",True,[]); c1=self.payroll.commit("D1","c1",1)
-        two=self.make_draft("2026-12","D2",True,[]); c2=self.payroll.commit("D2","c2",1)
+        one=self.make_draft("2026-11","D1",True,[]); c1=self.payroll.commit("D1","E101","c1",1)
+        two=self.make_draft("2026-12","D2",True,[]); c2=self.payroll.commit("D2","E101","c2",1)
         self.payroll.record_obligation("OB1",c1["employer_liability_entry_id"],300_000); self.payroll.record_obligation("OB2",c2["employer_liability_entry_id"],300_000)
         self.payroll.record_remittance("REM1",400_000,"challan:REM1"); self.payroll.allocate_remittance("A1","OB1","REM1",200_000); self.payroll.allocate_remittance("A2","OB2","REM1",200_000)
         self.assertEqual((self.payroll.elr_outstanding("OB1"),self.payroll.elr_outstanding("OB2")),(100_000,100_000))
         with self.assertRaises(PayrollError): self.payroll.allocate_remittance("A3","OB1","REM1",1)
 
     def test_elr_rejects_noninteger_wrong_entry_and_missing_proof(self):
-        self.make_draft(with_employer=True,instructions=[]); committed=self.payroll.commit("D1","elr",1)
-        salary=self.connection.execute("SELECT ledger_entry_id FROM payroll_ledger WHERE draft_key='payroll.draft:D1:1' AND direction='earning'").fetchone()[0]
+        self.make_draft(with_employer=True,instructions=[]); committed=self.payroll.commit("D1","E101","elr",1)
+        salary=self.connection.execute("SELECT ledger_entry_id FROM payroll_ledger WHERE draft_key='payroll.draft:E101:D1:1' AND direction='earning'").fetchone()[0]
         for amount in (True,1.5):
             with self.assertRaises(PayrollError): self.payroll.record_remittance("BAD",amount,"proof")
         with self.assertRaises(PayrollError): self.payroll.record_remittance("BAD",1," ")

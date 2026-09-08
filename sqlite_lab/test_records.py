@@ -50,10 +50,34 @@ class RecordStoreTest(unittest.TestCase):
         key = canonical_key("payroll.component", "Ab:C\\D.x_9", 10)
         self.assertEqual(key, "payroll.component:Ab\\:C\\\\D.x_9:10")
         self.assertEqual(parse_key(key), ("payroll.component", "Ab:C\\D.x_9", 10))
-        review_key = canonical_key("payroll.draft.review", "D:1", "R\\2:west")
-        self.assertEqual(review_key, "payroll.draft.review:D\\:1:R\\\\2\\:west")
+        review_key = canonical_key("payroll.draft.review", "E:1", "D:1", "R\\2:west")
+        self.assertEqual(review_key, "payroll.draft.review:E\\:1:D\\:1:R\\\\2\\:west")
         self.assertEqual(parse_key(review_key),
-                         ("payroll.draft.review", "D:1", "R\\2:west"))
+                         ("payroll.draft.review", "E:1", "D:1", "R\\2:west"))
+
+    def test_employee_owned_keys_require_the_registered_owner_arity(self):
+        expected = {
+            "payroll.earning": ("E101", "EARN", 2),
+            "payroll.instruction": ("E101", "I1", 2),
+            "payroll.draft": ("E101", "D1", 1),
+            "payroll.draft.control": ("E101", "D1", 3),
+            "payroll.draft.review": ("E101", "D1", "R1"),
+            "payroll.instruction.resolution": ("E101", "D1", "RES1"),
+            "payroll.instruction.application": ("E101", "I1", "APP1"),
+            "payroll.operation.receipt": ("E101", "D1", "RCPT1"),
+            "payroll.employee.settings": ("E101", 2),
+        }
+        for record_type, identity in expected.items():
+            with self.subTest(record_type=record_type):
+                key = canonical_key(record_type, *identity)
+                self.assertEqual(parse_key(key), (record_type, *identity))
+        for old_key in (
+            "payroll.earning:EARN:2",
+            "payroll.draft:D1:1",
+            "payroll.operation.receipt:D1:RCPT1",
+        ):
+            with self.subTest(old_key=old_key), self.assertRaises(RecordError):
+                parse_key(old_key)
 
     def test_canonical_key_rejects_malformed_segments_and_unnecessary_escapes(self):
         for invalid in ("", "E/101", "white space", "../E101"):
