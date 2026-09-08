@@ -1,255 +1,88 @@
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE payroll_l1_records (
-    tenant TEXT NOT NULL,
-    key TEXT NOT NULL,
-    value TEXT NOT NULL CHECK (json_valid(value) AND json_type(value) = 'object'),
-    ts TEXT NOT NULL,
-    state TEXT NOT NULL CHECK (state IN ('enabled', 'disabled', 'deleted')),
-    PRIMARY KEY (tenant, key)
+ tenant TEXT NOT NULL, key TEXT NOT NULL,
+ value TEXT NOT NULL CHECK(json_valid(value) AND json_type(value)='object'),
+ ts TEXT NOT NULL, state TEXT NOT NULL CHECK(state IN ('enabled','disabled','deleted')),
+ PRIMARY KEY(tenant,key)
 );
-
 CREATE TABLE payroll_l2_records (
-    tenant TEXT NOT NULL,
-    key TEXT NOT NULL,
-    value TEXT NOT NULL CHECK (json_valid(value) AND json_type(value) = 'object'),
-    ts TEXT NOT NULL,
-    state TEXT NOT NULL CHECK (state IN ('enabled', 'disabled', 'deleted')),
-    PRIMARY KEY (tenant, key)
+ tenant TEXT NOT NULL, key TEXT NOT NULL,
+ value TEXT NOT NULL CHECK(json_valid(value) AND json_type(value)='object'),
+ ts TEXT NOT NULL, state TEXT NOT NULL CHECK(state IN ('enabled','disabled','deleted')),
+ PRIMARY KEY(tenant,key)
 );
 
-CREATE INDEX l1_subject_revision
-ON payroll_l1_records (
-    tenant,
-    json_extract(value, '$.component_id'),
-    CAST(json_extract(value, '$.revision') AS INTEGER) DESC
-)
-WHERE key LIKE 'payroll.component:%';
-
-CREATE INDEX l1_receipt_replay
-ON payroll_l1_records (
-    tenant,
-    json_extract(value, '$.executor'),
-    json_extract(value, '$.operation'),
-    json_extract(value, '$.subject_id'),
-    json_extract(value, '$.idempotency_key')
-)
-WHERE key LIKE 'payroll.operation.receipt:%';
-
-CREATE UNIQUE INDEX l1_monthly_application_once
-ON payroll_l1_records (
-    tenant,
-    json_extract(value, '$.instruction_id'),
-    json_extract(value, '$.employee_id'),
-    json_extract(value, '$.payroll_month')
-)
-WHERE key LIKE 'payroll.instruction.application:%'
-  AND json_extract(value, '$.cadence') = 'monthly';
-
-CREATE UNIQUE INDEX l1_one_time_application_once
-ON payroll_l1_records (
-    tenant,
-    json_extract(value, '$.instruction_id'),
-    json_extract(value, '$.employee_id')
-)
-WHERE key LIKE 'payroll.instruction.application:%'
-  AND json_extract(value, '$.cadence') = 'one_time';
-
-CREATE INDEX l1_application_reverse
-ON payroll_l1_records (
-    tenant,
-    json_extract(value, '$.instruction_id'),
-    json_extract(value, '$.employee_id'),
-    json_extract(value, '$.payroll_month')
-)
-WHERE key LIKE 'payroll.instruction.application:%';
-
-CREATE INDEX l2_settings_effective
-ON payroll_l2_records (
-    tenant,
-    json_extract(value, '$.employee_id'),
-    json_extract(value, '$.effective_from') DESC,
-    CAST(json_extract(value, '$.revision') AS INTEGER) DESC
-)
-WHERE key LIKE 'payroll.employee.settings:%';
+CREATE INDEX l1_component_revision ON payroll_l1_records(tenant,json_extract(value,'$.component_id'),CAST(json_extract(value,'$.revision') AS INTEGER) DESC) WHERE key LIKE 'payroll.component:%';
+CREATE INDEX l1_earning_effective ON payroll_l1_records(tenant,json_extract(value,'$.employee_id'),json_extract(value,'$.effective_from'),json_extract(value,'$.effective_until')) WHERE key LIKE 'payroll.earning:%';
+CREATE UNIQUE INDEX l1_instruction_version ON payroll_l1_records(tenant,json_extract(value,'$.version_id')) WHERE key LIKE 'payroll.instruction:%';
+CREATE INDEX l1_instruction_effective ON payroll_l1_records(tenant,json_extract(value,'$.employee_id'),json_extract(value,'$.effective_from'),json_extract(value,'$.effective_until')) WHERE key LIKE 'payroll.instruction:%';
+CREATE INDEX l1_draft_employee_month ON payroll_l1_records(tenant,json_extract(value,'$.employee_id'),json_extract(value,'$.payroll_month')) WHERE key LIKE 'payroll.draft:%';
+CREATE INDEX l1_receipt_replay ON payroll_l1_records(tenant,json_extract(value,'$.executor'),json_extract(value,'$.operation'),json_extract(value,'$.subject_id'),json_extract(value,'$.idempotency_key')) WHERE key LIKE 'payroll.operation.receipt:%';
+CREATE UNIQUE INDEX l1_monthly_application_once ON payroll_l1_records(tenant,json_extract(value,'$.instruction_id'),json_extract(value,'$.employee_id'),json_extract(value,'$.payroll_month')) WHERE key LIKE 'payroll.instruction.application:%' AND json_extract(value,'$.cadence')='monthly';
+CREATE UNIQUE INDEX l1_one_time_application_once ON payroll_l1_records(tenant,json_extract(value,'$.instruction_id'),json_extract(value,'$.employee_id')) WHERE key LIKE 'payroll.instruction.application:%' AND json_extract(value,'$.cadence')='one_time';
+CREATE INDEX l1_application_reverse ON payroll_l1_records(tenant,json_extract(value,'$.instruction_id'),json_extract(value,'$.employee_id'),json_extract(value,'$.payroll_month')) WHERE key LIKE 'payroll.instruction.application:%';
+CREATE INDEX l2_settings_effective ON payroll_l2_records(tenant,json_extract(value,'$.employee_id'),json_extract(value,'$.effective_from') DESC,CAST(json_extract(value,'$.revision') AS INTEGER) DESC) WHERE key LIKE 'payroll.employee.settings:%';
 
 CREATE TRIGGER component_code_scope BEFORE INSERT ON payroll_l1_records
-WHEN NEW.key LIKE 'payroll.component:%' AND EXISTS (
-    SELECT 1 FROM payroll_l1_records old
-    WHERE old.tenant = NEW.tenant
-      AND old.key LIKE 'payroll.component:%'
-      AND json_extract(old.value, '$.country_code') = json_extract(NEW.value, '$.country_code')
-      AND json_extract(old.value, '$.code') = json_extract(NEW.value, '$.code')
-      AND json_extract(old.value, '$.component_id') <> json_extract(NEW.value, '$.component_id')
-)
-BEGIN SELECT RAISE(ABORT, 'component code conflicts in tenant/country scope'); END;
-
+WHEN NEW.key LIKE 'payroll.component:%' AND EXISTS(SELECT 1 FROM payroll_l1_records old WHERE old.tenant=NEW.tenant AND old.key LIKE 'payroll.component:%' AND json_extract(old.value,'$.country_code')=json_extract(NEW.value,'$.country_code') AND json_extract(old.value,'$.code')=json_extract(NEW.value,'$.code') AND json_extract(old.value,'$.component_id')<>json_extract(NEW.value,'$.component_id'))
+BEGIN SELECT RAISE(ABORT,'component code conflicts in tenant/country scope'); END;
 CREATE TRIGGER component_identity_stable BEFORE INSERT ON payroll_l1_records
-WHEN NEW.key LIKE 'payroll.component:%' AND EXISTS (
-    SELECT 1 FROM payroll_l1_records old
-    WHERE old.tenant = NEW.tenant
-      AND old.key LIKE 'payroll.component:%'
-      AND json_extract(old.value, '$.component_id') = json_extract(NEW.value, '$.component_id')
-      AND (json_extract(old.value, '$.code') <> json_extract(NEW.value, '$.code')
-        OR json_extract(old.value, '$.kind') <> json_extract(NEW.value, '$.kind')
-        OR json_extract(old.value, '$.country_code') <> json_extract(NEW.value, '$.country_code'))
-)
-BEGIN SELECT RAISE(ABORT, 'component identity fields changed'); END;
+WHEN NEW.key LIKE 'payroll.component:%' AND EXISTS(SELECT 1 FROM payroll_l1_records old WHERE old.tenant=NEW.tenant AND old.key LIKE 'payroll.component:%' AND json_extract(old.value,'$.component_id')=json_extract(NEW.value,'$.component_id') AND (json_extract(old.value,'$.code')<>json_extract(NEW.value,'$.code') OR json_extract(old.value,'$.kind')<>json_extract(NEW.value,'$.kind') OR json_extract(old.value,'$.country_code')<>json_extract(NEW.value,'$.country_code')))
+BEGIN SELECT RAISE(ABORT,'component identity fields changed'); END;
+CREATE TRIGGER l1_immutable_update BEFORE UPDATE ON payroll_l1_records BEGIN SELECT RAISE(ABORT,'L1 records are immutable'); END;
+CREATE TRIGGER l1_immutable_delete BEFORE DELETE ON payroll_l1_records BEGIN SELECT RAISE(ABORT,'L1 records are immutable'); END;
 
-CREATE TRIGGER l1_immutable_update BEFORE UPDATE ON payroll_l1_records
-BEGIN SELECT RAISE(ABORT, 'L1 records are immutable'); END;
-CREATE TRIGGER l1_immutable_delete BEFORE DELETE ON payroll_l1_records
-BEGIN SELECT RAISE(ABORT, 'L1 records are immutable'); END;
-
-CREATE TABLE payroll_instructions (
-    tenant TEXT NOT NULL,
-    instruction_id TEXT NOT NULL,
-    employee_id TEXT NOT NULL,
-    cadence TEXT NOT NULL CHECK (cadence IN ('monthly', 'one_time')),
-    start_month TEXT NOT NULL,
-    end_month TEXT,
-    PRIMARY KEY (tenant, instruction_id)
+CREATE TABLE payroll_draft_ledger (
+ tenant TEXT NOT NULL, draft_key TEXT NOT NULL, entry_id TEXT NOT NULL,
+ employee_id TEXT NOT NULL, payroll_month TEXT NOT NULL, source_key TEXT NOT NULL,
+ component_key TEXT NOT NULL, direction TEXT NOT NULL CHECK(direction IN ('earning','deduction','employer_expense','employer_liability')),
+ amount_minor INTEGER NOT NULL CHECK(typeof(amount_minor)='integer' AND amount_minor>0), currency TEXT NOT NULL CHECK(currency='INR'),
+ row_kind TEXT NOT NULL DEFAULT 'draft' CHECK(row_kind='draft'), PRIMARY KEY(tenant,draft_key,entry_id),
+ FOREIGN KEY(tenant,draft_key) REFERENCES payroll_l1_records(tenant,key),
+ FOREIGN KEY(tenant,source_key) REFERENCES payroll_l1_records(tenant,key),
+ FOREIGN KEY(tenant,component_key) REFERENCES payroll_l1_records(tenant,key)
 );
+CREATE TRIGGER draft_refs_typed BEFORE INSERT ON payroll_draft_ledger
+WHEN NEW.draft_key NOT LIKE 'payroll.draft:%' OR NEW.component_key NOT LIKE 'payroll.component:%' OR (NEW.source_key NOT LIKE 'payroll.earning:%' AND NEW.source_key NOT LIKE 'payroll.instruction:%')
+BEGIN SELECT RAISE(ABORT,'draft reference type mismatch'); END;
+CREATE INDEX draft_employee_month ON payroll_draft_ledger(tenant,employee_id,payroll_month,draft_key);
+CREATE TRIGGER draft_immutable_update BEFORE UPDATE ON payroll_draft_ledger BEGIN SELECT RAISE(ABORT,'draft ledger is immutable'); END;
+CREATE TRIGGER draft_immutable_delete BEFORE DELETE ON payroll_draft_ledger BEGIN SELECT RAISE(ABORT,'draft ledger is immutable'); END;
 
-CREATE TABLE payroll_instruction_versions (
-    tenant TEXT NOT NULL,
-    instruction_version_id TEXT NOT NULL,
-    instruction_id TEXT NOT NULL,
-    revision INTEGER NOT NULL CHECK (revision > 0),
-    component_id TEXT NOT NULL,
-    amount_minor INTEGER NOT NULL CHECK (amount_minor >= 0),
-    PRIMARY KEY (tenant, instruction_version_id),
-    UNIQUE (tenant, instruction_id, revision),
-    FOREIGN KEY (tenant, instruction_id)
-      REFERENCES payroll_instructions(tenant, instruction_id)
+CREATE TABLE payroll_ledger (
+ tenant TEXT NOT NULL, ledger_entry_id TEXT NOT NULL, draft_key TEXT NOT NULL, draft_entry_id TEXT NOT NULL,
+ employee_id TEXT NOT NULL, payroll_month TEXT NOT NULL, source_key TEXT NOT NULL, component_key TEXT NOT NULL,
+ direction TEXT NOT NULL CHECK(direction IN ('earning','deduction','employer_expense','employer_liability')),
+ amount_minor INTEGER NOT NULL CHECK(typeof(amount_minor)='integer' AND amount_minor>0), currency TEXT NOT NULL CHECK(currency='INR'),
+ row_kind TEXT NOT NULL DEFAULT 'posted' CHECK(row_kind='posted'), PRIMARY KEY(tenant,ledger_entry_id),
+ FOREIGN KEY(tenant,draft_key,draft_entry_id) REFERENCES payroll_draft_ledger(tenant,draft_key,entry_id),
+ FOREIGN KEY(tenant,draft_key) REFERENCES payroll_l1_records(tenant,key),
+ FOREIGN KEY(tenant,source_key) REFERENCES payroll_l1_records(tenant,key),
+ FOREIGN KEY(tenant,component_key) REFERENCES payroll_l1_records(tenant,key)
 );
+CREATE INDEX posted_employee_month ON payroll_ledger(tenant,employee_id,payroll_month,draft_key);
+CREATE TRIGGER posted_immutable_update BEFORE UPDATE ON payroll_ledger BEGIN SELECT RAISE(ABORT,'payroll ledger is immutable'); END;
+CREATE TRIGGER posted_immutable_delete BEFORE DELETE ON payroll_ledger BEGIN SELECT RAISE(ABORT,'payroll ledger is immutable'); END;
 
-CREATE TABLE payroll_calculations (
-    tenant TEXT NOT NULL,
-    calculation_id TEXT NOT NULL,
-    employee_id TEXT NOT NULL,
-    payroll_month TEXT NOT NULL,
-    status TEXT NOT NULL CHECK (status IN ('draft', 'committed')),
-    PRIMARY KEY (tenant, calculation_id)
+CREATE TABLE payroll_employer_liability_ledger (
+ tenant TEXT NOT NULL, entry_id TEXT NOT NULL, row_kind TEXT NOT NULL CHECK(row_kind IN ('obligation','remittance','allocation')),
+ amount_minor INTEGER NOT NULL CHECK(typeof(amount_minor)='integer' AND amount_minor>0),
+ posted_liability_entry_id TEXT, obligation_entry_id TEXT, remittance_entry_id TEXT, proof_ref TEXT,
+ PRIMARY KEY(tenant,entry_id), FOREIGN KEY(tenant,posted_liability_entry_id) REFERENCES payroll_ledger(tenant,ledger_entry_id),
+ FOREIGN KEY(tenant,obligation_entry_id) REFERENCES payroll_employer_liability_ledger(tenant,entry_id),
+ FOREIGN KEY(tenant,remittance_entry_id) REFERENCES payroll_employer_liability_ledger(tenant,entry_id),
+ CHECK((row_kind='obligation' AND posted_liability_entry_id IS NOT NULL AND obligation_entry_id IS NULL AND remittance_entry_id IS NULL AND proof_ref IS NULL)
+ OR (row_kind='remittance' AND posted_liability_entry_id IS NULL AND obligation_entry_id IS NULL AND remittance_entry_id IS NULL AND typeof(proof_ref)='text' AND length(trim(proof_ref))>0)
+ OR (row_kind='allocation' AND posted_liability_entry_id IS NULL AND obligation_entry_id IS NOT NULL AND remittance_entry_id IS NOT NULL AND proof_ref IS NULL))
 );
-
-CREATE TABLE payroll_calculation_revisions (
-    tenant TEXT NOT NULL,
-    calculation_id TEXT NOT NULL,
-    revision INTEGER NOT NULL CHECK (revision > 0),
-    draft_id TEXT NOT NULL,
-    candidate_identity TEXT NOT NULL,
-    content_hash TEXT NOT NULL,
-    gross_minor INTEGER NOT NULL CHECK (gross_minor >= 0),
-    deductions_minor INTEGER NOT NULL CHECK (deductions_minor >= 0),
-    net_minor INTEGER NOT NULL CHECK (net_minor = gross_minor - deductions_minor),
-    PRIMARY KEY (tenant, calculation_id, revision),
-    UNIQUE (tenant, draft_id),
-    FOREIGN KEY (tenant, calculation_id)
-      REFERENCES payroll_calculations(tenant, calculation_id)
-);
-
-CREATE TABLE payroll_draft_entries (
-    tenant TEXT NOT NULL,
-    draft_id TEXT NOT NULL,
-    entry_id TEXT NOT NULL,
-    component_id TEXT NOT NULL,
-    direction TEXT NOT NULL CHECK (direction IN ('earning', 'deduction', 'employer_expense', 'employer_liability')),
-    amount_minor INTEGER NOT NULL CHECK (amount_minor >= 0),
-    instruction_version_id TEXT,
-    PRIMARY KEY (tenant, draft_id, entry_id),
-    FOREIGN KEY (tenant, draft_id)
-      REFERENCES payroll_calculation_revisions(tenant, draft_id),
-    FOREIGN KEY (tenant, instruction_version_id)
-      REFERENCES payroll_instruction_versions(tenant, instruction_version_id)
-);
-
-CREATE TABLE payroll_ledger_entries (
-    tenant TEXT NOT NULL,
-    ledger_entry_id TEXT NOT NULL,
-    draft_id TEXT NOT NULL,
-    employee_id TEXT NOT NULL,
-    payroll_month TEXT NOT NULL,
-    component_id TEXT NOT NULL,
-    direction TEXT NOT NULL CHECK (direction IN ('earning', 'deduction', 'employer_expense', 'employer_liability')),
-    amount_minor INTEGER NOT NULL CHECK (amount_minor >= 0),
-    PRIMARY KEY (tenant, ledger_entry_id),
-    FOREIGN KEY (tenant, draft_id)
-      REFERENCES payroll_calculation_revisions(tenant, draft_id)
-);
-
-CREATE TABLE payroll_statutory_obligations (
-    tenant TEXT NOT NULL,
-    obligation_id TEXT NOT NULL,
-    ledger_entry_id TEXT NOT NULL,
-    amount_minor INTEGER NOT NULL CHECK (typeof(amount_minor) = 'integer' AND amount_minor > 0),
-    PRIMARY KEY (tenant, obligation_id),
-    UNIQUE (tenant, ledger_entry_id),
-    FOREIGN KEY (tenant, ledger_entry_id)
-      REFERENCES payroll_ledger_entries(tenant, ledger_entry_id)
-);
-
-CREATE TRIGGER obligation_requires_posted_liability
-BEFORE INSERT ON payroll_statutory_obligations
-WHEN NOT EXISTS (
-    SELECT 1 FROM payroll_ledger_entries entry
-    WHERE entry.tenant = NEW.tenant
-      AND entry.ledger_entry_id = NEW.ledger_entry_id
-      AND entry.direction = 'employer_liability'
-      AND entry.amount_minor = NEW.amount_minor
-)
-BEGIN SELECT RAISE(ABORT, 'obligation must match posted employer liability'); END;
-
-CREATE TABLE payroll_statutory_remittances (
-    tenant TEXT NOT NULL,
-    remittance_id TEXT NOT NULL,
-    amount_minor INTEGER NOT NULL CHECK (typeof(amount_minor) = 'integer' AND amount_minor > 0),
-    proof_ref TEXT NOT NULL CHECK (typeof(proof_ref) = 'text' AND length(trim(proof_ref)) > 0),
-    PRIMARY KEY (tenant, remittance_id)
-);
-
-CREATE TABLE payroll_statutory_allocations (
-    tenant TEXT NOT NULL,
-    allocation_id TEXT NOT NULL,
-    obligation_id TEXT NOT NULL,
-    remittance_id TEXT NOT NULL,
-    amount_minor INTEGER NOT NULL CHECK (typeof(amount_minor) = 'integer' AND amount_minor > 0),
-    PRIMARY KEY (tenant, allocation_id),
-    FOREIGN KEY (tenant, obligation_id)
-      REFERENCES payroll_statutory_obligations(tenant, obligation_id),
-    FOREIGN KEY (tenant, remittance_id)
-      REFERENCES payroll_statutory_remittances(tenant, remittance_id)
-);
-
-CREATE TRIGGER ledger_entries_immutable_update BEFORE UPDATE ON payroll_ledger_entries
-BEGIN SELECT RAISE(ABORT, 'posted entries are immutable'); END;
-CREATE TRIGGER ledger_entries_immutable_delete BEFORE DELETE ON payroll_ledger_entries
-BEGIN SELECT RAISE(ABORT, 'posted entries are immutable'); END;
-CREATE TRIGGER calculation_revisions_immutable_update BEFORE UPDATE ON payroll_calculation_revisions
-BEGIN SELECT RAISE(ABORT, 'draft revisions are immutable'); END;
-CREATE TRIGGER calculation_revisions_immutable_delete BEFORE DELETE ON payroll_calculation_revisions
-BEGIN SELECT RAISE(ABORT, 'draft revisions are immutable'); END;
-CREATE TRIGGER draft_entries_immutable_update BEFORE UPDATE ON payroll_draft_entries
-BEGIN SELECT RAISE(ABORT, 'draft entries are immutable'); END;
-CREATE TRIGGER draft_entries_immutable_delete BEFORE DELETE ON payroll_draft_entries
-BEGIN SELECT RAISE(ABORT, 'draft entries are immutable'); END;
-CREATE TRIGGER instructions_immutable_update BEFORE UPDATE ON payroll_instructions
-BEGIN SELECT RAISE(ABORT, 'instructions are immutable'); END;
-CREATE TRIGGER instructions_immutable_delete BEFORE DELETE ON payroll_instructions
-BEGIN SELECT RAISE(ABORT, 'instructions are immutable'); END;
-CREATE TRIGGER instruction_versions_immutable_update BEFORE UPDATE ON payroll_instruction_versions
-BEGIN SELECT RAISE(ABORT, 'instruction versions are immutable'); END;
-CREATE TRIGGER instruction_versions_immutable_delete BEFORE DELETE ON payroll_instruction_versions
-BEGIN SELECT RAISE(ABORT, 'instruction versions are immutable'); END;
-CREATE TRIGGER obligations_immutable_update BEFORE UPDATE ON payroll_statutory_obligations
-BEGIN SELECT RAISE(ABORT, 'obligations are immutable'); END;
-CREATE TRIGGER obligations_immutable_delete BEFORE DELETE ON payroll_statutory_obligations
-BEGIN SELECT RAISE(ABORT, 'obligations are immutable'); END;
-CREATE TRIGGER remittances_immutable_update BEFORE UPDATE ON payroll_statutory_remittances
-BEGIN SELECT RAISE(ABORT, 'remittances are immutable'); END;
-CREATE TRIGGER remittances_immutable_delete BEFORE DELETE ON payroll_statutory_remittances
-BEGIN SELECT RAISE(ABORT, 'remittances are immutable'); END;
-CREATE TRIGGER allocations_immutable_update BEFORE UPDATE ON payroll_statutory_allocations
-BEGIN SELECT RAISE(ABORT, 'allocations are immutable'); END;
-CREATE TRIGGER allocations_immutable_delete BEFORE DELETE ON payroll_statutory_allocations
-BEGIN SELECT RAISE(ABORT, 'allocations are immutable'); END;
+CREATE UNIQUE INDEX one_obligation_per_liability ON payroll_employer_liability_ledger(tenant,posted_liability_entry_id) WHERE row_kind='obligation';
+CREATE INDEX liability_allocations ON payroll_employer_liability_ledger(tenant,obligation_entry_id) WHERE row_kind='allocation';
+CREATE TRIGGER obligation_matches_posted BEFORE INSERT ON payroll_employer_liability_ledger
+WHEN NEW.row_kind='obligation' AND NOT EXISTS(SELECT 1 FROM payroll_ledger p WHERE p.tenant=NEW.tenant AND p.ledger_entry_id=NEW.posted_liability_entry_id AND p.direction='employer_liability' AND p.amount_minor=NEW.amount_minor)
+BEGIN SELECT RAISE(ABORT,'obligation must match posted employer liability'); END;
+CREATE TRIGGER allocation_refs_typed BEFORE INSERT ON payroll_employer_liability_ledger
+WHEN NEW.row_kind='allocation' AND (NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger o WHERE o.tenant=NEW.tenant AND o.entry_id=NEW.obligation_entry_id AND o.row_kind='obligation') OR NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger r WHERE r.tenant=NEW.tenant AND r.entry_id=NEW.remittance_entry_id AND r.row_kind='remittance'))
+BEGIN SELECT RAISE(ABORT,'allocation reference type mismatch'); END;
+CREATE TRIGGER liability_immutable_update BEFORE UPDATE ON payroll_employer_liability_ledger BEGIN SELECT RAISE(ABORT,'employer liability ledger is immutable'); END;
+CREATE TRIGGER liability_immutable_delete BEFORE DELETE ON payroll_employer_liability_ledger BEGIN SELECT RAISE(ABORT,'employer liability ledger is immutable'); END;

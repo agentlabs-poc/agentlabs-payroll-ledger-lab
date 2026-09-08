@@ -28,6 +28,24 @@ class RecordStoreTest(unittest.TestCase):
             "country_code": "IN",
         }
 
+    def test_exact_three_ledger_topology_has_five_physical_tables(self):
+        names = {row[0] for row in self.connection.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+        )}
+        self.assertEqual(names, {
+            "payroll_draft_ledger", "payroll_ledger",
+            "payroll_employer_liability_ledger", "payroll_l1_records",
+            "payroll_l2_records",
+        })
+
+    def test_connect_refuses_an_existing_incompatible_prototype(self):
+        legacy_path = Path(self.temp.name) / "legacy.sqlite3"
+        legacy = sqlite3.connect(legacy_path)
+        legacy.execute("CREATE TABLE payroll_calculations(id TEXT)")
+        legacy.close()
+        with self.assertRaisesRegex(RuntimeError, "incompatible payroll SQLite prototype"):
+            connect(legacy_path)
+
     def test_canonical_key_escapes_identity_colon_and_backslash_and_preserves_case(self):
         key = canonical_key("payroll.component", "Ab:C\\D.x_9", 10)
         self.assertEqual(key, "payroll.component:Ab\\:C\\\\D.x_9:10")

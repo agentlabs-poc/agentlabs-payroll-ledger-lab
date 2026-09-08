@@ -1,105 +1,73 @@
-# SQLite payroll record-folding proof
+# Three-ledger SQLite payroll simulation
 
-This isolated Python/SQLite lab exercises one `payroll_l1_records` store for
-supporting payroll records, one `payroll_l2_records` store for employee settings,
-and the nine designated canonical payroll tables. It deliberately supplies no L3
-table or API: `prove.py` is an example consumer that owns its employee selection
-and sequence in process.
+This disposable simulation implements exactly three canonical ledgers:
+`payroll_draft_ledger`, `payroll_ledger`, and
+`payroll_employer_liability_ledger`. Canonical definitions, sources, draft
+metadata, controls, applications and receipts live in `payroll_l1_records`;
+employee settings live in `payroll_l2_records`. These are the only five physical
+tables. There are no compatibility views or supplied L3 storage.
 
-Run the focused tests from the repository root:
+Run the complete real-file suite and disposable proof from the repository root:
 
 ```sh
 python3 -m unittest discover -s sqlite_lab -p 'test_*.py' -v
-```
-
-Run the disposable proof and print its JSON evidence:
-
-```sh
 python3 -m sqlite_lab.prove
+python3 -m sqlite_lab.prove --output-dir /tmp/payroll-three-ledger-evidence
 ```
 
-Retain both the database and JSON report in a new or empty directory:
+The retained form refuses to overwrite `proof.sqlite3`, `evidence.json`,
+`canonical-rows.json`, or `canonical-catalog.json`. `connect()` also rejects a
+database with an incompatible earlier prototype topology; it never migrates it.
 
-```sh
-python3 -m sqlite_lab.prove --output-dir /tmp/payroll-sqlite-evidence
-```
+The L1 registry contains exactly `payroll.component`, `payroll.earning`,
+`payroll.instruction`, `payroll.draft`, `payroll.draft.control`,
+`payroll.draft.review`, `payroll.instruction.resolution`,
+`payroll.instruction.application`, and `payroll.operation.receipt`. L2 contains
+`payroll.employee.settings`. The catalogue also covers draft and posted monetary
+rows plus obligation, remittance, and allocation rows: 15 required kinds total.
 
-The retained form refuses to replace an existing `proof.sqlite3` or
-`evidence.json`. The default form creates and removes its own temporary directory.
+Keys use `<type>:<subject>:<record>`. Dots separate registered namespace tokens.
+Within identity segments only, `\:` represents a colon and `\\` represents a
+backslash. Unknown, unnecessary, and trailing escapes are rejected; identities
+preserve case. Revisions are positive canonical decimal digits and sort
+numerically. The 64-character ASCII identity limit remains a prototype choice.
 
-## Prototype contracts
+Earnings and instructions are immutable versioned L1 sources that reference an
+exact component version, employee, integer minor-unit amount, and inclusive
+effective bounds. An instruction also stores an opaque version ID and cadence.
+Draft creation accepts exact earning and instruction record keys. It does not
+accept a calculation ID or invent salary entitlement from a scalar amount. A
+fixed `payroll.draft:<id>:1` record stores source keys, content hash, employee,
+month, and balanced totals; its monetary lines live in the draft ledger.
 
-- Keys use `<type>:<subject>:<record>`. Dots separate namespace tokens inside the
-  registered type, while colons separate the three key segments. Inside identity
-  segments only, `\:` encodes a literal colon and `\\` encodes a literal
-  backslash. Dots remain literal and must not be escaped. Unknown, unnecessary
-  and trailing escapes are rejected. Identities preserve opaque case, begin with
-  an ASCII letter or digit, contain at most 64 ASCII letters, digits, dots,
-  underscores, hyphens, colons or backslashes, and cannot be empty. Version
-  records require canonical positive decimal digits and order numerically.
-- JSON values are objects with closed top-level per-type field sets and targeted
-  validation for fields used by this proof; this is not full production JSON
-  Schema validation. Key subject/revision identity must agree with JSON identity.
-  Amounts and effects use integer minor units and the fixture currency is INR.
-- L1 has generic scoped reads but no public generic write. Named `Payroll`
-  operations create components, instructions, drafts, controls, reviews, commits,
-  applications and ELR records. L2 permits only the closed
-  `payroll.employee.settings` write in this proof.
-- Component definitions and controls are immutable revisions. A disabled newest
-  component remains authoritative and prevents new use; an older enabled revision
-  is not revived. Component code is unique within tenant/country scope, and code,
-  kind and country stay stable across one component's revisions while its label
-  may change. Receipts and applications cannot change availability because all L1
-  rows are immutable.
-- Employee settings choose the latest effective month and then numeric revision.
-  `policy_ref` is opaque. Its referent, policy semantics and authorization are not
-  validated by this lab.
-- Draft identity and content hash live on the canonical calculation revision.
-  Salary entitlement is an external fixture input. The lab does not add a Salary
-  Earning Ledger table.
-- Record `ts` values are generated by the Python wrapper in this prototype rather
-  than a database default; production database timestamp authority remains open.
-- Commit takes a protected `BEGIN IMMEDIATE`, checks the expected control revision,
-  and writes posted entries, stable-instruction applications with validated posted
-  effects, calculation state and one durable operation receipt in one transaction.
-  Retry identity is tenant + actor + operation + subject + idempotency key; changed
-  input conflicts. A one-time application is unique by stable instruction identity
-  and employee even if a new instruction version is supplied.
-- Supported instruction create/version operations also write one durable operation
-  receipt containing actor, canonical request hash, outcome and before/after
-  evidence. These receipts witness instruction-source authority inside this proof;
-  they do not trace an upstream business source or restore deprecated generic facts.
-- Review is optional unless the caller selects an approval requirement. When
-  required, it binds the exact immutable draft content hash and control revision.
-  The lab adds no maker/checker rule.
-- The employer-contribution fixture posts equal expense and liability entries so
-  the contribution increases gross and deductions equally, leaves net unchanged,
-  and preserves those distinct posted roles. An obligation must exactly match one
-  positive posted employer-liability entry, which can back only one obligation.
-  ELR amounts require exact integer
-  minor units. A remittance requires a nonempty proof reference, and allocation
-  cannot exceed the obligation or remittance. Accounting and bank workflows are
-  outside this proof.
+Component kind determines direction. Earnings add to gross, deductions add to
+deductions, and employer contributions add equal expense and liability amounts
+to gross and deductions, leaving net unchanged. The connected E101 fixture uses
+salary 5,000,000, employer contribution 300,000, and loan deduction 200,000:
+gross 5,300,000, deductions 500,000, net 4,800,000.
 
-The test suite uses real temporary SQLite files. It covers the literal E101
-November 2026 gross 5,000,000, loan deduction 200,000 and net 4,800,000; inclusive
-October through February applicability; a separate one-time consumption fixture;
-hold/release and exact review; injected rollback; reopen durability; duplicate and
-changed retries; two competing connections; stale controls; cross-tenant foreign
-keys; validated draft/posted effect links; and ELR allocation.
+Commit uses `BEGIN IMMEDIATE`, validates the exact draft/control and optional
+review, copies all draft lines to immutable posted rows, records instruction
+applications and effects, and writes a durable outcome receipt in one
+transaction. Stable instruction identity protects monthly and one-time
+consumption across versions. A separate one-time earning instruction fixture
+proves that earning direction and protection.
 
-The JSON proof reports measured timings, SQLite/Python versions, row counts, query
-plans, file/page/index space where SQLite exposes it, and a literal disposition for
-all 16 former supporting roles. `witnessed_combined` means a real journey produced
-the cited consolidated evidence. `explicit_gap` means the proof did not exercise
-that role; a static mapping is not counted as evidence.
+The employer-liability ledger uses immutable typed rows. An obligation must
+exactly match one posted employer-liability row. A remittance requires proof.
+Allocations reference both and enforce obligation and remittance caps; one
+remittance may span obligations. The connected fixture records 300,000 due,
+200,000 remitted and allocated, and 100,000 outstanding.
 
-## Unresolved production work
+`canonical-rows.json` contains every actual row from all five tables.
+`canonical-catalog.json` contains one actual stored example for every required
+kind with meaning, owner, identity, references, validation, and indexed queries.
+The evidence report includes source hashes, timings, row counts, query plans,
+storage measurements, the earlier 16-role disposition, and the former nine-table
+replacement map.
 
-This result does not establish production folding, compatibility or performance.
-PostgreSQL JSON/index behavior, constraints, isolation, database roles/RLS,
-authentication, permissions, migration/data reconciliation and representative
-load remain unproved. Platform-shared component definitions, exact HTTP response
-replay, upstream source tracing, a salary-source contract and an auxiliary policy
-contract are also open. SQLite serializes writers, so the
-two-connection result does not predict PostgreSQL concurrency or throughput.
+This is targeted prototype validation, not full production JSON Schema. Record
+timestamps come from the Python wrapper. Employee, actor, policy, and upstream
+source referents are external to this simulation. Exact HTTP response replay,
+PostgreSQL permissions/RLS, migration compatibility, concurrency behavior, and
+representative load remain unproved. No timing is a performance claim.

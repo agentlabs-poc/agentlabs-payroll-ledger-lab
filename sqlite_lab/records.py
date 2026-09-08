@@ -22,6 +22,18 @@ SCHEMAS = {
         "fields": {"schema_version", "component_id", "revision", "code", "label", "kind", "country_code"},
         "subject": "component_id", "revision": True,
     },
+    "payroll.earning": {
+        "fields": {"schema_version", "earning_id", "revision", "employee_id", "component_key", "amount_minor", "effective_from", "effective_until"},
+        "subject": "earning_id", "revision": True, "optional": {"effective_until"},
+    },
+    "payroll.instruction": {
+        "fields": {"schema_version", "instruction_id", "revision", "version_id", "employee_id", "component_key", "amount_minor", "cadence", "effective_from", "effective_until"},
+        "subject": "instruction_id", "revision": True, "optional": {"effective_until"},
+    },
+    "payroll.draft": {
+        "fields": {"schema_version", "draft_id", "revision", "employee_id", "payroll_month", "earning_keys", "instruction_keys", "content_hash", "gross_minor", "deductions_minor", "net_minor"},
+        "subject": "draft_id", "revision": True,
+    },
     "payroll.draft.control": {
         "fields": {"schema_version", "draft_id", "revision", "employee_id", "payroll_month", "actor", "held", "cancelled", "reason"},
         "subject": "draft_id", "revision": True,
@@ -31,12 +43,12 @@ SCHEMAS = {
         "subject": "draft_id", "record": "review_id",
     },
     "payroll.instruction.resolution": {
-        "fields": {"schema_version", "resolution_id", "draft_id", "instruction_version_id", "disposition", "effects"},
+        "fields": {"schema_version", "resolution_id", "draft_id", "instruction_id", "instruction_key", "disposition", "effects"},
         "subject": "draft_id", "record": "resolution_id",
     },
     "payroll.instruction.application": {
-        "fields": {"schema_version", "application_id", "instruction_id", "instruction_version_id", "employee_id", "payroll_month", "draft_id", "cadence", "effects"},
-        "subject": "instruction_version_id", "record": "application_id",
+        "fields": {"schema_version", "application_id", "instruction_id", "instruction_key", "version_id", "employee_id", "payroll_month", "draft_id", "cadence", "effects"},
+        "subject": "version_id", "record": "application_id",
     },
     "payroll.operation.receipt": {
         "fields": {"schema_version", "receipt_id", "operation", "subject_id", "executor", "idempotency_key", "request_hash", "outcome", "before", "after"},
@@ -129,12 +141,17 @@ def connect(path: str | Path) -> sqlite3.Connection:
     if connection.execute("PRAGMA foreign_keys").fetchone()[0] != 1:
         connection.close()
         raise RuntimeError("SQLite foreign keys could not be enabled")
-    initialized = connection.execute(
-        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='payroll_l1_records'"
-    ).fetchone()
-    if initialized is None:
+    names = {row[0] for row in connection.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+    )}
+    expected = {"payroll_l1_records", "payroll_l2_records", "payroll_draft_ledger",
+                "payroll_ledger", "payroll_employer_liability_ledger"}
+    if not names:
         schema = Path(__file__).with_name("schema.sql").read_text()
         connection.executescript(schema)
+    elif names != expected:
+        connection.close()
+        raise RuntimeError("incompatible payroll SQLite prototype; create a fresh database")
     return connection
 
 
@@ -142,7 +159,8 @@ def _validate(record_type, subject, record, value):
     if not isinstance(value, dict):
         raise RecordError("record value must be a JSON object")
     schema = SCHEMAS[record_type]
-    if set(value) != schema["fields"] or any(item is None for item in value.values()):
+    if set(value) != schema["fields"] or any(
+            item is None and name not in schema.get("optional", set()) for name, item in value.items()):
         raise RecordError("payload fields do not match closed schema")
     if value["schema_version"] != 1:
         raise RecordError("unsupported schema version")
@@ -160,6 +178,37 @@ def _validate(record_type, subject, record, value):
             _identifier(value[name], name, identity=name == "component_id")
         if not isinstance(value["label"], str) or not value["label"]:
             raise RecordError("label is required")
+    elif record_type in {"payroll.earning", "payroll.instruction"}:
+        for name in (schema["subject"], "employee_id"):
+            _identifier(value[name], name, identity=True)
+        if type(value["amount_minor"]) is not int or value["amount_minor"] <= 0:
+            raise RecordError("source amount must be positive integer minor units")
+        if not MONTH.fullmatch(value["effective_from"]):
+            raise RecordError("invalid source effective month")
+        if value["effective_until"] is not None and (
+                not MONTH.fullmatch(value["effective_until"]) or value["effective_until"] < value["effective_from"]):
+            raise RecordError("invalid source expiry month")
+        component_type, _, _ = parse_key(value["component_key"])
+        if component_type != "payroll.component":
+            raise RecordError("source component reference has wrong type")
+        if record_type == "payroll.instruction":
+            _identifier(value["version_id"], "version id", identity=True)
+            if value["cadence"] not in {"monthly", "one_time"}:
+                raise RecordError("invalid instruction cadence")
+    elif record_type == "payroll.draft":
+        _identifier(value["employee_id"], "employee", identity=True)
+        if not MONTH.fullmatch(value["payroll_month"]):
+            raise RecordError("invalid payroll month")
+        if not isinstance(value["earning_keys"], list) or not isinstance(value["instruction_keys"], list):
+            raise RecordError("draft source keys must be arrays")
+        if any(parse_key(key)[0] != "payroll.earning" for key in value["earning_keys"]):
+            raise RecordError("draft earning reference has wrong type")
+        if any(parse_key(key)[0] != "payroll.instruction" for key in value["instruction_keys"]):
+            raise RecordError("draft instruction reference has wrong type")
+        if any(type(value[name]) is not int or value[name] < 0 for name in ("gross_minor", "deductions_minor", "net_minor")):
+            raise RecordError("draft totals must be integer minor units")
+        if value["net_minor"] != value["gross_minor"] - value["deductions_minor"]:
+            raise RecordError("draft totals do not balance")
     elif record_type == "payroll.employee.settings":
         if not MONTH.fullmatch(value["effective_from"]):
             raise RecordError("invalid effective month")
