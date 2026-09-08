@@ -1,0 +1,92 @@
+# SQLite payroll record-folding proof
+
+This isolated Python/SQLite lab exercises one `payroll_l1_records` store for
+supporting payroll records, one `payroll_l2_records` store for employee settings,
+and the nine designated canonical payroll tables. It deliberately supplies no L3
+table or API: `prove.py` is an example consumer that owns its employee selection
+and sequence in process.
+
+Run the focused tests from the repository root:
+
+```sh
+python3 -m unittest discover -s sqlite_lab -p 'test_*.py' -v
+```
+
+Run the disposable proof and print its JSON evidence:
+
+```sh
+python3 -m sqlite_lab.prove
+```
+
+Retain both the database and JSON report in a new or empty directory:
+
+```sh
+python3 -m sqlite_lab.prove --output-dir /tmp/payroll-sqlite-evidence
+```
+
+The retained form refuses to replace an existing `proof.sqlite3` or
+`evidence.json`. The default form creates and removes its own temporary directory.
+
+## Prototype contracts
+
+- Keys use `<type>/<subject>/<record>`. Identifiers are case-preserving ASCII
+  letters, digits, dots, underscores and hyphens, begin with a letter or digit,
+  contain no separator and are at most 64 characters. Version records require a
+  canonical positive integer revision.
+- JSON values are objects with closed per-type field sets. Key subject/revision
+  identity must agree with JSON identity. Amounts and effects use integer minor
+  units and the fixture currency is INR.
+- L1 has generic scoped reads but no public generic write. Named `Payroll`
+  operations create components, instructions, drafts, controls, reviews, commits,
+  applications and ELR records. L2 permits only the closed
+  `payroll.employee.settings` write in this proof.
+- Component definitions and controls are immutable revisions. A disabled newest
+  component remains authoritative and prevents new use; an older enabled revision
+  is not revived. Receipts and applications cannot change availability because
+  all L1 rows are immutable.
+- Employee settings choose the latest effective month and then numeric revision.
+  `policy_ref` is opaque. Its referent, policy semantics and authorization are not
+  validated by this lab.
+- Draft identity and content hash live on the canonical calculation revision.
+  Salary entitlement is an external fixture input. The lab does not add a Salary
+  Earning Ledger table.
+- Commit takes a protected `BEGIN IMMEDIATE`, checks the expected control revision,
+  and writes posted entries, stable-instruction applications with validated posted
+  effects, calculation state and one durable operation receipt in one transaction.
+  Retry identity is tenant + actor + operation + subject + idempotency key; changed
+  input conflicts. A one-time application is unique by stable instruction identity
+  and employee even if a new instruction version is supplied.
+- Supported instruction create/version operations also write one durable operation
+  receipt containing actor, canonical request hash, outcome and before/after
+  evidence. These receipts witness instruction-source authority inside this proof;
+  they do not trace an upstream business source or restore deprecated generic facts.
+- Review is optional unless the caller selects an approval requirement. When
+  required, it binds the exact immutable draft content hash and control revision.
+  The lab adds no maker/checker rule.
+- The employer-contribution fixture posts equal expense and liability entries so
+  it does not alter the salary/loan totals. An obligation is outstanding until an
+  explicit remittance allocation, and allocation cannot exceed the obligation or
+  remittance. Accounting and bank workflows are outside this proof.
+
+The test suite uses real temporary SQLite files. It covers the literal E101
+November 2026 gross 5,000,000, loan deduction 200,000 and net 4,800,000; inclusive
+October through February applicability; a separate one-time consumption fixture;
+hold/release and exact review; injected rollback; reopen durability; duplicate and
+changed retries; two competing connections; stale controls; cross-tenant foreign
+keys; validated draft/posted effect links; and ELR allocation.
+
+The JSON proof reports measured timings, SQLite/Python versions, row counts, query
+plans, file/page/index space where SQLite exposes it, and a literal disposition for
+all 16 former supporting roles. `witnessed_combined` means a real journey produced
+the cited consolidated evidence. `explicit_gap` means the proof did not exercise
+that role; a static mapping is not counted as evidence.
+
+## Unresolved production work
+
+This result does not establish production folding, compatibility or performance.
+PostgreSQL JSON/index behavior, constraints, isolation, database roles/RLS,
+authentication, permissions, migration/data reconciliation and representative
+load remain unproved. Platform-shared component definitions, exact HTTP response
+replay, source-authority operation coverage, a salary-source contract and an
+auxiliary policy contract are also open. SQLite serializes writers, so the
+two-connection result does not predict PostgreSQL concurrency or throughput.
