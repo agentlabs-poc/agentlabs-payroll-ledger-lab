@@ -95,7 +95,8 @@ CREATE TRIGGER posted_immutable_delete BEFORE DELETE ON payroll_ledger BEGIN SEL
 CREATE TABLE payroll_employer_liability_ledger (
  tenant TEXT NOT NULL, entry_id TEXT NOT NULL, row_kind TEXT NOT NULL CHECK(row_kind IN ('obligation','remittance','allocation')),
  amount_minor INTEGER NOT NULL CHECK(typeof(amount_minor)='integer' AND amount_minor>0),
- posted_liability_entry_id TEXT, obligation_entry_id TEXT, remittance_entry_id TEXT, proof_ref TEXT,
+ employer_id TEXT NOT NULL, authority_id TEXT NOT NULL, currency TEXT NOT NULL,
+ reporting_period TEXT, posted_liability_entry_id TEXT, obligation_entry_id TEXT, remittance_entry_id TEXT, proof_ref TEXT,
  PRIMARY KEY(tenant,entry_id), FOREIGN KEY(tenant,posted_liability_entry_id) REFERENCES payroll_ledger(tenant,ledger_entry_id),
  FOREIGN KEY(tenant,obligation_entry_id) REFERENCES payroll_employer_liability_ledger(tenant,entry_id),
  FOREIGN KEY(tenant,remittance_entry_id) REFERENCES payroll_employer_liability_ledger(tenant,entry_id),

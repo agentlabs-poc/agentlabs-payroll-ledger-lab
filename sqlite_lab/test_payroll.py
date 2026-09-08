@@ -198,8 +198,8 @@ class PayrollTest(unittest.TestCase):
     def test_elr_one_remittance_spans_obligations_and_caps(self):
         one=self.make_draft("2026-11","D1",True,[]); c1=self.payroll.commit("D1","E101","c1",1)
         two=self.make_draft("2026-12","D2",True,[]); c2=self.payroll.commit("D2","E101","c2",1)
-        self.payroll.record_obligation("OB1",c1["employer_liability_entry_id"],300_000); self.payroll.record_obligation("OB2",c2["employer_liability_entry_id"],300_000)
-        self.payroll.record_remittance("REM1",400_000,"challan:REM1"); self.payroll.allocate_remittance("A1","OB1","REM1",200_000); self.payroll.allocate_remittance("A2","OB2","REM1",200_000)
+        self.payroll.record_obligation("OB1",c1["employer_liability_entry_ids"][0],300_000,employer_id="ORG1",authority_id="EPFO"); self.payroll.record_obligation("OB2",c2["employer_liability_entry_ids"][0],300_000,employer_id="ORG1",authority_id="EPFO")
+        self.payroll.record_remittance("REM1",400_000,"challan:REM1",employer_id="ORG1",authority_id="EPFO"); self.payroll.allocate_remittance("A1","OB1","REM1",200_000); self.payroll.allocate_remittance("A2","OB2","REM1",200_000)
         self.assertEqual((self.payroll.elr_outstanding("OB1"),self.payroll.elr_outstanding("OB2")),(100_000,100_000))
         with self.assertRaises(PayrollError): self.payroll.allocate_remittance("A3","OB1","REM1",1)
 
@@ -207,16 +207,16 @@ class PayrollTest(unittest.TestCase):
         self.make_draft(with_employer=True,instructions=[]); committed=self.payroll.commit("D1","E101","elr",1)
         salary=self.connection.execute("SELECT ledger_entry_id FROM payroll_ledger WHERE draft_key='payroll.draft:E101:D1:1' AND direction='earning'").fetchone()[0]
         for amount in (True,1.5):
-            with self.assertRaises(PayrollError): self.payroll.record_remittance("BAD",amount,"proof")
-        with self.assertRaises(PayrollError): self.payroll.record_remittance("BAD",1," ")
-        with self.assertRaises(Conflict): self.payroll.record_obligation("BAD",salary,5_000_000)
-        self.payroll.record_obligation("OB1",committed["employer_liability_entry_id"],300_000)
-        with self.assertRaises(Conflict): self.payroll.record_obligation("OB2",committed["employer_liability_entry_id"],300_000)
+            with self.assertRaises(PayrollError): self.payroll.record_remittance("BAD",amount,"proof",employer_id="ORG1",authority_id="EPFO")
+        with self.assertRaises(PayrollError): self.payroll.record_remittance("BAD",1," ",employer_id="ORG1",authority_id="EPFO")
+        with self.assertRaises(PayrollError): self.payroll.record_obligation("BAD",salary,5_000_000,employer_id="ORG1",authority_id="EPFO")
+        self.payroll.record_obligation("OB1",committed["employer_liability_entry_ids"][0],300_000,employer_id="ORG1",authority_id="EPFO")
+        with self.assertRaises(Conflict): self.payroll.record_obligation("OB2",committed["employer_liability_entry_ids"][0],300_000,employer_id="ORG1",authority_id="EPFO")
 
     def test_elr_rejects_malformed_own_and_reference_identities(self):
         for call in (
-            lambda: self.payroll.record_remittance("",1,"proof"),
-            lambda: self.payroll.record_obligation("BAD/ID","POSTED",1),
+            lambda: self.payroll.record_remittance("",1,"proof",employer_id="ORG1",authority_id="EPFO"),
+            lambda: self.payroll.record_obligation("BAD/ID","POSTED",1,employer_id="ORG1",authority_id="EPFO"),
             lambda: self.payroll.allocate_remittance("A1","BAD/OB","REM1",1),
             lambda: self.payroll.allocate_remittance("A1","OB1","BAD/REM",1),
         ):

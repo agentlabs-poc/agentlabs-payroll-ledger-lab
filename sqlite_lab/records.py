@@ -27,11 +27,11 @@ SCHEMAS = {
         "identity": (("employee_id", "text"), ("earning_id", "text"), ("revision", "revision")), "optional": {"effective_until"},
     },
     "payroll.instruction": {
-        "fields": {"schema_version", "instruction_id", "revision", "version_id", "employee_id", "component_key", "amount_minor", "cadence", "effective_from", "effective_until"},
-        "identity": (("employee_id", "text"), ("instruction_id", "text"), ("revision", "revision")), "optional": {"effective_until"},
+        "fields": {"schema_version", "instruction_id", "revision", "version_id", "employee_id", "component_key", "amount_minor", "cadence", "effective_from", "effective_until", "adjustment_of"},
+        "identity": (("employee_id", "text"), ("instruction_id", "text"), ("revision", "revision")), "optional": {"effective_until", "adjustment_of"},
     },
     "payroll.draft": {
-        "fields": {"schema_version", "draft_id", "revision", "employee_id", "payroll_month", "earning_keys", "instruction_keys", "content_hash", "gross_minor", "deductions_minor", "net_minor"},
+        "fields": {"schema_version", "draft_id", "revision", "employee_id", "payroll_month", "earning_keys", "instruction_keys", "source_basis", "content_hash", "gross_minor", "deductions_minor", "net_minor"},
         "identity": (("employee_id", "text"), ("draft_id", "text"), ("revision", "revision")),
     },
     "payroll.draft.control": {
@@ -161,8 +161,9 @@ def _validate(record_type, identity, value):
     if not isinstance(value, dict):
         raise RecordError("record value must be a JSON object")
     schema = SCHEMAS[record_type]
-    if set(value) != schema["fields"] or any(
-            item is None and name not in schema.get("optional", set()) for name, item in value.items()):
+    optional = schema.get("optional", set())
+    if not schema["fields"] - optional <= set(value) <= schema["fields"] or any(
+            item is None and name not in optional for name, item in value.items()):
         raise RecordError("payload fields do not match closed schema")
     if value["schema_version"] != 1:
         raise RecordError("unsupported schema version")
@@ -194,11 +195,15 @@ def _validate(record_type, identity, value):
             _identifier(value["version_id"], "version id", identity=True)
             if value["cadence"] not in {"monthly", "one_time"}:
                 raise RecordError("invalid instruction cadence")
+            if "adjustment_of" in value:
+                _identifier(value["adjustment_of"], "adjustment entry", identity=True)
+                if value["cadence"] != "one_time":
+                    raise RecordError("adjustment instruction must be one-time")
     elif record_type == "payroll.draft":
         _identifier(value["employee_id"], "employee", identity=True)
         if not MONTH.fullmatch(value["payroll_month"]):
             raise RecordError("invalid payroll month")
-        if not isinstance(value["earning_keys"], list) or not isinstance(value["instruction_keys"], list):
+        if not isinstance(value["earning_keys"], list) or not isinstance(value["instruction_keys"], list) or not isinstance(value["source_basis"], list):
             raise RecordError("draft source keys must be arrays")
         if any(parse_key(key)[:2] != ("payroll.earning", value["employee_id"])
                for key in value["earning_keys"]):
