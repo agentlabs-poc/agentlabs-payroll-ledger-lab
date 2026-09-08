@@ -1,0 +1,3363 @@
+{
+  "source": {
+    "revision": "canonical-three-ledger-v1",
+    "sha256": {
+      "demo.py": "6b4956ce4f1f530478850f202c7ef803f1debc32a95378ad5adbae38869a1692",
+      "schema.sql": "952668ff12b244b80cbfe9e9bd49ffe62c1578ea29d9a841e802aea5b1a4fd35",
+      "records.py": "87621aa7480b515475cd0abb1203e7fc5863762361d379c96e88c400c1f44cd4",
+      "payroll.py": "60f79df6d74eb751b98dd712536dd56d7380fd99957a3dc974897c58a89938e4"
+    }
+  },
+  "fixture": {
+    "tenant": "T1",
+    "employee_id": "E101",
+    "payroll_month": "2026-11",
+    "currency": "INR",
+    "unit": "minor"
+  },
+  "tables": [
+    "payroll_l1_records",
+    "payroll_l2_records",
+    "payroll_draft_ledger",
+    "payroll_ledger",
+    "payroll_employer_liability_ledger"
+  ],
+  "catalogue": {
+    "record_types": [
+      "payroll.component",
+      "payroll.earning",
+      "payroll.instruction",
+      "payroll.draft",
+      "payroll.draft.control",
+      "payroll.draft.review",
+      "payroll.instruction.resolution",
+      "payroll.instruction.application",
+      "payroll.operation.receipt",
+      "payroll.employee.settings"
+    ],
+    "ledger_kinds": [
+      "draft",
+      "posted",
+      "obligation",
+      "remittance",
+      "allocation"
+    ]
+  },
+  "stages": [
+    {
+      "id": "empty",
+      "title": "Empty database",
+      "explanation": "A fresh schema has no payroll rows.",
+      "outcome": {
+        "status": "observed"
+      },
+      "summary": {
+        "payroll": {
+          "gross_minor": 0,
+          "deductions_minor": 0,
+          "net_minor": 0
+        },
+        "liability": {
+          "due_minor": 0,
+          "paid_minor": 0,
+          "allocated_minor": 0,
+          "outstanding_minor": 0
+        }
+      },
+      "tables": {
+        "payroll_l1_records": [],
+        "payroll_l2_records": [],
+        "payroll_draft_ledger": [],
+        "payroll_ledger": [],
+        "payroll_employer_liability_ledger": []
+      }
+    },
+    {
+      "id": "sources",
+      "title": "Source records",
+      "explanation": "Components define meaning; earnings are entitlements, while instructions are monthly or one-time inputs. L2 settings are auxiliary.",
+      "outcome": {
+        "status": "observed"
+      },
+      "summary": {
+        "payroll": {
+          "gross_minor": 0,
+          "deductions_minor": 0,
+          "net_minor": 0
+        },
+        "liability": {
+          "due_minor": 0,
+          "paid_minor": 0,
+          "allocated_minor": 0,
+          "outstanding_minor": 0
+        }
+      },
+      "tables": {
+        "payroll_l1_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.component:SALARY:1",
+            "value": {
+              "code": "salary",
+              "component_id": "SALARY",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "Salary",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:EMPLOYER:1",
+            "value": {
+              "code": "employer",
+              "component_id": "EMPLOYER",
+              "country_code": "IN",
+              "kind": "employer_contribution",
+              "label": "Employer contribution",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:LOAN:1",
+            "value": {
+              "code": "loan",
+              "component_id": "LOAN",
+              "country_code": "IN",
+              "kind": "deduction",
+              "label": "Loan recovery",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-SALARY:1",
+            "value": {
+              "amount_minor": 5000000,
+              "component_key": "payroll.component:SALARY:1",
+              "earning_id": "EARN-SALARY",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-EMPLOYER:1",
+            "value": {
+              "amount_minor": 300000,
+              "component_key": "payroll.component:EMPLOYER:1",
+              "earning_id": "EARN-EMPLOYER",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction:I-LOAN:1",
+            "value": {
+              "amount_minor": 200000,
+              "cadence": "monthly",
+              "component_key": "payroll.component:LOAN:1",
+              "effective_from": "2026-10",
+              "effective_until": "2027-02",
+              "employee_id": "E101",
+              "instruction_id": "I-LOAN",
+              "revision": 1,
+              "schema_version": 1,
+              "version_id": "opaque\\loan-nov-2026"
+            },
+            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.operation.receipt:I-LOAN:RCPT88def4f563420338b4dd",
+            "value": {
+              "after": {
+                "instruction_key": "payroll.instruction:I-LOAN:1"
+              },
+              "before": {
+                "instruction_exists": false
+              },
+              "executor": "payroll-admin",
+              "idempotency_key": "opaque\\loan-nov-2026",
+              "operation": "payroll.instruction.create",
+              "outcome": {
+                "instruction_key": "payroll.instruction:I-LOAN:1",
+                "status": "created",
+                "version_id": "opaque\\loan-nov-2026"
+              },
+              "receipt_id": "RCPT88def4f563420338b4dd",
+              "request_hash": "233b6e218717860a8cc63aca37bb5eb5220d2e63f4f812bfeb6227cebe39bfc9",
+              "schema_version": 1,
+              "subject_id": "I-LOAN"
+            },
+            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_l2_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.employee.settings:E101:1",
+            "value": {
+              "effective_from": "2026-01",
+              "employee_id": "E101",
+              "payslip_locale": "en-IN",
+              "policy_ref": {
+                "id": "INDIA-PAYROLL",
+                "revision": 1
+              },
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_draft_ledger": [],
+        "payroll_ledger": [],
+        "payroll_employer_liability_ledger": []
+      }
+    },
+    {
+      "id": "draft",
+      "title": "Draft snapshot",
+      "explanation": "payroll.draft fixes source versions, content hash, and totals; payroll_draft_ledger holds its monetary effects. Resolution records describe candidate instruction treatment.",
+      "outcome": {
+        "status": "observed"
+      },
+      "summary": {
+        "payroll": {
+          "gross_minor": 5300000,
+          "deductions_minor": 500000,
+          "net_minor": 4800000
+        },
+        "liability": {
+          "due_minor": 0,
+          "paid_minor": 0,
+          "allocated_minor": 0,
+          "outstanding_minor": 0
+        }
+      },
+      "tables": {
+        "payroll_l1_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.component:SALARY:1",
+            "value": {
+              "code": "salary",
+              "component_id": "SALARY",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "Salary",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:EMPLOYER:1",
+            "value": {
+              "code": "employer",
+              "component_id": "EMPLOYER",
+              "country_code": "IN",
+              "kind": "employer_contribution",
+              "label": "Employer contribution",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:LOAN:1",
+            "value": {
+              "code": "loan",
+              "component_id": "LOAN",
+              "country_code": "IN",
+              "kind": "deduction",
+              "label": "Loan recovery",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-SALARY:1",
+            "value": {
+              "amount_minor": 5000000,
+              "component_key": "payroll.component:SALARY:1",
+              "earning_id": "EARN-SALARY",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-EMPLOYER:1",
+            "value": {
+              "amount_minor": 300000,
+              "component_key": "payroll.component:EMPLOYER:1",
+              "earning_id": "EARN-EMPLOYER",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction:I-LOAN:1",
+            "value": {
+              "amount_minor": 200000,
+              "cadence": "monthly",
+              "component_key": "payroll.component:LOAN:1",
+              "effective_from": "2026-10",
+              "effective_until": "2027-02",
+              "employee_id": "E101",
+              "instruction_id": "I-LOAN",
+              "revision": 1,
+              "schema_version": 1,
+              "version_id": "opaque\\loan-nov-2026"
+            },
+            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.operation.receipt:I-LOAN:RCPT88def4f563420338b4dd",
+            "value": {
+              "after": {
+                "instruction_key": "payroll.instruction:I-LOAN:1"
+              },
+              "before": {
+                "instruction_exists": false
+              },
+              "executor": "payroll-admin",
+              "idempotency_key": "opaque\\loan-nov-2026",
+              "operation": "payroll.instruction.create",
+              "outcome": {
+                "instruction_key": "payroll.instruction:I-LOAN:1",
+                "status": "created",
+                "version_id": "opaque\\loan-nov-2026"
+              },
+              "receipt_id": "RCPT88def4f563420338b4dd",
+              "request_hash": "233b6e218717860a8cc63aca37bb5eb5220d2e63f4f812bfeb6227cebe39bfc9",
+              "schema_version": 1,
+              "subject_id": "I-LOAN"
+            },
+            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft:D1:1",
+            "value": {
+              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "deductions_minor": 500000,
+              "draft_id": "D1",
+              "earning_keys": [
+                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-EMPLOYER:1"
+              ],
+              "employee_id": "E101",
+              "gross_minor": 5300000,
+              "instruction_keys": [
+                "payroll.instruction:I-LOAN:1"
+              ],
+              "net_minor": 4800000,
+              "payroll_month": "2026-11",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:1",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": false,
+              "payroll_month": "2026-11",
+              "reason": "created",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction.resolution:D1:RES1",
+            "value": {
+              "disposition": "applied",
+              "draft_id": "D1",
+              "effects": [
+                {
+                  "amount_minor": 200000,
+                  "currency": "INR",
+                  "draft_entry_id": "DE7328a0ac6583cd256b8f"
+                }
+              ],
+              "instruction_id": "I-LOAN",
+              "instruction_key": "payroll.instruction:I-LOAN:1",
+              "resolution_id": "RES1",
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_l2_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.employee.settings:E101:1",
+            "value": {
+              "effective_from": "2026-01",
+              "employee_id": "E101",
+              "payslip_locale": "en-IN",
+              "policy_ref": {
+                "id": "INDIA-PAYROLL",
+                "revision": 1
+              },
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_draft_ledger": [
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE793db74cd6d705234049",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-SALARY:1",
+            "component_key": "payroll.component:SALARY:1",
+            "direction": "earning",
+            "amount_minor": 5000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DEa05eef9d1d09953bcfc2",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_expense",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE21d443fc672885ac8f0d",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_liability",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE7328a0ac6583cd256b8f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.instruction:I-LOAN:1",
+            "component_key": "payroll.component:LOAN:1",
+            "direction": "deduction",
+            "amount_minor": 200000,
+            "currency": "INR",
+            "row_kind": "draft"
+          }
+        ],
+        "payroll_ledger": [],
+        "payroll_employer_liability_ledger": []
+      }
+    },
+    {
+      "id": "held",
+      "title": "Commit blocked by hold",
+      "explanation": "The hold is a new payroll.draft.control revision. The rejected commit appends no monetary rows, application, or receipt.",
+      "outcome": {
+        "status": "rejected",
+        "reason": "draft held or cancelled"
+      },
+      "summary": {
+        "payroll": {
+          "gross_minor": 5300000,
+          "deductions_minor": 500000,
+          "net_minor": 4800000
+        },
+        "liability": {
+          "due_minor": 0,
+          "paid_minor": 0,
+          "allocated_minor": 0,
+          "outstanding_minor": 0
+        }
+      },
+      "tables": {
+        "payroll_l1_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.component:SALARY:1",
+            "value": {
+              "code": "salary",
+              "component_id": "SALARY",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "Salary",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:EMPLOYER:1",
+            "value": {
+              "code": "employer",
+              "component_id": "EMPLOYER",
+              "country_code": "IN",
+              "kind": "employer_contribution",
+              "label": "Employer contribution",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:LOAN:1",
+            "value": {
+              "code": "loan",
+              "component_id": "LOAN",
+              "country_code": "IN",
+              "kind": "deduction",
+              "label": "Loan recovery",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-SALARY:1",
+            "value": {
+              "amount_minor": 5000000,
+              "component_key": "payroll.component:SALARY:1",
+              "earning_id": "EARN-SALARY",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-EMPLOYER:1",
+            "value": {
+              "amount_minor": 300000,
+              "component_key": "payroll.component:EMPLOYER:1",
+              "earning_id": "EARN-EMPLOYER",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction:I-LOAN:1",
+            "value": {
+              "amount_minor": 200000,
+              "cadence": "monthly",
+              "component_key": "payroll.component:LOAN:1",
+              "effective_from": "2026-10",
+              "effective_until": "2027-02",
+              "employee_id": "E101",
+              "instruction_id": "I-LOAN",
+              "revision": 1,
+              "schema_version": 1,
+              "version_id": "opaque\\loan-nov-2026"
+            },
+            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.operation.receipt:I-LOAN:RCPT88def4f563420338b4dd",
+            "value": {
+              "after": {
+                "instruction_key": "payroll.instruction:I-LOAN:1"
+              },
+              "before": {
+                "instruction_exists": false
+              },
+              "executor": "payroll-admin",
+              "idempotency_key": "opaque\\loan-nov-2026",
+              "operation": "payroll.instruction.create",
+              "outcome": {
+                "instruction_key": "payroll.instruction:I-LOAN:1",
+                "status": "created",
+                "version_id": "opaque\\loan-nov-2026"
+              },
+              "receipt_id": "RCPT88def4f563420338b4dd",
+              "request_hash": "233b6e218717860a8cc63aca37bb5eb5220d2e63f4f812bfeb6227cebe39bfc9",
+              "schema_version": 1,
+              "subject_id": "I-LOAN"
+            },
+            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft:D1:1",
+            "value": {
+              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "deductions_minor": 500000,
+              "draft_id": "D1",
+              "earning_keys": [
+                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-EMPLOYER:1"
+              ],
+              "employee_id": "E101",
+              "gross_minor": 5300000,
+              "instruction_keys": [
+                "payroll.instruction:I-LOAN:1"
+              ],
+              "net_minor": 4800000,
+              "payroll_month": "2026-11",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:1",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": false,
+              "payroll_month": "2026-11",
+              "reason": "created",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction.resolution:D1:RES1",
+            "value": {
+              "disposition": "applied",
+              "draft_id": "D1",
+              "effects": [
+                {
+                  "amount_minor": 200000,
+                  "currency": "INR",
+                  "draft_entry_id": "DE7328a0ac6583cd256b8f"
+                }
+              ],
+              "instruction_id": "I-LOAN",
+              "instruction_key": "payroll.instruction:I-LOAN:1",
+              "resolution_id": "RES1",
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:2",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": true,
+              "payroll_month": "2026-11",
+              "reason": "payroll review hold",
+              "revision": 2,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511421+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_l2_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.employee.settings:E101:1",
+            "value": {
+              "effective_from": "2026-01",
+              "employee_id": "E101",
+              "payslip_locale": "en-IN",
+              "policy_ref": {
+                "id": "INDIA-PAYROLL",
+                "revision": 1
+              },
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_draft_ledger": [
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE793db74cd6d705234049",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-SALARY:1",
+            "component_key": "payroll.component:SALARY:1",
+            "direction": "earning",
+            "amount_minor": 5000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DEa05eef9d1d09953bcfc2",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_expense",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE21d443fc672885ac8f0d",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_liability",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE7328a0ac6583cd256b8f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.instruction:I-LOAN:1",
+            "component_key": "payroll.component:LOAN:1",
+            "direction": "deduction",
+            "amount_minor": 200000,
+            "currency": "INR",
+            "row_kind": "draft"
+          }
+        ],
+        "payroll_ledger": [],
+        "payroll_employer_liability_ledger": []
+      }
+    },
+    {
+      "id": "released",
+      "title": "Hold released",
+      "explanation": "A later control revision releases the same immutable draft.",
+      "outcome": {
+        "status": "observed"
+      },
+      "summary": {
+        "payroll": {
+          "gross_minor": 5300000,
+          "deductions_minor": 500000,
+          "net_minor": 4800000
+        },
+        "liability": {
+          "due_minor": 0,
+          "paid_minor": 0,
+          "allocated_minor": 0,
+          "outstanding_minor": 0
+        }
+      },
+      "tables": {
+        "payroll_l1_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.component:SALARY:1",
+            "value": {
+              "code": "salary",
+              "component_id": "SALARY",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "Salary",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:EMPLOYER:1",
+            "value": {
+              "code": "employer",
+              "component_id": "EMPLOYER",
+              "country_code": "IN",
+              "kind": "employer_contribution",
+              "label": "Employer contribution",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:LOAN:1",
+            "value": {
+              "code": "loan",
+              "component_id": "LOAN",
+              "country_code": "IN",
+              "kind": "deduction",
+              "label": "Loan recovery",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-SALARY:1",
+            "value": {
+              "amount_minor": 5000000,
+              "component_key": "payroll.component:SALARY:1",
+              "earning_id": "EARN-SALARY",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-EMPLOYER:1",
+            "value": {
+              "amount_minor": 300000,
+              "component_key": "payroll.component:EMPLOYER:1",
+              "earning_id": "EARN-EMPLOYER",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction:I-LOAN:1",
+            "value": {
+              "amount_minor": 200000,
+              "cadence": "monthly",
+              "component_key": "payroll.component:LOAN:1",
+              "effective_from": "2026-10",
+              "effective_until": "2027-02",
+              "employee_id": "E101",
+              "instruction_id": "I-LOAN",
+              "revision": 1,
+              "schema_version": 1,
+              "version_id": "opaque\\loan-nov-2026"
+            },
+            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.operation.receipt:I-LOAN:RCPT88def4f563420338b4dd",
+            "value": {
+              "after": {
+                "instruction_key": "payroll.instruction:I-LOAN:1"
+              },
+              "before": {
+                "instruction_exists": false
+              },
+              "executor": "payroll-admin",
+              "idempotency_key": "opaque\\loan-nov-2026",
+              "operation": "payroll.instruction.create",
+              "outcome": {
+                "instruction_key": "payroll.instruction:I-LOAN:1",
+                "status": "created",
+                "version_id": "opaque\\loan-nov-2026"
+              },
+              "receipt_id": "RCPT88def4f563420338b4dd",
+              "request_hash": "233b6e218717860a8cc63aca37bb5eb5220d2e63f4f812bfeb6227cebe39bfc9",
+              "schema_version": 1,
+              "subject_id": "I-LOAN"
+            },
+            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft:D1:1",
+            "value": {
+              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "deductions_minor": 500000,
+              "draft_id": "D1",
+              "earning_keys": [
+                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-EMPLOYER:1"
+              ],
+              "employee_id": "E101",
+              "gross_minor": 5300000,
+              "instruction_keys": [
+                "payroll.instruction:I-LOAN:1"
+              ],
+              "net_minor": 4800000,
+              "payroll_month": "2026-11",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:1",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": false,
+              "payroll_month": "2026-11",
+              "reason": "created",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction.resolution:D1:RES1",
+            "value": {
+              "disposition": "applied",
+              "draft_id": "D1",
+              "effects": [
+                {
+                  "amount_minor": 200000,
+                  "currency": "INR",
+                  "draft_entry_id": "DE7328a0ac6583cd256b8f"
+                }
+              ],
+              "instruction_id": "I-LOAN",
+              "instruction_key": "payroll.instruction:I-LOAN:1",
+              "resolution_id": "RES1",
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:2",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": true,
+              "payroll_month": "2026-11",
+              "reason": "payroll review hold",
+              "revision": 2,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511421+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:3",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": false,
+              "payroll_month": "2026-11",
+              "reason": "released for posting",
+              "revision": 3,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511760+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_l2_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.employee.settings:E101:1",
+            "value": {
+              "effective_from": "2026-01",
+              "employee_id": "E101",
+              "payslip_locale": "en-IN",
+              "policy_ref": {
+                "id": "INDIA-PAYROLL",
+                "revision": 1
+              },
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_draft_ledger": [
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE793db74cd6d705234049",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-SALARY:1",
+            "component_key": "payroll.component:SALARY:1",
+            "direction": "earning",
+            "amount_minor": 5000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DEa05eef9d1d09953bcfc2",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_expense",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE21d443fc672885ac8f0d",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_liability",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE7328a0ac6583cd256b8f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.instruction:I-LOAN:1",
+            "component_key": "payroll.component:LOAN:1",
+            "direction": "deduction",
+            "amount_minor": 200000,
+            "currency": "INR",
+            "row_kind": "draft"
+          }
+        ],
+        "payroll_ledger": [],
+        "payroll_employer_liability_ledger": []
+      }
+    },
+    {
+      "id": "reviewed",
+      "title": "Optional exact review",
+      "explanation": "The review binds this draft content hash and control revision. This journey records it, although commit policy does not require approval.",
+      "outcome": {
+        "status": "approved",
+        "optional": true
+      },
+      "summary": {
+        "payroll": {
+          "gross_minor": 5300000,
+          "deductions_minor": 500000,
+          "net_minor": 4800000
+        },
+        "liability": {
+          "due_minor": 0,
+          "paid_minor": 0,
+          "allocated_minor": 0,
+          "outstanding_minor": 0
+        }
+      },
+      "tables": {
+        "payroll_l1_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.component:SALARY:1",
+            "value": {
+              "code": "salary",
+              "component_id": "SALARY",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "Salary",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:EMPLOYER:1",
+            "value": {
+              "code": "employer",
+              "component_id": "EMPLOYER",
+              "country_code": "IN",
+              "kind": "employer_contribution",
+              "label": "Employer contribution",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:LOAN:1",
+            "value": {
+              "code": "loan",
+              "component_id": "LOAN",
+              "country_code": "IN",
+              "kind": "deduction",
+              "label": "Loan recovery",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-SALARY:1",
+            "value": {
+              "amount_minor": 5000000,
+              "component_key": "payroll.component:SALARY:1",
+              "earning_id": "EARN-SALARY",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-EMPLOYER:1",
+            "value": {
+              "amount_minor": 300000,
+              "component_key": "payroll.component:EMPLOYER:1",
+              "earning_id": "EARN-EMPLOYER",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction:I-LOAN:1",
+            "value": {
+              "amount_minor": 200000,
+              "cadence": "monthly",
+              "component_key": "payroll.component:LOAN:1",
+              "effective_from": "2026-10",
+              "effective_until": "2027-02",
+              "employee_id": "E101",
+              "instruction_id": "I-LOAN",
+              "revision": 1,
+              "schema_version": 1,
+              "version_id": "opaque\\loan-nov-2026"
+            },
+            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.operation.receipt:I-LOAN:RCPT88def4f563420338b4dd",
+            "value": {
+              "after": {
+                "instruction_key": "payroll.instruction:I-LOAN:1"
+              },
+              "before": {
+                "instruction_exists": false
+              },
+              "executor": "payroll-admin",
+              "idempotency_key": "opaque\\loan-nov-2026",
+              "operation": "payroll.instruction.create",
+              "outcome": {
+                "instruction_key": "payroll.instruction:I-LOAN:1",
+                "status": "created",
+                "version_id": "opaque\\loan-nov-2026"
+              },
+              "receipt_id": "RCPT88def4f563420338b4dd",
+              "request_hash": "233b6e218717860a8cc63aca37bb5eb5220d2e63f4f812bfeb6227cebe39bfc9",
+              "schema_version": 1,
+              "subject_id": "I-LOAN"
+            },
+            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft:D1:1",
+            "value": {
+              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "deductions_minor": 500000,
+              "draft_id": "D1",
+              "earning_keys": [
+                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-EMPLOYER:1"
+              ],
+              "employee_id": "E101",
+              "gross_minor": 5300000,
+              "instruction_keys": [
+                "payroll.instruction:I-LOAN:1"
+              ],
+              "net_minor": 4800000,
+              "payroll_month": "2026-11",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:1",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": false,
+              "payroll_month": "2026-11",
+              "reason": "created",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction.resolution:D1:RES1",
+            "value": {
+              "disposition": "applied",
+              "draft_id": "D1",
+              "effects": [
+                {
+                  "amount_minor": 200000,
+                  "currency": "INR",
+                  "draft_entry_id": "DE7328a0ac6583cd256b8f"
+                }
+              ],
+              "instruction_id": "I-LOAN",
+              "instruction_key": "payroll.instruction:I-LOAN:1",
+              "resolution_id": "RES1",
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:2",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": true,
+              "payroll_month": "2026-11",
+              "reason": "payroll review hold",
+              "revision": 2,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511421+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:3",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": false,
+              "payroll_month": "2026-11",
+              "reason": "released for posting",
+              "revision": 3,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511760+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.review:D1:REV1",
+            "value": {
+              "actor": "payroll-admin",
+              "control_revision": 3,
+              "decision": "approved",
+              "draft_content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "draft_id": "D1",
+              "review_id": "REV1",
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.512019+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_l2_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.employee.settings:E101:1",
+            "value": {
+              "effective_from": "2026-01",
+              "employee_id": "E101",
+              "payslip_locale": "en-IN",
+              "policy_ref": {
+                "id": "INDIA-PAYROLL",
+                "revision": 1
+              },
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_draft_ledger": [
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE793db74cd6d705234049",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-SALARY:1",
+            "component_key": "payroll.component:SALARY:1",
+            "direction": "earning",
+            "amount_minor": 5000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DEa05eef9d1d09953bcfc2",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_expense",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE21d443fc672885ac8f0d",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_liability",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE7328a0ac6583cd256b8f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.instruction:I-LOAN:1",
+            "component_key": "payroll.component:LOAN:1",
+            "direction": "deduction",
+            "amount_minor": 200000,
+            "currency": "INR",
+            "row_kind": "draft"
+          }
+        ],
+        "payroll_ledger": [],
+        "payroll_employer_liability_ledger": []
+      }
+    },
+    {
+      "id": "committed",
+      "title": "Committed atomically",
+      "explanation": "Posted entries, the instruction application, and the durable payroll.commit receipt appear together. The draft and its resolution stay unchanged.",
+      "outcome": {
+        "status": "committed",
+        "draft_id": "D1",
+        "draft_key": "payroll.draft:D1:1",
+        "posted_entry_ids": [
+          "PEca8e136caced406044ca",
+          "PE5e38fcb8288db506f734",
+          "PEd3fa4ff6c733d58e8b6a",
+          "PEe672463bd7dd5f3520ad"
+        ],
+        "employer_liability_entry_id": "PEd3fa4ff6c733d58e8b6a",
+        "approval_required": false
+      },
+      "summary": {
+        "payroll": {
+          "gross_minor": 5300000,
+          "deductions_minor": 500000,
+          "net_minor": 4800000
+        },
+        "liability": {
+          "due_minor": 0,
+          "paid_minor": 0,
+          "allocated_minor": 0,
+          "outstanding_minor": 0
+        }
+      },
+      "tables": {
+        "payroll_l1_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.component:SALARY:1",
+            "value": {
+              "code": "salary",
+              "component_id": "SALARY",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "Salary",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:EMPLOYER:1",
+            "value": {
+              "code": "employer",
+              "component_id": "EMPLOYER",
+              "country_code": "IN",
+              "kind": "employer_contribution",
+              "label": "Employer contribution",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:LOAN:1",
+            "value": {
+              "code": "loan",
+              "component_id": "LOAN",
+              "country_code": "IN",
+              "kind": "deduction",
+              "label": "Loan recovery",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-SALARY:1",
+            "value": {
+              "amount_minor": 5000000,
+              "component_key": "payroll.component:SALARY:1",
+              "earning_id": "EARN-SALARY",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-EMPLOYER:1",
+            "value": {
+              "amount_minor": 300000,
+              "component_key": "payroll.component:EMPLOYER:1",
+              "earning_id": "EARN-EMPLOYER",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction:I-LOAN:1",
+            "value": {
+              "amount_minor": 200000,
+              "cadence": "monthly",
+              "component_key": "payroll.component:LOAN:1",
+              "effective_from": "2026-10",
+              "effective_until": "2027-02",
+              "employee_id": "E101",
+              "instruction_id": "I-LOAN",
+              "revision": 1,
+              "schema_version": 1,
+              "version_id": "opaque\\loan-nov-2026"
+            },
+            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.operation.receipt:I-LOAN:RCPT88def4f563420338b4dd",
+            "value": {
+              "after": {
+                "instruction_key": "payroll.instruction:I-LOAN:1"
+              },
+              "before": {
+                "instruction_exists": false
+              },
+              "executor": "payroll-admin",
+              "idempotency_key": "opaque\\loan-nov-2026",
+              "operation": "payroll.instruction.create",
+              "outcome": {
+                "instruction_key": "payroll.instruction:I-LOAN:1",
+                "status": "created",
+                "version_id": "opaque\\loan-nov-2026"
+              },
+              "receipt_id": "RCPT88def4f563420338b4dd",
+              "request_hash": "233b6e218717860a8cc63aca37bb5eb5220d2e63f4f812bfeb6227cebe39bfc9",
+              "schema_version": 1,
+              "subject_id": "I-LOAN"
+            },
+            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft:D1:1",
+            "value": {
+              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "deductions_minor": 500000,
+              "draft_id": "D1",
+              "earning_keys": [
+                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-EMPLOYER:1"
+              ],
+              "employee_id": "E101",
+              "gross_minor": 5300000,
+              "instruction_keys": [
+                "payroll.instruction:I-LOAN:1"
+              ],
+              "net_minor": 4800000,
+              "payroll_month": "2026-11",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:1",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": false,
+              "payroll_month": "2026-11",
+              "reason": "created",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction.resolution:D1:RES1",
+            "value": {
+              "disposition": "applied",
+              "draft_id": "D1",
+              "effects": [
+                {
+                  "amount_minor": 200000,
+                  "currency": "INR",
+                  "draft_entry_id": "DE7328a0ac6583cd256b8f"
+                }
+              ],
+              "instruction_id": "I-LOAN",
+              "instruction_key": "payroll.instruction:I-LOAN:1",
+              "resolution_id": "RES1",
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:2",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": true,
+              "payroll_month": "2026-11",
+              "reason": "payroll review hold",
+              "revision": 2,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511421+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:3",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": false,
+              "payroll_month": "2026-11",
+              "reason": "released for posting",
+              "revision": 3,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511760+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.review:D1:REV1",
+            "value": {
+              "actor": "payroll-admin",
+              "control_revision": 3,
+              "decision": "approved",
+              "draft_content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "draft_id": "D1",
+              "review_id": "REV1",
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.512019+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction.application:opaque\\\\loan-nov-2026:APPc5df085ad3ef2bb6fa06",
+            "value": {
+              "application_id": "APPc5df085ad3ef2bb6fa06",
+              "cadence": "monthly",
+              "draft_id": "D1",
+              "effects": [
+                {
+                  "amount_minor": 200000,
+                  "currency": "INR",
+                  "ledger_entry_id": "PEe672463bd7dd5f3520ad"
+                }
+              ],
+              "employee_id": "E101",
+              "instruction_id": "I-LOAN",
+              "instruction_key": "payroll.instruction:I-LOAN:1",
+              "payroll_month": "2026-11",
+              "schema_version": 1,
+              "version_id": "opaque\\loan-nov-2026"
+            },
+            "ts": "2026-09-08T17:35:49.512530+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.operation.receipt:D1:RCPTed60bce8b652a975114f",
+            "value": {
+              "after": {
+                "committed": true,
+                "posted_entry_ids": [
+                  "PEca8e136caced406044ca",
+                  "PE5e38fcb8288db506f734",
+                  "PEd3fa4ff6c733d58e8b6a",
+                  "PEe672463bd7dd5f3520ad"
+                ]
+              },
+              "before": {
+                "committed": false,
+                "control_revision": 3
+              },
+              "executor": "payroll-admin",
+              "idempotency_key": "commit-nov-2026",
+              "operation": "payroll.commit",
+              "outcome": {
+                "draft_id": "D1",
+                "draft_key": "payroll.draft:D1:1",
+                "employer_liability_entry_id": "PEd3fa4ff6c733d58e8b6a",
+                "posted_entry_ids": [
+                  "PEca8e136caced406044ca",
+                  "PE5e38fcb8288db506f734",
+                  "PEd3fa4ff6c733d58e8b6a",
+                  "PEe672463bd7dd5f3520ad"
+                ],
+                "status": "committed"
+              },
+              "receipt_id": "RCPTed60bce8b652a975114f",
+              "request_hash": "6c72e865aefe0ac30b3229ca77f03c4330f59e7605ec315cdac99606984d45b6",
+              "schema_version": 1,
+              "subject_id": "D1"
+            },
+            "ts": "2026-09-08T17:35:49.512622+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_l2_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.employee.settings:E101:1",
+            "value": {
+              "effective_from": "2026-01",
+              "employee_id": "E101",
+              "payslip_locale": "en-IN",
+              "policy_ref": {
+                "id": "INDIA-PAYROLL",
+                "revision": 1
+              },
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_draft_ledger": [
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE793db74cd6d705234049",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-SALARY:1",
+            "component_key": "payroll.component:SALARY:1",
+            "direction": "earning",
+            "amount_minor": 5000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DEa05eef9d1d09953bcfc2",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_expense",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE21d443fc672885ac8f0d",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_liability",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE7328a0ac6583cd256b8f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.instruction:I-LOAN:1",
+            "component_key": "payroll.component:LOAN:1",
+            "direction": "deduction",
+            "amount_minor": 200000,
+            "currency": "INR",
+            "row_kind": "draft"
+          }
+        ],
+        "payroll_ledger": [
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PEca8e136caced406044ca",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE793db74cd6d705234049",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-SALARY:1",
+            "component_key": "payroll.component:SALARY:1",
+            "direction": "earning",
+            "amount_minor": 5000000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PE5e38fcb8288db506f734",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DEa05eef9d1d09953bcfc2",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_expense",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PEd3fa4ff6c733d58e8b6a",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE21d443fc672885ac8f0d",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_liability",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PEe672463bd7dd5f3520ad",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE7328a0ac6583cd256b8f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.instruction:I-LOAN:1",
+            "component_key": "payroll.component:LOAN:1",
+            "direction": "deduction",
+            "amount_minor": 200000,
+            "currency": "INR",
+            "row_kind": "posted"
+          }
+        ],
+        "payroll_employer_liability_ledger": []
+      }
+    },
+    {
+      "id": "obligation",
+      "title": "Employer obligation",
+      "explanation": "The obligation references the exact posted employer-liability entry and establishes INR 3,000 due.",
+      "outcome": {
+        "status": "observed"
+      },
+      "summary": {
+        "payroll": {
+          "gross_minor": 5300000,
+          "deductions_minor": 500000,
+          "net_minor": 4800000
+        },
+        "liability": {
+          "due_minor": 300000,
+          "paid_minor": 0,
+          "allocated_minor": 0,
+          "outstanding_minor": 300000
+        }
+      },
+      "tables": {
+        "payroll_l1_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.component:SALARY:1",
+            "value": {
+              "code": "salary",
+              "component_id": "SALARY",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "Salary",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:EMPLOYER:1",
+            "value": {
+              "code": "employer",
+              "component_id": "EMPLOYER",
+              "country_code": "IN",
+              "kind": "employer_contribution",
+              "label": "Employer contribution",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:LOAN:1",
+            "value": {
+              "code": "loan",
+              "component_id": "LOAN",
+              "country_code": "IN",
+              "kind": "deduction",
+              "label": "Loan recovery",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-SALARY:1",
+            "value": {
+              "amount_minor": 5000000,
+              "component_key": "payroll.component:SALARY:1",
+              "earning_id": "EARN-SALARY",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-EMPLOYER:1",
+            "value": {
+              "amount_minor": 300000,
+              "component_key": "payroll.component:EMPLOYER:1",
+              "earning_id": "EARN-EMPLOYER",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction:I-LOAN:1",
+            "value": {
+              "amount_minor": 200000,
+              "cadence": "monthly",
+              "component_key": "payroll.component:LOAN:1",
+              "effective_from": "2026-10",
+              "effective_until": "2027-02",
+              "employee_id": "E101",
+              "instruction_id": "I-LOAN",
+              "revision": 1,
+              "schema_version": 1,
+              "version_id": "opaque\\loan-nov-2026"
+            },
+            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.operation.receipt:I-LOAN:RCPT88def4f563420338b4dd",
+            "value": {
+              "after": {
+                "instruction_key": "payroll.instruction:I-LOAN:1"
+              },
+              "before": {
+                "instruction_exists": false
+              },
+              "executor": "payroll-admin",
+              "idempotency_key": "opaque\\loan-nov-2026",
+              "operation": "payroll.instruction.create",
+              "outcome": {
+                "instruction_key": "payroll.instruction:I-LOAN:1",
+                "status": "created",
+                "version_id": "opaque\\loan-nov-2026"
+              },
+              "receipt_id": "RCPT88def4f563420338b4dd",
+              "request_hash": "233b6e218717860a8cc63aca37bb5eb5220d2e63f4f812bfeb6227cebe39bfc9",
+              "schema_version": 1,
+              "subject_id": "I-LOAN"
+            },
+            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft:D1:1",
+            "value": {
+              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "deductions_minor": 500000,
+              "draft_id": "D1",
+              "earning_keys": [
+                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-EMPLOYER:1"
+              ],
+              "employee_id": "E101",
+              "gross_minor": 5300000,
+              "instruction_keys": [
+                "payroll.instruction:I-LOAN:1"
+              ],
+              "net_minor": 4800000,
+              "payroll_month": "2026-11",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:1",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": false,
+              "payroll_month": "2026-11",
+              "reason": "created",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction.resolution:D1:RES1",
+            "value": {
+              "disposition": "applied",
+              "draft_id": "D1",
+              "effects": [
+                {
+                  "amount_minor": 200000,
+                  "currency": "INR",
+                  "draft_entry_id": "DE7328a0ac6583cd256b8f"
+                }
+              ],
+              "instruction_id": "I-LOAN",
+              "instruction_key": "payroll.instruction:I-LOAN:1",
+              "resolution_id": "RES1",
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:2",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": true,
+              "payroll_month": "2026-11",
+              "reason": "payroll review hold",
+              "revision": 2,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511421+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:3",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": false,
+              "payroll_month": "2026-11",
+              "reason": "released for posting",
+              "revision": 3,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511760+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.review:D1:REV1",
+            "value": {
+              "actor": "payroll-admin",
+              "control_revision": 3,
+              "decision": "approved",
+              "draft_content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "draft_id": "D1",
+              "review_id": "REV1",
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.512019+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction.application:opaque\\\\loan-nov-2026:APPc5df085ad3ef2bb6fa06",
+            "value": {
+              "application_id": "APPc5df085ad3ef2bb6fa06",
+              "cadence": "monthly",
+              "draft_id": "D1",
+              "effects": [
+                {
+                  "amount_minor": 200000,
+                  "currency": "INR",
+                  "ledger_entry_id": "PEe672463bd7dd5f3520ad"
+                }
+              ],
+              "employee_id": "E101",
+              "instruction_id": "I-LOAN",
+              "instruction_key": "payroll.instruction:I-LOAN:1",
+              "payroll_month": "2026-11",
+              "schema_version": 1,
+              "version_id": "opaque\\loan-nov-2026"
+            },
+            "ts": "2026-09-08T17:35:49.512530+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.operation.receipt:D1:RCPTed60bce8b652a975114f",
+            "value": {
+              "after": {
+                "committed": true,
+                "posted_entry_ids": [
+                  "PEca8e136caced406044ca",
+                  "PE5e38fcb8288db506f734",
+                  "PEd3fa4ff6c733d58e8b6a",
+                  "PEe672463bd7dd5f3520ad"
+                ]
+              },
+              "before": {
+                "committed": false,
+                "control_revision": 3
+              },
+              "executor": "payroll-admin",
+              "idempotency_key": "commit-nov-2026",
+              "operation": "payroll.commit",
+              "outcome": {
+                "draft_id": "D1",
+                "draft_key": "payroll.draft:D1:1",
+                "employer_liability_entry_id": "PEd3fa4ff6c733d58e8b6a",
+                "posted_entry_ids": [
+                  "PEca8e136caced406044ca",
+                  "PE5e38fcb8288db506f734",
+                  "PEd3fa4ff6c733d58e8b6a",
+                  "PEe672463bd7dd5f3520ad"
+                ],
+                "status": "committed"
+              },
+              "receipt_id": "RCPTed60bce8b652a975114f",
+              "request_hash": "6c72e865aefe0ac30b3229ca77f03c4330f59e7605ec315cdac99606984d45b6",
+              "schema_version": 1,
+              "subject_id": "D1"
+            },
+            "ts": "2026-09-08T17:35:49.512622+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_l2_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.employee.settings:E101:1",
+            "value": {
+              "effective_from": "2026-01",
+              "employee_id": "E101",
+              "payslip_locale": "en-IN",
+              "policy_ref": {
+                "id": "INDIA-PAYROLL",
+                "revision": 1
+              },
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_draft_ledger": [
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE793db74cd6d705234049",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-SALARY:1",
+            "component_key": "payroll.component:SALARY:1",
+            "direction": "earning",
+            "amount_minor": 5000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DEa05eef9d1d09953bcfc2",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_expense",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE21d443fc672885ac8f0d",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_liability",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE7328a0ac6583cd256b8f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.instruction:I-LOAN:1",
+            "component_key": "payroll.component:LOAN:1",
+            "direction": "deduction",
+            "amount_minor": 200000,
+            "currency": "INR",
+            "row_kind": "draft"
+          }
+        ],
+        "payroll_ledger": [
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PEca8e136caced406044ca",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE793db74cd6d705234049",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-SALARY:1",
+            "component_key": "payroll.component:SALARY:1",
+            "direction": "earning",
+            "amount_minor": 5000000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PE5e38fcb8288db506f734",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DEa05eef9d1d09953bcfc2",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_expense",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PEd3fa4ff6c733d58e8b6a",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE21d443fc672885ac8f0d",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_liability",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PEe672463bd7dd5f3520ad",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE7328a0ac6583cd256b8f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.instruction:I-LOAN:1",
+            "component_key": "payroll.component:LOAN:1",
+            "direction": "deduction",
+            "amount_minor": 200000,
+            "currency": "INR",
+            "row_kind": "posted"
+          }
+        ],
+        "payroll_employer_liability_ledger": [
+          {
+            "tenant": "T1",
+            "entry_id": "OB1",
+            "row_kind": "obligation",
+            "amount_minor": 300000,
+            "posted_liability_entry_id": "PEd3fa4ff6c733d58e8b6a",
+            "obligation_entry_id": null,
+            "remittance_entry_id": null,
+            "proof_ref": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "remittance",
+      "title": "Challan-backed remittance",
+      "explanation": "The remittance proves INR 2,000 was paid. It does not itself reduce the obligation's outstanding amount.",
+      "outcome": {
+        "status": "observed"
+      },
+      "summary": {
+        "payroll": {
+          "gross_minor": 5300000,
+          "deductions_minor": 500000,
+          "net_minor": 4800000
+        },
+        "liability": {
+          "due_minor": 300000,
+          "paid_minor": 200000,
+          "allocated_minor": 0,
+          "outstanding_minor": 300000
+        }
+      },
+      "tables": {
+        "payroll_l1_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.component:SALARY:1",
+            "value": {
+              "code": "salary",
+              "component_id": "SALARY",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "Salary",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:EMPLOYER:1",
+            "value": {
+              "code": "employer",
+              "component_id": "EMPLOYER",
+              "country_code": "IN",
+              "kind": "employer_contribution",
+              "label": "Employer contribution",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:LOAN:1",
+            "value": {
+              "code": "loan",
+              "component_id": "LOAN",
+              "country_code": "IN",
+              "kind": "deduction",
+              "label": "Loan recovery",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-SALARY:1",
+            "value": {
+              "amount_minor": 5000000,
+              "component_key": "payroll.component:SALARY:1",
+              "earning_id": "EARN-SALARY",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-EMPLOYER:1",
+            "value": {
+              "amount_minor": 300000,
+              "component_key": "payroll.component:EMPLOYER:1",
+              "earning_id": "EARN-EMPLOYER",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction:I-LOAN:1",
+            "value": {
+              "amount_minor": 200000,
+              "cadence": "monthly",
+              "component_key": "payroll.component:LOAN:1",
+              "effective_from": "2026-10",
+              "effective_until": "2027-02",
+              "employee_id": "E101",
+              "instruction_id": "I-LOAN",
+              "revision": 1,
+              "schema_version": 1,
+              "version_id": "opaque\\loan-nov-2026"
+            },
+            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.operation.receipt:I-LOAN:RCPT88def4f563420338b4dd",
+            "value": {
+              "after": {
+                "instruction_key": "payroll.instruction:I-LOAN:1"
+              },
+              "before": {
+                "instruction_exists": false
+              },
+              "executor": "payroll-admin",
+              "idempotency_key": "opaque\\loan-nov-2026",
+              "operation": "payroll.instruction.create",
+              "outcome": {
+                "instruction_key": "payroll.instruction:I-LOAN:1",
+                "status": "created",
+                "version_id": "opaque\\loan-nov-2026"
+              },
+              "receipt_id": "RCPT88def4f563420338b4dd",
+              "request_hash": "233b6e218717860a8cc63aca37bb5eb5220d2e63f4f812bfeb6227cebe39bfc9",
+              "schema_version": 1,
+              "subject_id": "I-LOAN"
+            },
+            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft:D1:1",
+            "value": {
+              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "deductions_minor": 500000,
+              "draft_id": "D1",
+              "earning_keys": [
+                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-EMPLOYER:1"
+              ],
+              "employee_id": "E101",
+              "gross_minor": 5300000,
+              "instruction_keys": [
+                "payroll.instruction:I-LOAN:1"
+              ],
+              "net_minor": 4800000,
+              "payroll_month": "2026-11",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:1",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": false,
+              "payroll_month": "2026-11",
+              "reason": "created",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction.resolution:D1:RES1",
+            "value": {
+              "disposition": "applied",
+              "draft_id": "D1",
+              "effects": [
+                {
+                  "amount_minor": 200000,
+                  "currency": "INR",
+                  "draft_entry_id": "DE7328a0ac6583cd256b8f"
+                }
+              ],
+              "instruction_id": "I-LOAN",
+              "instruction_key": "payroll.instruction:I-LOAN:1",
+              "resolution_id": "RES1",
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:2",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": true,
+              "payroll_month": "2026-11",
+              "reason": "payroll review hold",
+              "revision": 2,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511421+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:3",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": false,
+              "payroll_month": "2026-11",
+              "reason": "released for posting",
+              "revision": 3,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511760+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.review:D1:REV1",
+            "value": {
+              "actor": "payroll-admin",
+              "control_revision": 3,
+              "decision": "approved",
+              "draft_content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "draft_id": "D1",
+              "review_id": "REV1",
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.512019+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction.application:opaque\\\\loan-nov-2026:APPc5df085ad3ef2bb6fa06",
+            "value": {
+              "application_id": "APPc5df085ad3ef2bb6fa06",
+              "cadence": "monthly",
+              "draft_id": "D1",
+              "effects": [
+                {
+                  "amount_minor": 200000,
+                  "currency": "INR",
+                  "ledger_entry_id": "PEe672463bd7dd5f3520ad"
+                }
+              ],
+              "employee_id": "E101",
+              "instruction_id": "I-LOAN",
+              "instruction_key": "payroll.instruction:I-LOAN:1",
+              "payroll_month": "2026-11",
+              "schema_version": 1,
+              "version_id": "opaque\\loan-nov-2026"
+            },
+            "ts": "2026-09-08T17:35:49.512530+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.operation.receipt:D1:RCPTed60bce8b652a975114f",
+            "value": {
+              "after": {
+                "committed": true,
+                "posted_entry_ids": [
+                  "PEca8e136caced406044ca",
+                  "PE5e38fcb8288db506f734",
+                  "PEd3fa4ff6c733d58e8b6a",
+                  "PEe672463bd7dd5f3520ad"
+                ]
+              },
+              "before": {
+                "committed": false,
+                "control_revision": 3
+              },
+              "executor": "payroll-admin",
+              "idempotency_key": "commit-nov-2026",
+              "operation": "payroll.commit",
+              "outcome": {
+                "draft_id": "D1",
+                "draft_key": "payroll.draft:D1:1",
+                "employer_liability_entry_id": "PEd3fa4ff6c733d58e8b6a",
+                "posted_entry_ids": [
+                  "PEca8e136caced406044ca",
+                  "PE5e38fcb8288db506f734",
+                  "PEd3fa4ff6c733d58e8b6a",
+                  "PEe672463bd7dd5f3520ad"
+                ],
+                "status": "committed"
+              },
+              "receipt_id": "RCPTed60bce8b652a975114f",
+              "request_hash": "6c72e865aefe0ac30b3229ca77f03c4330f59e7605ec315cdac99606984d45b6",
+              "schema_version": 1,
+              "subject_id": "D1"
+            },
+            "ts": "2026-09-08T17:35:49.512622+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_l2_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.employee.settings:E101:1",
+            "value": {
+              "effective_from": "2026-01",
+              "employee_id": "E101",
+              "payslip_locale": "en-IN",
+              "policy_ref": {
+                "id": "INDIA-PAYROLL",
+                "revision": 1
+              },
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_draft_ledger": [
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE793db74cd6d705234049",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-SALARY:1",
+            "component_key": "payroll.component:SALARY:1",
+            "direction": "earning",
+            "amount_minor": 5000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DEa05eef9d1d09953bcfc2",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_expense",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE21d443fc672885ac8f0d",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_liability",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE7328a0ac6583cd256b8f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.instruction:I-LOAN:1",
+            "component_key": "payroll.component:LOAN:1",
+            "direction": "deduction",
+            "amount_minor": 200000,
+            "currency": "INR",
+            "row_kind": "draft"
+          }
+        ],
+        "payroll_ledger": [
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PEca8e136caced406044ca",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE793db74cd6d705234049",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-SALARY:1",
+            "component_key": "payroll.component:SALARY:1",
+            "direction": "earning",
+            "amount_minor": 5000000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PE5e38fcb8288db506f734",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DEa05eef9d1d09953bcfc2",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_expense",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PEd3fa4ff6c733d58e8b6a",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE21d443fc672885ac8f0d",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_liability",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PEe672463bd7dd5f3520ad",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE7328a0ac6583cd256b8f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.instruction:I-LOAN:1",
+            "component_key": "payroll.component:LOAN:1",
+            "direction": "deduction",
+            "amount_minor": 200000,
+            "currency": "INR",
+            "row_kind": "posted"
+          }
+        ],
+        "payroll_employer_liability_ledger": [
+          {
+            "tenant": "T1",
+            "entry_id": "OB1",
+            "row_kind": "obligation",
+            "amount_minor": 300000,
+            "posted_liability_entry_id": "PEd3fa4ff6c733d58e8b6a",
+            "obligation_entry_id": null,
+            "remittance_entry_id": null,
+            "proof_ref": null
+          },
+          {
+            "tenant": "T1",
+            "entry_id": "REM1",
+            "row_kind": "remittance",
+            "amount_minor": 200000,
+            "posted_liability_entry_id": null,
+            "obligation_entry_id": null,
+            "remittance_entry_id": null,
+            "proof_ref": "challan:IN-2026-11-001"
+          }
+        ]
+      }
+    },
+    {
+      "id": "allocation",
+      "title": "Payment allocated",
+      "explanation": "Allocation connects the remittance to the obligation, reducing outstanding liability from INR 3,000 to INR 1,000.",
+      "outcome": {
+        "status": "observed"
+      },
+      "summary": {
+        "payroll": {
+          "gross_minor": 5300000,
+          "deductions_minor": 500000,
+          "net_minor": 4800000
+        },
+        "liability": {
+          "due_minor": 300000,
+          "paid_minor": 200000,
+          "allocated_minor": 200000,
+          "outstanding_minor": 100000
+        }
+      },
+      "tables": {
+        "payroll_l1_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.component:SALARY:1",
+            "value": {
+              "code": "salary",
+              "component_id": "SALARY",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "Salary",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:EMPLOYER:1",
+            "value": {
+              "code": "employer",
+              "component_id": "EMPLOYER",
+              "country_code": "IN",
+              "kind": "employer_contribution",
+              "label": "Employer contribution",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:LOAN:1",
+            "value": {
+              "code": "loan",
+              "component_id": "LOAN",
+              "country_code": "IN",
+              "kind": "deduction",
+              "label": "Loan recovery",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-SALARY:1",
+            "value": {
+              "amount_minor": 5000000,
+              "component_key": "payroll.component:SALARY:1",
+              "earning_id": "EARN-SALARY",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-EMPLOYER:1",
+            "value": {
+              "amount_minor": 300000,
+              "component_key": "payroll.component:EMPLOYER:1",
+              "earning_id": "EARN-EMPLOYER",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction:I-LOAN:1",
+            "value": {
+              "amount_minor": 200000,
+              "cadence": "monthly",
+              "component_key": "payroll.component:LOAN:1",
+              "effective_from": "2026-10",
+              "effective_until": "2027-02",
+              "employee_id": "E101",
+              "instruction_id": "I-LOAN",
+              "revision": 1,
+              "schema_version": 1,
+              "version_id": "opaque\\loan-nov-2026"
+            },
+            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.operation.receipt:I-LOAN:RCPT88def4f563420338b4dd",
+            "value": {
+              "after": {
+                "instruction_key": "payroll.instruction:I-LOAN:1"
+              },
+              "before": {
+                "instruction_exists": false
+              },
+              "executor": "payroll-admin",
+              "idempotency_key": "opaque\\loan-nov-2026",
+              "operation": "payroll.instruction.create",
+              "outcome": {
+                "instruction_key": "payroll.instruction:I-LOAN:1",
+                "status": "created",
+                "version_id": "opaque\\loan-nov-2026"
+              },
+              "receipt_id": "RCPT88def4f563420338b4dd",
+              "request_hash": "233b6e218717860a8cc63aca37bb5eb5220d2e63f4f812bfeb6227cebe39bfc9",
+              "schema_version": 1,
+              "subject_id": "I-LOAN"
+            },
+            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft:D1:1",
+            "value": {
+              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "deductions_minor": 500000,
+              "draft_id": "D1",
+              "earning_keys": [
+                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-EMPLOYER:1"
+              ],
+              "employee_id": "E101",
+              "gross_minor": 5300000,
+              "instruction_keys": [
+                "payroll.instruction:I-LOAN:1"
+              ],
+              "net_minor": 4800000,
+              "payroll_month": "2026-11",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:1",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": false,
+              "payroll_month": "2026-11",
+              "reason": "created",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction.resolution:D1:RES1",
+            "value": {
+              "disposition": "applied",
+              "draft_id": "D1",
+              "effects": [
+                {
+                  "amount_minor": 200000,
+                  "currency": "INR",
+                  "draft_entry_id": "DE7328a0ac6583cd256b8f"
+                }
+              ],
+              "instruction_id": "I-LOAN",
+              "instruction_key": "payroll.instruction:I-LOAN:1",
+              "resolution_id": "RES1",
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:2",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": true,
+              "payroll_month": "2026-11",
+              "reason": "payroll review hold",
+              "revision": 2,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511421+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.control:D1:3",
+            "value": {
+              "actor": "payroll-admin",
+              "cancelled": false,
+              "draft_id": "D1",
+              "employee_id": "E101",
+              "held": false,
+              "payroll_month": "2026-11",
+              "reason": "released for posting",
+              "revision": 3,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.511760+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.draft.review:D1:REV1",
+            "value": {
+              "actor": "payroll-admin",
+              "control_revision": 3,
+              "decision": "approved",
+              "draft_content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "draft_id": "D1",
+              "review_id": "REV1",
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.512019+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.instruction.application:opaque\\\\loan-nov-2026:APPc5df085ad3ef2bb6fa06",
+            "value": {
+              "application_id": "APPc5df085ad3ef2bb6fa06",
+              "cadence": "monthly",
+              "draft_id": "D1",
+              "effects": [
+                {
+                  "amount_minor": 200000,
+                  "currency": "INR",
+                  "ledger_entry_id": "PEe672463bd7dd5f3520ad"
+                }
+              ],
+              "employee_id": "E101",
+              "instruction_id": "I-LOAN",
+              "instruction_key": "payroll.instruction:I-LOAN:1",
+              "payroll_month": "2026-11",
+              "schema_version": 1,
+              "version_id": "opaque\\loan-nov-2026"
+            },
+            "ts": "2026-09-08T17:35:49.512530+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.operation.receipt:D1:RCPTed60bce8b652a975114f",
+            "value": {
+              "after": {
+                "committed": true,
+                "posted_entry_ids": [
+                  "PEca8e136caced406044ca",
+                  "PE5e38fcb8288db506f734",
+                  "PEd3fa4ff6c733d58e8b6a",
+                  "PEe672463bd7dd5f3520ad"
+                ]
+              },
+              "before": {
+                "committed": false,
+                "control_revision": 3
+              },
+              "executor": "payroll-admin",
+              "idempotency_key": "commit-nov-2026",
+              "operation": "payroll.commit",
+              "outcome": {
+                "draft_id": "D1",
+                "draft_key": "payroll.draft:D1:1",
+                "employer_liability_entry_id": "PEd3fa4ff6c733d58e8b6a",
+                "posted_entry_ids": [
+                  "PEca8e136caced406044ca",
+                  "PE5e38fcb8288db506f734",
+                  "PEd3fa4ff6c733d58e8b6a",
+                  "PEe672463bd7dd5f3520ad"
+                ],
+                "status": "committed"
+              },
+              "receipt_id": "RCPTed60bce8b652a975114f",
+              "request_hash": "6c72e865aefe0ac30b3229ca77f03c4330f59e7605ec315cdac99606984d45b6",
+              "schema_version": 1,
+              "subject_id": "D1"
+            },
+            "ts": "2026-09-08T17:35:49.512622+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_l2_records": [
+          {
+            "tenant": "T1",
+            "key": "payroll.employee.settings:E101:1",
+            "value": {
+              "effective_from": "2026-01",
+              "employee_id": "E101",
+              "payslip_locale": "en-IN",
+              "policy_ref": {
+                "id": "INDIA-PAYROLL",
+                "revision": 1
+              },
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "state": "enabled"
+          }
+        ],
+        "payroll_draft_ledger": [
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE793db74cd6d705234049",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-SALARY:1",
+            "component_key": "payroll.component:SALARY:1",
+            "direction": "earning",
+            "amount_minor": 5000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DEa05eef9d1d09953bcfc2",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_expense",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE21d443fc672885ac8f0d",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_liability",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE7328a0ac6583cd256b8f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.instruction:I-LOAN:1",
+            "component_key": "payroll.component:LOAN:1",
+            "direction": "deduction",
+            "amount_minor": 200000,
+            "currency": "INR",
+            "row_kind": "draft"
+          }
+        ],
+        "payroll_ledger": [
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PEca8e136caced406044ca",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE793db74cd6d705234049",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-SALARY:1",
+            "component_key": "payroll.component:SALARY:1",
+            "direction": "earning",
+            "amount_minor": 5000000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PE5e38fcb8288db506f734",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DEa05eef9d1d09953bcfc2",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_expense",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PEd3fa4ff6c733d58e8b6a",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE21d443fc672885ac8f0d",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-EMPLOYER:1",
+            "component_key": "payroll.component:EMPLOYER:1",
+            "direction": "employer_liability",
+            "amount_minor": 300000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PEe672463bd7dd5f3520ad",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE7328a0ac6583cd256b8f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.instruction:I-LOAN:1",
+            "component_key": "payroll.component:LOAN:1",
+            "direction": "deduction",
+            "amount_minor": 200000,
+            "currency": "INR",
+            "row_kind": "posted"
+          }
+        ],
+        "payroll_employer_liability_ledger": [
+          {
+            "tenant": "T1",
+            "entry_id": "OB1",
+            "row_kind": "obligation",
+            "amount_minor": 300000,
+            "posted_liability_entry_id": "PEd3fa4ff6c733d58e8b6a",
+            "obligation_entry_id": null,
+            "remittance_entry_id": null,
+            "proof_ref": null
+          },
+          {
+            "tenant": "T1",
+            "entry_id": "REM1",
+            "row_kind": "remittance",
+            "amount_minor": 200000,
+            "posted_liability_entry_id": null,
+            "obligation_entry_id": null,
+            "remittance_entry_id": null,
+            "proof_ref": "challan:IN-2026-11-001"
+          },
+          {
+            "tenant": "T1",
+            "entry_id": "ALLOC1",
+            "row_kind": "allocation",
+            "amount_minor": 200000,
+            "posted_liability_entry_id": null,
+            "obligation_entry_id": "OB1",
+            "remittance_entry_id": "REM1",
+            "proof_ref": null
+          }
+        ]
+      }
+    }
+  ]
+}
