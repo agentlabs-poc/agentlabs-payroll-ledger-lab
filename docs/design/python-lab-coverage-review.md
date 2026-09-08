@@ -31,6 +31,46 @@ The benchmark verifier now derives net from actual posted gross minus deductions
 rather than copying the expected net into the measured result. The 3,000-employee
 run was stopped at the user's request; a fresh 100-employee run replaces it.
 
+## Completed 100-employee benchmark
+
+Runtime commit `3ee9312`; November 2026, sequential separate CLI processes,
+workspace NVMe disk, existing SQLite DELETE journal and FULL synchronization.
+The host was a Linux i7-1185G7 laptop with 8 logical CPUs and about 31 GiB RAM.
+This measures the local Python reference, not the earlier Go/server deployment.
+
+| Stage | Seconds |
+|---|---:|
+| Shared setup | 0.922 |
+| Employee settings, earnings and instructions | 97.393 |
+| Draft creation and review | 18.388 |
+| Commit | 9.357 |
+| Employer liability obligations | 53.208 |
+| Final verification | 0.005 |
+| Total wall time, including orchestration overhead | **179.274** |
+
+The 2,012 CLI calls produced 1,200 draft monetary rows, 1,200 posted rows,
+2,910 L1 records, 100 L2 records and 500 obligations. All 100 employee totals
+and five payables per employee verified. There were no remittances or allocations.
+Outstanding liability is **INR 1,645,334.00**; net payroll is INR 13,834,666.00.
+
+Mean full-flow time is 1.793 seconds per employee; median is 1.776 seconds and
+p95 is 1.849 seconds. CPU time is 171.184 seconds across the benchmark and its
+CLI children, averaging about 0.955 CPU cores. Reported peak RSS is 240.09 MiB
+for the benchmark process and 26.95 MiB for the largest CLI child; these are
+separate lifetime maxima, not simultaneous combined usage. SQLite is embedded,
+so there is no separate database-service RSS. Database size is 3,317,760 bytes
+(3.16 MiB); allocated space is 3,321,856 bytes.
+
+Retained local artifacts are in
+`/home/agent-005/workspace-auth/payroll-benchmarks/nov2026-100-cli-fixed-20260909/`:
+`metrics.json`, `employee-stage-timings.csv`, configuration and the SQLite database.
+The CSV records each employee's stage times. These generated artifacts are not
+committed. Reproduce with a fresh output directory:
+
+```sh
+python3 -m sqlite_lab.benchmark --employees 100 --mode subprocess --output-dir /path/to/fresh-run
+```
+
 ## Scope and evidence
 
 The current model has exactly three monetary ledgers, `payroll_l1_records`, and
