@@ -26,6 +26,12 @@ applications**, now pinned in the architecture chapter. The established name
 123 Architecture remains, with 123 Software Design Paradigm as an alternative
 description of the proposed synthesis. The SQLite proof has not yet been executed.
 
+**Latest direction:** continue folding the 16 supporting roles into
+`payroll_l1_records`, using L2 only for auxiliary data. Software does not provide
+L3; consumers own its composition and persistence. This supersedes the earlier
+proposal for a software-provided L3 key/value table/API. The lab's SQLite
+implementation plan proceeds on that corrected basis; production code is untouched.
+
 This chapter has moved to HRMS Core, the canonical payroll documentation source.
 
 [Read the canonical chapter](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/decision-log.md). The original edition and its rationale are preserved in Git history and Core’s [migration record](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/migration-record.md).
@@ -46,3 +52,19 @@ Existing section links are forwarded below.
 
 <a id="alternatives-and-history"></a>
 - [Alternatives and history](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/decision-log.md#alternatives-and-history)
+
+## 2026-09-08 — Canonical storage vocabulary and key grammar pinned
+
+The user approved dot-separated canonical type tokens, colon-separated identity
+segments, and backslash escaping of literal colon/backslash inside identities.
+This supersedes the provisional slash examples. Shared encoding/parsing must
+preserve opaque case and reject ambiguous spellings; numeric revisions sort
+numerically. Key syntax does not prescribe an ID-generation algorithm.
+
+The user also requested an explicit distinction between canonical tables and
+canonical record types. The record chapter now calls out the nine designated L1
+ledger tables, target L1/L2 shared stores, six L1 supporting record types and L2
+employee settings. Detailed candidate contracts remain proposals. L3 storage
+belongs to consumers. Rationale: a minimal vocabulary must distinguish storage
+structure, domain meaning and individual identity without creating a table for
+every supporting concept. Production code and schemas are unchanged.

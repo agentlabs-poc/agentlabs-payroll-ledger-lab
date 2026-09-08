@@ -12,10 +12,10 @@ indexing rationale and outstanding contract decisions here in readable form.
 
 | Design pin | Contents and status |
 |---|---|
-| [SQLite-first proof plan](sqlite-proof-plan.md) | Executable lab proof before production changes; finite checkpoints and PostgreSQL acceptance boundary. Planned, not executed. |
+| [SQLite-first proof plan](sqlite-proof-plan.md) | Finite checkpoints for the SQLite lab proof, with production PostgreSQL acceptance kept separate. |
 | [123 Architecture](123-architecture.md) | Agreed L1 core primitives, L2 software-owned auxiliary primitives and L3 application/AI composition; canonical vocabulary before API contracts. |
 | [Canonical ledger tables](canonical-ledger-tables.md) | Nine user-designated L1 ledger tables, the 16 existing supporting tables, candidate L2 output and deprecated structures. Existing storage inventory, not the replacement schema. |
-| [Payroll records by domain and layer](payroll-records.md) | L1/L2/L3 key/value tables and wrappers, four-column baseline, proposed fifth `state` column, six original entry examples, an L2 employee-settings candidate and all 16 L1 consolidation mappings. |
+| [Payroll records by domain and layer](payroll-records.md) | Supplied L1/L2 key/value tables and wrappers, consumer-owned L3, four-column baseline, proposed fifth `state` column, six original entry examples, an L2 employee-settings candidate and all 16 L1 consolidation mappings. |
 
 ## Domain ownership and minimal storage
 
@@ -24,20 +24,25 @@ canonical key/value table per domain/layer. The complete rule, including keys,
 indexes, state, wrappers and client/server responsibilities, is in
 [123 Architecture](123-architecture.md#canonical-storage-model).
 
-Each domain can own a table for each layer's data while sharing a minimal shape:
+**Latest ownership correction:** the supplied software provides L1 and L2.
+Consumers own L3 composition and persistence; we do not supply an L3 table or API.
+
+Each domain can own a table for each software-owned layer's data:
 
 ```text
 Payroll domain
   Canonical monetary/source ledgers
   payroll_l1_records               Core supporting records
   payroll_l2_records               Reusable software-owned auxiliary data
-  payroll_l3_records               Application/AI composition data
     Each: tenant | key | value(JSONB) | ts
           state                    (proposed fifth column)
 
 Other domains, when justified
-  Their own domain records and tables for the owning layers
+  Their own domain records and tables for software-owned L1/L2
     Same reusable envelope; their own canonical contracts and indexes
+
+Consumers (L3)
+  Own their application/AI composition and choose their own persistence
 ```
 
 These are working table names. This is one table per domain and owning layer,
@@ -56,8 +61,8 @@ commit guarantees remain enforced at the server/database boundary.
 
 Domain APIs can express canonical operations; shared key/value wrappers can
 provide scoped record access and permitted mutation. L1 writes still execute
-complete domain operations. L2/L3 generic writes are limited to their authorized
-namespaces and contracts, and cannot write L1 by selecting its table. Exact APIs,
+complete domain operations. L2 generic writes are limited to authorized
+namespaces and contracts; L3 consumers use these L1/L2 APIs. Exact APIs,
 deployment placement and DDL remain to be reviewed; no new endpoint is implemented.
 
 ## Meaning before storage
@@ -72,7 +77,8 @@ The user specifically required canonical key construction for indexing. Each
 type therefore needs one shared encoder/validator and an explicit subject/record
 identity contract. The proposed `<canonical-type>/<subject-id>/<record-id>`
 shape is documented with its query/index rules in the record chapter; exact
-grammar remains under review. Numeric revisions sort numerically, and disabling
+grammar is pinned: dot-delimited type tokens, colon-delimited identity segments,
+and backslash escaping of literal colon/backslash inside identities. Numeric revisions sort numerically, and disabling
 or logically deleting a record must not free its identity for conflicting reuse.
 
 The proposed shared `state` describes availability: enabled, disabled or
@@ -94,11 +100,19 @@ with Core before being treated as accepted implementation requirements.
 Each design document records the exact Core source used for this initial pin.
 That source binding is provenance, not a claim that future edits synchronize
 automatically. Preserve the distinction between agreed principles, candidate
-payloads and implemented behavior in both repositories. Full schemas, index DDL,
-migrations, validation scripts and performance proof are not implemented here.
+payloads and implemented behavior in both repositories. Detailed production schemas, migrations and performance proof remain open.
+The isolated SQLite prototype exercises explicitly stated assumptions; it does
+not establish production conformance.
+
+The [SQLite folding implementation plan](sqlite-fold-implementation-plan.md)
+tracks the lab-only implementation and its scoped review. Design pins and executable
+proof status are kept separate; production compatibility remains unproved.
 
 Existing PRs carry the work: [Lab #1](https://github.com/agentlabs-poc/agentlabs-payroll-ledger-lab/pull/1)
 and [Core #190](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/190), whose
 merge destination is [Core hub #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172).
 No PR per term or table is needed. These pins do not authorize a PR merge or
 database/runtime change.
+
+The [canonical tables and record types](payroll-records.md#canonical-tables-and-canonical-record-types)
+are listed separately, with layer, meaning, example keys and acceptance status.

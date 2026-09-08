@@ -6,7 +6,8 @@ design work and [Lab #1](https://github.com/agentlabs-poc/agentlabs-payroll-ledg
 It is not a report of a completed prototype or a new production implementation.
 
 The contract under test is [123 Architecture](123-architecture.md): core canonical
-tables plus one canonical key/value table per domain/layer. The
+tables plus one canonical key/value table per software-owned domain/layer
+(L1/L2). Consumers own L3 persistence; no L3 store is supplied. The
 [record chapter](payroll-records.md) supplies candidate JSON examples and the
 complete 16-table consolidation map; the [table register](canonical-ledger-tables.md)
 supplies current ledger roles and known representation gaps.
@@ -29,8 +30,8 @@ do not build a general framework before demonstrating the concrete case.
 
 | Checkpoint | Exercise | Required evidence |
 |---|---|---|
-| 1. Canonical storage and keys | Representative core ledger tables and the three layer stores; valid/invalid payloads; exact key encoder/decoder; conflicting key/payload identities. | Agreed versus prototype-only schema choices; malformed records rejected; tenant/store scope separated; numeric revision 10 follows 2. |
-| 2. Definitions, settings and state | Versioned components, L2 employee preferences/policy assignment, L3 work state, enabled/disabled/logically deleted history. | Effective versus latest revision behavior; disabled newer records do not resurrect older ones; existing references remain resolvable; protected evidence cannot be deleted to reopen consumption. |
+| 1. Canonical storage and keys | Representative core ledger tables and L1/L2 stores; valid/invalid payloads; exact key encoder/decoder; conflicting key/payload identities. | Agreed versus prototype-only schema choices; malformed records rejected; tenant/store scope separated; numeric revision 10 follows 2; no supplied L3 persistence. |
+| 2. Definitions, settings and state | Versioned components, L2 employee preferences/policy assignment and enabled/disabled/logically deleted history. | Effective versus latest revision behavior; disabled newer records do not resurrect older ones; existing references remain resolvable; protected evidence cannot be deleted to reopen consumption. |
 | 3. Draft-to-posted integrity | One employee's salary and a monthly loan instruction, fixed draft, selected controls/review, commit and instruction application. | Posted money and application/receipt are atomic; held drafts cannot commit; no policy choice is mandated merely by the prototype. |
 | 4. Failure, retry and expiry | Duplicate/changed retries, competing commits, stale control updates, injected failure, database reopen and the loan's first/last/expired periods. | No duplicate money or consumption; rollback leaves no partial commit; committed evidence survives reopen; expiry follows payroll period; settings do not rewrite posted facts. |
 | 5. Indexed access and consumption | Exact record, subject history/current state, employee/month, instruction application, operation replay and required reverse links through wrappers. | Query plans for representative cardinalities; query results, latency, database/index space where measurable, and evidence that domain/general paths enforce the same contract. |

@@ -122,7 +122,7 @@ preserve the domain's guarantees.
 
 Minimality applies to the consumer's conceptual model as well as storage.
 Core canonical tables retain first-class facts. One canonical key/value table
-per domain/layer provides supporting, auxiliary or composition persistence
+per software-owned domain/layer provides supporting or auxiliary persistence
 without a table and public API for every implementation detail. Canonical schemas,
 keys, indexes and wrappers give that flexibility explicit meaning and scope.
 
@@ -132,6 +132,16 @@ Establish value through simpler contracts, preserved integrity, practical reuse
 and tested implementation rather than table count alone. No new framework or
 runtime implementation is authorized merely by naming the paradigm.
 
+## Canonical table and record callout
+
+The [explicit inventory](payroll-records.md#canonical-tables-and-canonical-record-types)
+separates **nine designated L1 ledger tables**, the target shared tables
+**`payroll_l1_records` / `payroll_l2_records`**, and **six L1 record types plus
+L2 `payroll.employee.settings`**. Canonical tables define storage roles; canonical
+record types define meanings within shared storage; keys locate individual
+records. No L3 table is supplied. Detailed candidate schemas remain marked as
+proposals even when their vocabulary is pinned.
+
 ## Canonical storage model
 
 **User-pinned extension, 2026-09-08:** “it should have core canonical table +
@@ -140,6 +150,11 @@ canonical keys/indexing and API-wrapper principles be part of 123 Architecture.
 
 **Domain storage = core canonical tables + one canonical key/value table per
 domain/layer.**
+
+**Current ownership clarification:** software supplies L1 and L2; L3 belongs
+to the people/applications consuming them. No L3 table or L3 persistence API is
+provided by this software. The per-domain/layer storage rule applies to the
+software-owned layers; consumers choose their own L3 persistence.
 
 Core canonical tables retain the domain's first-class facts and guarantees.
 For payroll these include the accepted instruction, draft, posted payroll and
@@ -151,19 +166,19 @@ recorded conformance gaps; supporting storage does not replace them.
 | Core canonical tables | First-class domain facts, relationships and authoritative lifecycle | Canonical ledger tables; committed money remains here. |
 | Domain/L1 key/value table | Canonical supporting records required by core operations | Component definitions, reviewed draft controls and instruction/operation evidence, subject to their individual contracts. |
 | Domain/L2 key/value table | Reusable software-owned auxiliary data | Reviewed reusable compensation-package definitions; employee payroll preferences/policy assignment is a candidate with fields still to be defined. |
-| Domain/L3 key/value table | Application/AI composition data within a supported storage contract | Employee selections, pending work and references to returned L1 operation outcomes. |
+| L3 consumer-owned persistence | Outside the supplied software; consumers choose their storage and composition | Employee selections, pending work and returned operation references may live in consumer-owned state. |
 
-Working payroll names are `payroll_l1_records`, `payroll_l2_records` and
-`payroll_l3_records`. Names and physical implementation are proposals. The
+Working payroll names are `payroll_l1_records` and `payroll_l2_records`.
+Names and physical implementation are proposals. The
 shape does not require separate services or force all layer stores into Core's
 database. Other domains can adopt the same shape while owning their own terms,
 schemas, permissions and indexes. Do not create a table per canonical key or
 treat shared storage mechanics as shared mutation authority.
 
-This gives each layer a place to store its data without expanding L1 to own all
+This gives the software-owned layers a place to store their data without expanding L1 to own all
 business policy. L1's 16 current supporting tables are candidates for one L1
 store, combined or eliminated where their information already belongs to a core
-record. L2/L3 persistence does not reinstate deprecated run/compensation APIs or
+record. L2 storage or consumer L3 composition does not reinstate deprecated run/compensation APIs or
 prove their historical contracts conform.
 
 ### Minimal envelope and availability
@@ -195,18 +210,37 @@ Definitions and validators can be version-controlled artifacts; they do not
 require another metadata table.
 
 A type key describes a meaning; a unique record key locates a particular record.
-The proposed common shape is:
+The pinned common shape is:
 
 ```text
-<canonical-type>/<subject-id>/<record-id>
-payroll.component/C101/1
-payroll.draft.control/D1/2
+<canonical-type>:<subject-id>:<record-id>
+payroll.component:C101:1
+payroll.draft.control:D1:2
 ```
 
-These examples do not prescribe an ID-generation algorithm. Finalize token
-grammar, escaping, lengths, revision identity and key/payload consistency per
-type. Use a shared encoder/validator instead of assembling incompatible strings
-in each client. Domain/layer scope comes from the owned store, tenant scope from
+**Pinned key grammar, 2026-09-08:** `.` separates registered namespace/type
+tokens; `:` separates type, subject and record identity. Inside identity segments,
+`\` escapes only literal `:` and literal `\`. Thus an identifier `EMP:101` is
+encoded as `EMP\:101`; a literal backslash is encoded as `\\`. Dots inside an
+identifier remain literal and are not escaped. Parse separators using this grammar,
+not a plain split on every colon. Reject empty segments, unknown or unnecessary
+escapes (including `\.`), and a trailing backslash. Preserve opaque identifier case.
+
+```text
+payroll.employee.settings:EMP\:101:1
+```
+
+The same key in JSON is `"payroll.employee.settings:EMP\\:101:1"` because JSON
+also escapes backslashes. JSON encoding is distinct from canonical key encoding.
+Use one shared encoder/parser with round-trip validation. Numeric revisions use
+canonical positive decimal digits and numeric ordering, so revision 10 follows 2.
+The grammar does not prescribe how IDs are generated; type-specific length and
+character limits still require a contract. Escape any query-language metacharacters
+separately when building queries; canonical key escaping is not SQL escaping.
+
+These examples do not prescribe an ID-generation algorithm. Finalize lengths,
+revision identity and key/payload consistency per type. Use the shared encoder
+and validator in each client. Domain/layer scope comes from the owned store, tenant scope from
 the tenant column; references between stores must identify all required scopes.
 
 Indexes follow supported access and integrity requirements:
@@ -221,7 +255,7 @@ Indexes follow supported access and integrity requirements:
 - Type-specific uniqueness must protect consumption, retry identity and valid
   version succession. Missing fields and availability changes must not bypass it.
 - Partial/expression indexes need justified query predicates. Avoid a blanket
-  whole-JSON index and do not copy every L1 index into L2/L3 without a use case.
+  whole-JSON index and do not copy every L1 index into L2 without a use case.
 
 Reference integrity and concurrency-safe transitions require authoritative
 enforcement beyond JSON validation or indexing. Validate query plans, index
@@ -241,19 +275,22 @@ record or commit receipt cannot stand in for payroll commit. General reads still
 enforce permissions and visibility. Domain wrappers and shared wrappers must
 use the same authoritative rules.
 
-L2/L3 may use generic record operations within their authorized namespaces and
+L2 may expose generic record operations within authorized namespaces and
 schema/lifecycle contracts. A table selector or caller-supplied layer field does
-not grant authority over another store. L2/L3 call L1 to change core facts and
-retain actual outcomes; their own progress records are not proof of commit.
+not grant authority over another store. L3 consumers use L1/L2 APIs and choose
+their own persistence; this software provides no L3 store or mutation wrapper.
+L2/L3 call L1 to change core facts and retain actual outcomes; their own progress
+records are not proof of commit.
 No cross-employee bulk write or cross-layer all-or-nothing promise is added to L1.
 
 ### Client compute and authoritative enforcement
 
 Share canonical definitions with client scripts for early validation, proposal
 calculation, preparation and orchestration. Software-owned reusable wrappers
-are L2; application/AI composition is L3. Repository/CI scripts can detect key,
-schema and vocabulary drift. Layer-3 payload flexibility is bounded by its
-declared namespace/schema contract, not permission to redefine L1 facts.
+are L2; application/AI composition is consumer-owned L3. Repository/CI scripts
+can detect key, schema and vocabulary drift in the supplied L1/L2 contracts.
+Consumers define their own L3 persistence, while calls to the software must
+conform to its L1/L2 contracts and cannot redefine L1 facts.
 
 The server/database still enforce authorization, tenant/domain/layer isolation,
 accepted payloads, references, uniqueness, stale-write protection and atomic
@@ -266,7 +303,8 @@ domain-specific invariants.
 **User-directed sequence, 2026-09-08:** prove the architecture in SQLite in the
 payroll lab before changing actual production code. Use the canonical contracts
 and representative payroll data to exercise the model, including core tables,
-L1/L2/L3 key/value stores, wrappers, canonical keys, indexes and lifecycle rules.
+L1/L2 key/value stores, wrappers, canonical keys, indexes and lifecycle rules.
+L3 is exercised only as a consumer of those interfaces; no L3 store is supplied.
 
 The lab proof should be executable and repeatable: create an isolated database,
 seed fixtures, run positive/negative scenarios, inspect query plans and preserve
@@ -294,8 +332,8 @@ pinning this sequence.
 
 The subsequent [canonical supporting-record direction](payroll-records.md)
 targets one reusable four-column JSON table for the current supporting roles.
-The user refined its scope to one such table per domain and owning layer, so
-L1, L2 and L3 can persist their respective data. Shared shape does not imply
+The user refined its scope to one such table per domain and software-owned
+layer: L1 and L2. Consumers own L3 storage/composition. Shared shape does not imply
 shared domain/layer authority. Domain APIs or general wrappers must preserve
 the owning contract; a generic transport cannot bypass L1 domain operations.
 Canonical key construction, payload paths and query/index rules are defined
