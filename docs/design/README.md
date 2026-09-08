@@ -14,8 +14,8 @@ indexing rationale and outstanding contract decisions here in readable form.
 |---|---|
 | [SQLite-first proof plan](sqlite-proof-plan.md) | Finite checkpoints for the SQLite lab proof, with production PostgreSQL acceptance kept separate. |
 | [123 Architecture](123-architecture.md) | Agreed L1 core primitives, L2 software-owned auxiliary primitives and L3 application/AI composition; canonical vocabulary before API contracts. |
-| [Canonical ledger tables](canonical-ledger-tables.md) | Nine user-designated L1 ledger tables, the 16 existing supporting tables, candidate L2 output and deprecated structures. Existing storage inventory, not the replacement schema. |
-| [Payroll records by domain and layer](payroll-records.md) | Supplied L1/L2 key/value tables and wrappers, consumer-owned L3, four-column baseline, proposed fifth `state` column, six original entry examples, an L2 employee-settings candidate and all 16 L1 consolidation mappings. |
+| [Canonical ledger tables](canonical-ledger-tables.md) | Current three-ledger target, with the former nine-table designation, 16 supporting roles and deprecated structures retained as historical inventory. |
+| [Payroll records by domain and layer](payroll-records.md) | Supplied L1/L2 key/value tables and wrappers, consumer-owned L3, four-column baseline, proposed fifth `state` column, nine L1 record types, L2 employee settings and all 16 supporting-role mappings. |
 
 ## Domain ownership and minimal storage
 
@@ -31,10 +31,12 @@ Each domain can own a table for each software-owned layer's data:
 
 ```text
 Payroll domain
-  Canonical monetary/source ledgers
+  payroll_draft_ledger             Fixed draft monetary entries
+  payroll_ledger                   Committed payroll entries
+  payroll_employer_liability_ledger  Obligations, remittances, allocations
   payroll_l1_records               Core supporting records
   payroll_l2_records               Reusable software-owned auxiliary data
-    Each: tenant | key | value(JSONB) | ts
+    Record stores: tenant | key | value(JSONB) | ts
           state                    (proposed fifth column)
 
 Other domains, when justified
@@ -117,8 +119,11 @@ database/runtime change.
 The [canonical tables and record types](payroll-records.md#canonical-tables-and-canonical-record-types)
 are listed separately, with layer, meaning, example keys and acceptance status.
 
-The [SQLite proof result](../evidence/sqlite-record-fold/README.md) records
-33 passing tests, stored examples, review regressions and the remaining gaps.
+The [historical nine-table proof](../evidence/sqlite-record-fold/README.md) records
+33 passing tests at its source revision. The three-ledger simulation has its own
+row catalogue and verification; the earlier result does not prove this new layout.
 
 **Current target:** [three canonical ledgers and complete simulation row map](three-ledger-simulation.md).
 This supersedes the earlier nine-table target.
+
+Read the [canonical row mind map](canonical-row-map.md) for the complete type/relationship catalogue.

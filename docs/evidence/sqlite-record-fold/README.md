@@ -1,4 +1,8 @@
-# SQLite canonical payroll record proof
+# Historical nine-table SQLite payroll proof
+
+**Historical evidence:** this proves the former nine-table layout, not the current
+[three-ledger target](../../design/three-ledger-simulation.md). Reproduce it from
+the source revision below; the current simulation is being converted.
 
 Source: `44de62d61965f624b180016801c8068716802ba5`, Python 3.14.4,
 SQLite 3.46.1. This is the isolated lab proof of the folding design, not

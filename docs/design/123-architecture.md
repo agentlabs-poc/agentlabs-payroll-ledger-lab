@@ -3,8 +3,8 @@
 > **Superseding user decision:** the target is three canonical ledgers plus
 > `payroll_l1_records`, with `payroll_l2_records` separate and no supplied L3.
 > Read the [current three-ledger design and record catalogue](three-ledger-simulation.md).
-> The former nine-table callouts below are retained pending the simulation's
-> documentation reconciliation; they no longer define the target.
+> This chapter uses the current target; the table register retains the old
+> physical mapping as historical evidence.
 
 **123: a new software-design paradigm for AI-native applications.** The user
 requested this framing on 2026-09-08. It names the model being defined here:
@@ -28,7 +28,7 @@ The user subsequently named this model **123 Architecture**.
 
 | Layer | Contract and ownership | Payroll examples |
 |---|---|---|
-| L1: core primitives | Fundamental domain records, valid operations and integrity guarantees | Salary earning ledger, instructions, fixed employee draft, exact employee commit, Payroll Ledger, employer-liability register |
+| L1: core primitives | Fundamental domain records, valid operations and integrity guarantees | Versioned salary earning/instruction records, fixed employee draft, exact employee commit, Payroll Ledger, employer-liability ledger |
 | L2: auxiliary primitives | Reusable, software-owned capabilities and auxiliary records built using L1 | Versioned compensation packages, reusable earning listings, package application, aggregate projections and coordination across employees |
 | L3: application composition | Task-specific intent, choices, sequencing, interactions and exception handling; may be AI-owned | Select a fresher package, gather inputs, choose employees, prepare their payroll and resolve outstanding cases |
 
@@ -104,11 +104,11 @@ A supporting table needs a concrete ledger-integrity or output role; merely
 being used by payroll is insufficient. This is a design disposition, not
 authorization to drop tables or rewrite stored records.
 
-The user subsequently designated the nine tables in the register's primary L1
-ledger list as **canonical L1 ledger tables**. Supporting tables remain separately
-classified; no salary-ledger table name was invented to fill the existing gap.
-Canonical designation confirms their names and ledger roles, while current API,
-lifecycle and schema-dependency conformance still requires verification.
+The user's latest decision supersedes the earlier nine-table designation:
+**`payroll_draft_ledger`, `payroll_ledger`, `payroll_employer_liability_ledger`**
+are the complete canonical-ledger set. Instructions, earnings, draft metadata
+and evidence use `payroll_l1_records`. The earlier physical mapping is historical;
+production API, schema and migration conformance still need separate verification.
 
 ## Software-design premise
 
@@ -141,8 +141,8 @@ runtime implementation is authorized merely by naming the paradigm.
 ## Canonical table and record callout
 
 The [explicit inventory](payroll-records.md#canonical-tables-and-canonical-record-types)
-separates **nine designated L1 ledger tables**, the target shared tables
-**`payroll_l1_records` / `payroll_l2_records`**, and **six L1 record types plus
+separates **three canonical L1 ledger tables**, the shared record tables
+**`payroll_l1_records` / `payroll_l2_records`**, and **nine L1 record types plus
 L2 `payroll.employee.settings`**. Canonical tables define storage roles; canonical
 record types define meanings within shared storage; keys locate individual
 records. No L3 table is supplied. Detailed candidate schemas remain marked as
@@ -163,9 +163,9 @@ provided by this software. The per-domain/layer storage rule applies to the
 software-owned layers; consumers choose their own L3 persistence.
 
 Core canonical tables retain the domain's first-class facts and guarantees.
-For payroll these include the accepted instruction, draft, posted payroll and
-employer-liability ledger roles. Their physical mapping remains subject to the
-recorded conformance gaps; supporting storage does not replace them.
+For payroll, the three ledgers own draft entries, committed payroll and employer
+liability events. The L1 record store owns source definitions, exact draft metadata
+and evidence. Their production implementation remains subject to separate proof.
 
 | Storage | Ownership and purpose | Payroll illustration |
 |---|---|---|
@@ -174,8 +174,8 @@ recorded conformance gaps; supporting storage does not replace them.
 | Domain/L2 key/value table | Reusable software-owned auxiliary data | Reviewed reusable compensation-package definitions; employee payroll preferences/policy assignment is a candidate with fields still to be defined. |
 | L3 consumer-owned persistence | Outside the supplied software; consumers choose their storage and composition | Employee selections, pending work and returned operation references may live in consumer-owned state. |
 
-Working payroll names are `payroll_l1_records` and `payroll_l2_records`.
-Names and physical implementation are proposals. The
+Payroll shared-table names are `payroll_l1_records` and `payroll_l2_records`.
+Detailed physical implementation remains a prototype contract. The
 shape does not require separate services or force all layer stores into Core's
 database. Other domains can adopt the same shape while owning their own terms,
 schemas, permissions and indexes. Do not create a table per canonical key or

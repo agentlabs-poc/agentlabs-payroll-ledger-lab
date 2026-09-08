@@ -1,10 +1,10 @@
-# Canonical supporting records: shared JSON storage
+# Canonical payroll records and shared JSON storage
 
 > **Superseding user decision:** the target is three canonical ledgers plus
 > `payroll_l1_records`, with `payroll_l2_records` separate and no supplied L3.
 > Read the [current three-ledger design and record catalogue](three-ledger-simulation.md).
-> The former nine-table callouts below are retained pending the simulation's
-> documentation reconciliation; they no longer define the target.
+> This chapter uses the current target; the table register retains the old
+> physical mapping as historical evidence.
 
 **Lab design pin, 2026-09-08.** Retained here at the user's request. Read the [design index](README.md) for status and ownership. This is readable design content, not a forwarding page.
 
@@ -25,8 +25,8 @@ This chapter records the agreed design direction and component example, then
 lists candidate entries for individual review. It is not an implemented schema,
 a completed migration design, or blanket approval of every candidate payload.
 The [current table register](canonical-ledger-tables.md) remains the inventory
-of existing storage. The nine canonical ledger table designations remain;
-this proposal concerns consolidation of their 16 supporting tables.
+of existing storage. The current three-ledger target also folds instruction
+and draft metadata into L1 records alongside the 16 supporting roles.
 
 **Lab design home:** the user subsequently requested that these concepts also
 be pinned in the [payroll lab design collection](https://github.com/agentlabs-poc/agentlabs-payroll-ledger-lab/blob/docs/payroll-handbook-compat/docs/design/README.md).
@@ -43,60 +43,57 @@ and contract of records held in a shared table. A **record key** identifies one
 instance/revision of that type within its tenant and store. These are distinct;
 introducing a record type does not introduce another table.
 
-### Canonical L1 ledger tables — nine designated tables
+### Canonical L1 ledger tables — exactly three
 
 | Canonical table | Ledger role |
 |---|---|
-| `payroll_instructions` | Stable instruction identity |
-| `payroll_instruction_versions` | Immutable instruction versions, including applicability and expiry |
-| `payroll_calculations` | Employee payroll draft identity |
-| `payroll_calculation_revisions` | Exact draft revisions and content identity |
-| `payroll_draft_entries` | Monetary entries in a draft |
-| `payroll_ledger_entries` | Committed payroll entries |
-| `payroll_statutory_obligations` | Employer-liability obligations arising from payroll |
-| `payroll_statutory_remittances` | Payments to authorities with supporting proof |
-| `payroll_statutory_allocations` | Allocation of remittances against obligations |
+| `payroll_draft_ledger` | Fixed draft monetary entries |
+| `payroll_ledger` | Committed payroll entries |
+| `payroll_employer_liability_ledger` | Obligation, remittance and allocation entries |
 
-These names and roles are designated canonical. That designation does not certify
-every existing column, endpoint or lifecycle as conformant. The standalone Salary
-Earning Ledger representation remains an explicit gap; no table name is invented
-here to fill it.
+This is the current user-approved target. The earlier nine-table designation is
+superseded; its physical mapping remains historical evidence in the table register.
+Instructions, earnings and draft metadata are canonical L1 records, not additional
+ledger tables. The production schema has not been migrated.
 
-### Canonical shared record tables — target design
+### Canonical shared record tables
 
 | Layer | Table | Responsibility |
 |---|---|---|
-| L1 | `payroll_l1_records` | Canonical support and integrity evidence for core payroll operations |
-| L2 | `payroll_l2_records` | Canonical reusable auxiliary payroll records owned by software |
-| L3 | None supplied | Consumers own their composition and persistence |
+| L1 | `payroll_l1_records` | Canonical source definitions, draft metadata, controls and integrity evidence |
+| L2 | `payroll_l2_records` | Reusable software-owned auxiliary payroll records |
+| L3 | None supplied | Consumers own composition and persistence |
 
-These are the target canonical shared-table names, implemented only in the SQLite
-lab proof. They are not migrated production tables. The envelope is `tenant`,
-`key`, `value`, `ts`; `state` is the proposed availability extension used by the
-prototype. Core ledger money remains in the nine designated tables.
+L1 has four physical tables; L2 has one separate table. KV rows use `tenant`,
+`key`, `value`, `ts`, plus the prototype availability extension `state`.
 
-### Canonical record vocabulary — six L1 types and one L2 type
+### Canonical record vocabulary — nine L1 types and one L2 type
 
-| Layer / store | Canonical record type | Meaning | Example record key |
+| Store | Canonical record type | Meaning | Example key |
 |---|---|---|---|
-| L1 / `payroll_l1_records` | `payroll.component` | Versioned earning/deduction definition | `payroll.component:C101:1` |
-| L1 / `payroll_l1_records` | `payroll.draft.control` | Complete control revision for an exact draft | `payroll.draft.control:D1:2` |
-| L1 / `payroll_l1_records` | `payroll.draft.review` | Review bound to exact draft content/control context | `payroll.draft.review:D1:R1` |
-| L1 / `payroll_l1_records` | `payroll.instruction.resolution` | An instruction's treatment and effects in a draft | `payroll.instruction.resolution:D1:IR1` |
-| L1 / `payroll_l1_records` | `payroll.instruction.application` | Permanent committed application and posted effects | `payroll.instruction.application:IV1:IA1` |
-| L1 / `payroll_l1_records` | `payroll.operation.receipt` | Durable authorized operation outcome and retry evidence | `payroll.operation.receipt:D1:OR1` |
-| L2 / `payroll_l2_records` | `payroll.employee.settings` | Versioned employee preferences / reusable policy assignment | `payroll.employee.settings:E101:1` |
+| L1 | `payroll.component` | Versioned component definition | `payroll.component:C101:1` |
+| L1 | `payroll.earning` | Employee earning entitlement and effective bounds | `payroll.earning:EARN1:1` |
+| L1 | `payroll.instruction` | Monthly/one-time instruction, amount and expiry | `payroll.instruction:I1:1` |
+| L1 | `payroll.draft` | Exact employee/month snapshot, selected source versions, hash and totals | `payroll.draft:D1:1` |
+| L1 | `payroll.draft.control` | Complete hold/cancel control revision | `payroll.draft.control:D1:2` |
+| L1 | `payroll.draft.review` | Review bound to exact content/control context | `payroll.draft.review:D1:R1` |
+| L1 | `payroll.instruction.resolution` | Instruction treatment and draft effects | `payroll.instruction.resolution:D1:IR1` |
+| L1 | `payroll.instruction.application` | Permanent application and posted effects | `payroll.instruction.application:IV1:IA1` |
+| L1 | `payroll.operation.receipt` | Durable authorized outcome and retry evidence | `payroll.operation.receipt:D1:OR1` |
+| L2 | `payroll.employee.settings` | Effective preferences / reusable policy assignment | `payroll.employee.settings:E101:1` |
 
-This is the vocabulary for the folding design. Component is the accepted starting
-example; the remaining detailed payloads, lifecycle choices and reference contracts
-are proposals exercised by the prototype, not blanket production-schema approval.
-The old 16 supporting tables are mapped to these responsibilities below; they are
-not 16 new canonical record types. Candidate identity/content hash belongs on the
-draft revision. Several evidence roles can share one operation receipt.
+The [three-ledger simulation](three-ledger-simulation.md) defines the complete
+prototype contract and connected scenario. This vocabulary does not blanket-approve
+production payloads or migration. A record type does not imply a separate table.
 
-Rationale: readers and clients need a small, explicit domain vocabulary. The
-shared envelope reduces storage structures while type contracts preserve meaning,
-integrity and queryability. Storage consolidation must not blur layer ownership.
+The 16 former supporting roles map to these responsibilities. Several evidence
+roles can share one operation receipt. The former instruction/version and
+calculation/revision tables fold into instruction/draft records. Earning records
+provide an explicit source representation for this simulation; upstream source
+intake and organization-specific policy remain outside it.
+
+Rationale: keep the canonical ledger vocabulary small while retaining exact
+meaning, history, references and queryability in typed L1 records.
 
 ## Agreed direction and rationale
 
@@ -135,14 +132,15 @@ permissions, lifecycle and indexes. Do not create one table per canonical key.
 | L2 | `payroll_l2_records` | Reusable software-owned auxiliary data, such as a reviewed compensation-package definition. Exact keys/contracts remain to be specified. |
 | L3 | Not supplied | Consumers own composition and any persistence they need. Their progress records are not proof that payroll committed. |
 
-These are working names, not accepted physical schemas. They refine the earlier
-single working name `payroll_records`. No other domain's tables are prescribed.
+These are pinned target names; detailed production schemas remain unapproved.
+They refine the earlier single working name `payroll_records`. No other domain's tables are prescribed.
 L2 data storage belongs with its software-owned capability; this design does not
 require both stores in hrms-core or separate services. No L3 table is provisioned.
 Tenant, domain, layer and key jointly determine a record's scope. Equal tenant/key
 values in different layer stores do not refer to the same record.
 
-Core payroll money stays in the canonical ledgers. L1 supporting storage remains
+Draft, committed and employer-liability monetary entries stay in the three
+canonical ledgers. Source amounts also appear in versioned earning/instruction records. L1 supporting storage remains
 one table target; providing L2 storage does not add organization-specific policy
 to it. Existing deprecated compensation/run structures are not reinstated by
 calling them L2/L3. Each replacement contract still needs individual review.
@@ -605,14 +603,15 @@ index size and read/write cost rather than promising a gain from table count.
 
 This chapter pins design and rationale only. Existing component and instruction
 APIs, the CLI, migrations and data are unchanged. Run/compensation deprecations
-remain. It does not fill the Salary Earning Ledger representation gap, approve
+remain. The earlier proposal did not fill the salary-source representation gap; the
+three-ledger simulation now proposes explicit earning records. This does not approve
 new APIs, establish overall merge readiness or authorize merging pending PRs.
 
-## Executable prototype examples
+## Historical prototype examples
 
-The [SQLite proof result](../evidence/sqlite-record-fold/README.md) retains
+The [earlier nine-table SQLite proof](../evidence/sqlite-record-fold/README.md) retains
 [seven complete stored rows](../evidence/sqlite-record-fold/record-examples.json)
 using the pinned vocabulary and key grammar. The examples above explain the
 design; the retained rows show the exact prototype field sets, including record
-identity, integer minor units and availability state. These are not accepted
-production payload schemas.
+identity, integer minor units and availability state. These historical examples predate earning/instruction/draft records in the
+three-ledger model and are not its complete catalogue or production schemas.

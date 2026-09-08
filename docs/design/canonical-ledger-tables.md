@@ -26,12 +26,12 @@ the current payroll schema: a retained table needs a concrete canonical ledger
 role or a necessary supporting role for its records and guarantees. A foreign
 key to payroll or an existing runtime dependency alone is insufficient.
 
-The canonical ledgers are Salary Earning, monthly standing instructions, one-time
-instructions, the fixed employee Draft Ledger, the committed Payroll Ledger,
-and the Employer-Liability Register. See [core concepts](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/b72312a8203a37ab97669f760099516a2bba1d9d/docs/payroll/handbook/core-concepts.md)
+The earlier vocabulary described Salary Earning and monthly/one-time instruction
+ledgers alongside draft, payroll and employer liabilities. The current target
+keeps earnings/instructions as canonical L1 records and names only three ledgers. See [core concepts](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/b72312a8203a37ab97669f760099516a2bba1d9d/docs/payroll/handbook/core-concepts.md)
 and [123 Architecture](123-architecture.md).
 
-## Scope and meaning of status
+## Historical inventory: scope and meaning of status
 
 This inventory covers **58 payroll and payroll-adjacent tables: 9 canonical L1
 ledger tables, 16 L1 supporting tables, 1 candidate L2 output table and 32
@@ -56,16 +56,17 @@ not a live database catalog inspection.
 All existing data and dependencies remain. This marking changes documentation
 only: no DROP/ALTER/COMMENT statements are executed, and historical migrations,
 runtime behavior and schema privileges are unchanged. No replacement table names,
-removal date or migration plan are invented. The register is the canonical schema
-status; old migration declarations describe what was implemented.
+removal date or migration plan are invented. The historical register records that earlier schema disposition; the current
+three-ledger target supersedes its canonical-table count. Old migration
+declarations describe what was implemented.
 
 ## Canonical ledger mappings by layer
 
-### Layer 1: canonical ledger tables
+### Former Layer 1 designation: nine physical ledger tables
 
 **User-confirmed canonical, 2026-09-08.** After reviewing this L1 ledger list,
 the user instructed: “can you mark these table as canonical layer-1 ledgers”.
-All nine tables below are designated **Canonical L1 ledger tables** for their
+All nine tables below were designated **Canonical L1 ledger tables** for their
 stated roles. The 16 supporting tables in the next section remain separate.
 Existing implementation conformance gaps remain open.
 **Salary Earning Ledger: no accepted standalone representation identified.**
