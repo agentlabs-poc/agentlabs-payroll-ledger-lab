@@ -17,11 +17,11 @@ code, pre { font-family: DM Mono, monospace; }
 .fixture b, .fixture span { display: block; }
 .fixture b { color: #71e6aa; font: 500 19px DM Mono, monospace; }
 .fixture span { margin-top: 3px; color: #9fb4aa; font-size: 11px; }
-.stage-rail { display: grid; grid-template-columns: repeat(10, minmax(88px, 1fr)); gap: 6px; margin-top: 22px; overflow-x: auto; padding: 2px; }
+.stage-rail { display: flex; gap: 6px; margin-top: 22px; overflow-x: auto; padding: 2px; }
 button { border: 1px solid #2d5546; background: #132a21; color: #cfe6dc; padding: 9px 12px; border-radius: 7px; cursor: pointer; font-size: 12px; font-weight: 700; }
 button:hover { border-color: #5fd79d; background: #1a392d; }
 button:disabled { cursor: not-allowed; opacity: .38; }
-.stage-rail button { display: flex; align-items: center; gap: 7px; min-width: 88px; padding: 8px; color: #779188; background: #0b1914; font-size: 10px; text-align: left; white-space: nowrap; }
+.stage-rail button { display: flex; align-items: center; gap: 7px; flex: 0 0 auto; padding: 8px; color: #779188; background: #0b1914; font-size: 10px; text-align: left; white-space: nowrap; }
 .stage-rail button span { display: grid; place-items: center; width: 20px; height: 20px; flex: 0 0 auto; border: 1px solid #315c4b; border-radius: 50%; font-family: DM Mono, monospace; }
 .stage-rail button.done span { color: #07100d; background: #65dda4; }
 .stage-rail button.active { border-color: #a9ef6b; color: #e8f2ed; background: #17372b; }
@@ -60,7 +60,7 @@ a { color: #9eebc6; font-size: 12px; }
 .panel-copy code { color: #8de7b9; }
 .rows { max-height: 440px; overflow: auto; }
 .json-row { border-bottom: 1px solid #172b24; }
-.json-row.new { background: #142b21; box-shadow: inset 3px 0 #71e6aa; }
+.json-row.new { background: #142b21; }
 .json-row summary { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 9px; padding: 11px 13px; cursor: pointer; }
 .json-row summary:hover { background: #14261f; }
 .json-row summary code { min-width: 0; color: #7ee8b4; font-size: 11px; overflow-wrap: anywhere; }

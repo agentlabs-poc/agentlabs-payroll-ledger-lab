@@ -62,7 +62,7 @@ function recordPanel(table: string, title: string, rows: Row[], previous: Row[],
   </section>`;
 }
 
-function render(): void {
+function render(focusSelector?: string): void {
   const stage = flow.stages[selected];
   const before = selected ? flow.stages[selected - 1].tables : {};
   const p = stage.summary.payroll;
@@ -112,11 +112,19 @@ function render(): void {
   document.querySelector<HTMLButtonElement>('#next')!.addEventListener('click', () => go(selected + 1));
   document.querySelector<HTMLButtonElement>('#complete')!.addEventListener('click', () => go(flow.stages.length - 1));
   document.querySelector<HTMLButtonElement>('#reset')!.addEventListener('click', () => go(0));
+  if (focusSelector) {
+    const target = document.querySelector<HTMLElement>(focusSelector);
+    ((target instanceof HTMLButtonElement && target.disabled) ? document.querySelector<HTMLSelectElement>('#stage-select') : target)?.focus();
+  }
 }
 
 function go(index: number): void {
+  const active = document.activeElement as HTMLElement;
+  const focusSelector = active.dataset.stage === undefined
+    ? (active.id ? `#${active.id}` : undefined)
+    : `[data-stage="${active.dataset.stage}"]`;
   selected = Math.max(0, Math.min(index, flow.stages.length - 1));
-  render();
+  render(focusSelector);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
