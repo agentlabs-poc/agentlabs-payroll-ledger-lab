@@ -110,6 +110,7 @@ a { color: #9eebc6; font-size: 12px; }
 .ledger-table td { color: #b9d8ca; }
 .ledger-table code { display: block; max-width: 280px; color: #7ee8b4; font-size: 10px; overflow-wrap: anywhere; }
 .ledger-table .money-cell { font-family: DM Mono, monospace; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ledger-table .row-kind { color: #9eebc6; font: 500 10px DM Mono, monospace; text-transform: uppercase; }
 .panel-copy { padding: 10px 14px; border-bottom: 1px solid #172b24; color: #809a8f; font-size: 12px; }
 .panel-copy code { color: #8de7b9; }
 .rows { max-height: 440px; overflow: auto; }

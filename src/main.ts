@@ -89,6 +89,41 @@ function draftLedgerTable(rows: Row[]): string {
   </table></div>`;
 }
 
+function postedLedgerTable(rows: Row[]): string {
+  return `<div class="ledger-table-wrap"><table class="ledger-table">
+    <thead><tr><th>Employee</th><th>Month</th><th>Entry ID</th><th>Draft key</th><th>Source key</th><th>Component key</th><th>Earning / expense</th><th>Deduction / liability</th></tr></thead>
+    <tbody>${rows.map((row) => {
+      const amount = Number(row.amount_minor);
+      const isEarning = row.direction === 'earning' || row.direction === 'employer_expense';
+      return `<tr>
+        <td>${escapeHtml(row.employee_id)}</td><td>${escapeHtml(row.payroll_month)}</td><td><code>${escapeHtml(row.ledger_entry_id)}</code></td>
+        <td><code>${escapeHtml(row.draft_key)}</code></td><td><code>${escapeHtml(row.source_key)}</code></td><td><code>${escapeHtml(row.component_key)}</code></td>
+        <td class="money-cell">${isEarning ? money(amount) : '—'}</td><td class="money-cell">${isEarning ? '—' : money(amount)}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+
+function liabilityLedgerTable(rows: Row[]): string {
+  const cell = (value: Json): string => value == null ? '—' : escapeHtml(value);
+  return `<div class="ledger-table-wrap"><table class="ledger-table liability-table">
+    <thead><tr><th>Kind</th><th>Entry ID</th><th>Employer</th><th>Authority</th><th>Period</th><th>Posted liability</th><th>Obligation</th><th>Remittance</th><th>Amount</th><th>Proof</th></tr></thead>
+    <tbody>${rows.map((row) => `<tr>
+      <td><span class="row-kind">${escapeHtml(row.row_kind)}</span></td><td><code>${escapeHtml(row.entry_id)}</code></td>
+      <td>${cell(row.employer_id)}</td><td>${cell(row.authority_id)}</td><td>${cell(row.reporting_period)}</td>
+      <td><code>${cell(row.posted_liability_entry_id)}</code></td><td><code>${cell(row.obligation_entry_id)}</code></td><td><code>${cell(row.remittance_entry_id)}</code></td>
+      <td class="money-cell">${money(Number(row.amount_minor))}</td><td><code>${cell(row.proof_ref)}</code></td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function ledgerTable(table: string, rows: Row[]): string {
+  if (table === 'payroll_draft_ledger') return draftLedgerTable(rows);
+  if (table === 'payroll_ledger') return postedLedgerTable(rows);
+  if (table === 'payroll_employer_liability_ledger') return liabilityLedgerTable(rows);
+  return '';
+}
+
 function timelineStage(stage: Stage, index: number): string {
   const previous = index ? flow.stages[index - 1].tables : {};
   const contributions = Object.entries(stage.tables).flatMap(([table, rows]) => {
@@ -100,7 +135,7 @@ function timelineStage(stage: Stage, index: number): string {
       : [[table, added] as const];
     return groups.map(([type, records]) => `<section class="contribution">
       <div class="contribution-head"><code>${table}</code>${type === table ? '' : `<span>${type}</span>`}<b>${records.length} added</b></div>
-      ${table === 'payroll_draft_ledger' ? draftLedgerTable(records) : ''}
+      ${ledgerTable(table, records)}
       <div class="rows">${records.map((row) => jsonDetails(row, index === selected)).join('')}</div>
     </section>`);
   });
