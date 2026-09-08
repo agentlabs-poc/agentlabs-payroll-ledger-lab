@@ -1,5 +1,11 @@
 # 123 Architecture
 
+> **Superseding user decision:** the target is three canonical ledgers plus
+> `payroll_l1_records`, with `payroll_l2_records` separate and no supplied L3.
+> Read the [current three-ledger design and record catalogue](three-ledger-simulation.md).
+> The former nine-table callouts below are retained pending the simulation's
+> documentation reconciliation; they no longer define the target.
+
 **123: a new software-design paradigm for AI-native applications.** The user
 requested this framing on 2026-09-08. It names the model being defined here:
 canonical domain primitives, domain/layer-owned persistence and software/AI

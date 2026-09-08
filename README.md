@@ -87,3 +87,6 @@ one-time inputs while monthly standing inputs remain effective for future period
 
 The [SQLite record-folding proof](docs/evidence/sqlite-record-fold/README.md)
 retains executable validation, measured evidence and seven full record examples.
+
+**Current target:** [three canonical ledgers and complete simulation row map](docs/design/three-ledger-simulation.md).
+This supersedes the earlier nine-table target.

@@ -1,5 +1,13 @@
 # Canonical ledger table mapping and deprecation register
 
+> **Current target supersedes the nine-table designation:** exactly
+> `payroll_draft_ledger`, `payroll_ledger` and
+> `payroll_employer_liability_ledger` are canonical ledgers. Other core records
+> use `payroll_l1_records`. See the [three-ledger design](three-ledger-simulation.md).
+> The inventory below preserves the former physical mapping and its rationale;
+> its nine-table canonical classification is historical, not the new target.
+> Production tables have not been migrated.
+
 **Lab design pin, 2026-09-08.** Retained here at the user's request. Read the [design index](README.md) for status and ownership. This is readable design content, not a forwarding page.
 
 Initial pin reconciled with [Core source at `b72312a`](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/b72312a8203a37ab97669f760099516a2bba1d9d/docs/payroll/ledger-table-mapping.md). Acceptance and proposal labels below remain in force; the browser lab and production schema are unchanged.

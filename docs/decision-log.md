@@ -68,3 +68,18 @@ employee settings. Detailed candidate contracts remain proposals. L3 storage
 belongs to consumers. Rationale: a minimal vocabulary must distinguish storage
 structure, domain meaning and individual identity without creating a table for
 every supporting concept. Production code and schemas are unchanged.
+
+## 2026-09-08 — Exactly three canonical ledgers
+
+The user named `payroll_draft_ledger`, `payroll_ledger` and
+`payroll_employer_liability_ledger` as the complete canonical-ledger set and asked
+for extreme simplicity. This supersedes the nine-table target. Instructions,
+earnings and draft metadata can be canonical L1 records; obligation/remittance/
+allocation remain distinct monetary entry types within the employer ledger.
+
+Rationale: physical implementation tables should not inflate the consumer's
+canonical ledger vocabulary. Preserve exact references, indexes, immutable
+history and employee-atomic operations while reducing table count. The user then
+requested commit/push and a return to simulation with all canonical row examples
+and a complete mind map. The [design](design/three-ledger-simulation.md) defines this SQLite-only step.
+No production runtime/API/CLI/migration changes are authorized here.

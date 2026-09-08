@@ -1,5 +1,11 @@
 # Canonical supporting records: shared JSON storage
 
+> **Superseding user decision:** the target is three canonical ledgers plus
+> `payroll_l1_records`, with `payroll_l2_records` separate and no supplied L3.
+> Read the [current three-ledger design and record catalogue](three-ledger-simulation.md).
+> The former nine-table callouts below are retained pending the simulation's
+> documentation reconciliation; they no longer define the target.
+
 **Lab design pin, 2026-09-08.** Retained here at the user's request. Read the [design index](README.md) for status and ownership. This is readable design content, not a forwarding page.
 
 Initial pin reconciled with [Core source at `b72312a`](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/b72312a8203a37ab97669f760099516a2bba1d9d/docs/payroll/handbook/canonical-records.md). Acceptance and proposal labels below remain in force; the browser lab and production schema are unchanged.

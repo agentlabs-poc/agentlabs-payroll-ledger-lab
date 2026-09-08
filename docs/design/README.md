@@ -119,3 +119,6 @@ are listed separately, with layer, meaning, example keys and acceptance status.
 
 The [SQLite proof result](../evidence/sqlite-record-fold/README.md) records
 33 passing tests, stored examples, review regressions and the remaining gaps.
+
+**Current target:** [three canonical ledgers and complete simulation row map](three-ledger-simulation.md).
+This supersedes the earlier nine-table target.
