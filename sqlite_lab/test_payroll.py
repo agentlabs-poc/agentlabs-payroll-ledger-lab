@@ -297,7 +297,8 @@ class ProofRunnerTest(unittest.TestCase):
         for label,change in (
             ("review control",lambda rs: next(r for r in rs if r["key"].startswith("payroll.draft.review:"))["value"].__setitem__("control_revision",99)),
             ("receipt control",lambda rs: next(r for r in rs if r["value"].get("operation")=="payroll.commit")["value"]["before"].__setitem__("control_revision",99)),
-            ("receipt liability",lambda rs: next(r for r in rs if r["value"].get("outcome",{}).get("employer_liability_entry_id"))["value"]["outcome"].__setitem__("employer_liability_entry_id","MISSING")),
+            ("receipt liability",lambda rs: next(r for r in rs if r["value"].get("outcome",{}).get("employer_liability_entry_ids"))["value"]["outcome"]["employer_liability_entry_ids"].__setitem__(0,"MISSING")),
+            ("receipt payable",lambda rs: next(r for r in rs if r["value"].get("outcome",{}).get("payable_entry_ids"))["value"]["outcome"]["payable_entry_ids"].__setitem__(0,"MISSING")),
             ("receipt after posted entry",lambda rs: next(r for r in rs if r["value"].get("operation")=="payroll.commit")["value"]["after"]["posted_entry_ids"].__setitem__(0,"MISSING")),
         ):
             broken=copy.deepcopy(rows); change(broken["payroll_l1_records"])
