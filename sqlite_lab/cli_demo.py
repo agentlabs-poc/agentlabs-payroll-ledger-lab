@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
 import subprocess
 import sys
 import time
@@ -12,6 +13,7 @@ from pathlib import Path
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--db", type=Path, required=True)
+    parser.add_argument("--step", action="store_true", help="pause before every CLI subprocess and show its input and result")
     args = parser.parse_args(argv)
     if args.db.exists():
         parser.error("--db must name a fresh path")
@@ -26,12 +28,22 @@ def main(argv=None):
         if output_format != "json":
             command += ["--format", output_format]
         command += arguments
+        if args.step:
+            if payload is not None:
+                print(f"\n$ {shlex.join(command)} <<'JSON'")
+                print(json.dumps(payload, indent=2, sort_keys=True))
+                print("JSON")
+            else:
+                print(f"\n$ {shlex.join(command)}")
+            input("Press Enter to run… ")
         started = time.perf_counter_ns()
         result = subprocess.run(
             command, cwd=root, text=True, input=None if payload is None else json.dumps(payload),
             capture_output=True,
         )
         timings.append({"command": " ".join(arguments[:2]), "elapsed_ms": round((time.perf_counter_ns() - started) / 1_000_000, 3)})
+        if args.step:
+            print((result.stdout if result.returncode == 0 else result.stderr).rstrip())
         if result.returncode:
             raise RuntimeError(result.stderr.strip())
         return json.loads(result.stdout) if output_format == "json" else result.stdout.rstrip()
@@ -47,6 +59,10 @@ def main(argv=None):
         raise AssertionError("operation should have been rejected")
 
     invoke(["init"])
+    employee = "E101"
+    invoke(["l2", "put_l2_settings", "--input", "-"], {
+        "value": {"schema_version": 1, "employee_id": employee, "revision": 1, "effective_from": "2026-11", "policy_ref": {"id": "POLICY-DEMO", "revision": 1}, "payslip_locale": "en-IN"}
+    })
     components = {}
     for component_id, code, kind in (
         ("BASIC", "BASIC", "earning"),
@@ -60,7 +76,6 @@ def main(argv=None):
             label=code.title(), kind=kind, country_code="IN",
         )["key"]
 
-    employee = "E101"
     earnings = [
         l1("define_earning", earning_id="earning_9do1sj396nf9", revision=1, employee_id=employee, component_key=components["BASIC"], amount_minor=3_000_000, effective_from="2026-11")["key"],
         l1("define_earning", earning_id="earning_9do1sj396nfa", revision=1, employee_id=employee, component_key=components["HRA"], amount_minor=2_000_000, effective_from="2026-11")["key"],
@@ -76,10 +91,6 @@ def main(argv=None):
         employee_id=employee, component_key=components["BONUS"], amount_minor=500_000,
         cadence="one_time", start_month="2026-11", end_month="2026-11",
     )
-    invoke(["l2", "put_l2_settings", "--input", "-"], {
-        "value": {"schema_version": 1, "employee_id": employee, "revision": 1, "effective_from": "2026-11", "policy_ref": {"id": "POLICY-DEMO", "revision": 1}, "payslip_locale": "en-IN"}
-    })
-
     draft_id = "draft_9do1sj396nfe"
     draft = l1(
         "create_draft", draft_id=draft_id, employee_id=employee, payroll_month="2026-11",
@@ -107,10 +118,14 @@ def main(argv=None):
     assert l1("elr_outstanding", obligation_id=obligation_id) == 0
     assert (draft["gross_minor"], draft["deductions_minor"], draft["net_minor"]) == (5_800_000, 500_000, 5_300_000)
 
-    print(json.dumps({"database": str(args.db), "held_commit_rejected": True, "commit_replay_equal": True, "totals": {key: draft[key] for key in ("gross_minor", "deductions_minor", "net_minor")}, "outstanding_before_allocation_minor": partial_outstanding, "outstanding_minor": 0, "elapsed_ms": round((time.perf_counter_ns() - walkthrough_started) / 1_000_000, 3), "commands": timings}, indent=2, sort_keys=True))
+    elapsed = round((time.perf_counter_ns() - walkthrough_started) / 1_000_000, 3)
+    timing = ({"interactive_elapsed_ms": elapsed, "active_subprocess_ms": round(sum(item["elapsed_ms"] for item in timings), 3)} if args.step else {"elapsed_ms": elapsed})
+    print(json.dumps({"database": str(args.db), "held_commit_rejected": True, "commit_replay_equal": True, "totals": {key: draft[key] for key in ("gross_minor", "deductions_minor", "net_minor")}, "outstanding_before_allocation_minor": partial_outstanding, "outstanding_minor": 0, **timing, "commands": timings}, indent=2, sort_keys=True))
     for ledger in ("payroll_draft_ledger", "payroll_ledger", "payroll_employer_liability_ledger"):
         print(f"\n{ledger}")
-        print(invoke(["ledger", ledger], output_format="table"))
+        result = invoke(["ledger", ledger], output_format="table")
+        if not args.step:
+            print(result)
     return 0
 
 
