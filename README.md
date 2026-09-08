@@ -1,25 +1,8 @@
 # Payroll Ledger Lab
 
-Start with the [HRMS Payroll Handbook — pinned goal and outcome](docs/handbook.md#pinned-goal-and-intended-outcome).
-The working handbook begins with [the payroll concepts already expressed in code](docs/core-concepts.md);
-its opening page records the intended outcome, completion criteria, and current
-discussion point. See [what was incorporated](docs/incorporation-record.md) for
-the mapping from existing agreements and code descriptions into the handbook.
-**Current: layered conceptual handbook reviewed; implementation proceeding through [Core hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172).** The
-[current review](docs/handbook-review.md#current-consolidated-review) records
-reviewed coverage and PAY-Q-020’s superseded closure under the
-[Layer-1/Layer-2 boundary](docs/payroll-policy-boundary.md). Read the
-[Layer-1 contracts](docs/layer-1-contracts.md), then the
-[HRMS payroll policy](docs/hrms-payroll-policy.md). The earlier conceptual edition
-is historical, not current implementation approval. The
-[baseline reconciliation](docs/baseline-reconciliation.md) separates Core main,
-the payroll hub, browser-lab evidence and local unmerged fixes. The
-[implementation reconciliation](docs/implementation-reconciliation.md) records
-which of the six local fixes to retain or reshape and the remaining controls.
-The [implementation checkpoint status](docs/handbook-review.md#implementation-checkpoint-status)
-records the complete reviewed Core implementation merged into the draft hub.
-Final Core review fixes passed; full E2E implementation/review and authenticated
-acceptance remain in progress.
+The payroll handbook, contracts, decisions, and rationale now live in [HRMS Core](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/handbook.md). Core is the canonical documentation source; the lab retains this browser experiment and forwarding pages for existing links.
+
+The [independent handbook review](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/review-2026-09-08.md) records the resolved documentation findings. Reviewed implementation is integrated in [Core draft hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172); complete authenticated handbook acceptance remains pending in [E2E PR #61](https://github.com/agentlabs-poc/agentlabs-hrms-e2e/pull/61).
 
 ## Existing browser lab
 

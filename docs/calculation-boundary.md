@@ -1,94 +1,22 @@
 # Calculation and the payroll core
 
-**PAY-ARCH-001 / PAY-Q-011 — agreed. User approved the explained boundary.** This begins the
-horizontal pass through high-impact areas requested under PAY-PROCESS-006.
-It draws on the existing lab's separation of ledger operations from its
-higher-order preparation code; it does not select a new service architecture.
+This chapter has moved to HRMS Core, the canonical payroll documentation source.
 
-PAY-CORE-008/009/010 clarify this boundary: the producing layer determines
-business source intent; payroll uses applicable facts at run time; source
-tracing is not mandatory in payroll core. Existing application guards and
-the selected reconciliation requirement remain distinct from business-source tracing.
-Under [PAY-ARCH-006](payroll-policy-boundary.md), organizational policy may
-require current-source freshness or accept the fixed draft as monetary authority.
+[Read the canonical chapter](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/calculation-boundary.md). The original edition and its rationale are preserved in Git history and Core’s [migration record](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/migration-record.md).
 
-## Responsibility split
+Existing section links are forwarded below.
 
-| Responsibility | Agreed owner |
-|---|---|
-| Preserve source records and identity, with the agreed applicability and instruction-use semantics | Payroll core |
-| Apply business calculation rules to those sources and produce proposed earning/deduction amounts | Higher-order calculation logic |
-| Create a complete fixed draft with evidence needed by its operations and selected policy | Payroll core, accepting the calculation result through its governed boundary |
-| Review and accept the proposed result | Scoped approval authority under PAY-ARCH-003; exact role assignments remain open |
-| Enforce authorized draft controls, application constraints and exact commit; honor freshness if the selected policy requires it | Payroll core |
-| Preserve posted history and expose entries and their summaries for downstream use | Payroll core |
+<a id="calculation-and-the-payroll-core"></a>
+- [Calculation and the payroll core](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/calculation-boundary.md#calculation-and-the-payroll-core)
 
-Higher-order calculation logic can be a module in the same application. The
-logical boundary does not require a network service, plugin system, particular
-language, or a separate deployment.
+<a id="responsibility-split"></a>
+- [Responsibility split](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/calculation-boundary.md#responsibility-split)
 
-The core can calculate sums, check amount representation, and enforce ledger
-invariants. Those operations are different from deciding a business formula
-such as how salary is prorated or how a particular statutory deduction is
-calculated. The agreement keeps the latter rules in calculation logic while
-retaining core control over the creation and posting of monetary records.
+<a id="rationale"></a>
+- [Rationale](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/calculation-boundary.md#rationale)
 
-## Rationale
+<a id="existing-code-and-an-example"></a>
+- [Existing code and an example](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/calculation-boundary.md#existing-code-and-an-example)
 
-The five core stores describe sources and monetary lifecycle independently of
-the particular formula producing an earning or deduction. Keeping business
-calculation separate lets the same ledger model accommodate different rules
-and instructions without adding a new ledger primitive for every use case.
-
-The user's loan example fits this boundary: higher-order logic determines the
-repayment arrangement and produces an appropriate finite standing instruction.
-The core represents its lifetime, monthly application, draft effect, and posted
-history. It need not become a loan-servicing subsystem to do so.
-
-At the same time, calculation output is a proposal. It cannot bypass the core's
-applicable approval, hold, reconciliation, application or commit rules merely because it came
-from trusted software. Source consistency and duplicate prevention also do not
-by themselves prove a business formula is correct. Calculation correctness and
-the evidence needed to review it remain responsibilities to make explicit.
-
-## Existing code and an example
-
-Source: lab revision `737465d5e27888518018e9b1f28f75fcfcac0139`,
-[main.ts](../src/main.ts), particularly `preparePayrollReport`,
-`fireDraftPayroll`, `appendDraft`, and `commitDraft`.
-
-`preparePayrollReport` reads salary and instruction sources, copies some amounts,
-and derives another deduction using a hardcoded demo rule. It produces a query
-preview. `fireDraftPayroll` materializes its rows into a draft; ledger operations
-then seal, approve, and commit. The demo formula is source evidence, not a
-statutory recommendation. The mutable open draft and incomplete validation are
-already recorded implementation gaps against later agreements.
-
-Illustrative case: calculation logic derives a deduction amount from the
-applicable inputs. The core receives that proposed amount; PAY-CORE-010 does not require
-source/evidence links on the monetary entry. It holds it in the fixed draft, subjects it to the
-selected workflow, and performs current-source reconciliation if its policy requires it. A replacement calculator must
-use the same monetary lifecycle even if its formula differs.
-
-Counterexample: calculation logic directly inserts a posted deduction and marks
-an instruction used, bypassing applicable draft controls and the selected policy. Another
-counterexample: the core silently recalculates with a changed business rule
-during commit and posts amounts different from the reviewed draft.
-
-## Scope of this decision
-
-This decision establishes responsibilities. It does not settle calculator
-interfaces, rule languages, policy-version encoding, execution evidence format,
-algorithm validation, or the list of payroll formulas. Dependency capture and
-validation must eventually satisfy PAY-CORE-006-C; those details stay parked
-until the major boundaries are covered.
-
-**PAY-Q-011 — approved:** Calculation logic produces business amounts; the core
-owns source/ledger integrity, authorized draft operations and exact commit for
-every producer. PAY-ARCH-006 places the choice of approval and freshness
-workflow in organizational policy.
-
----
-
-The following horizontal branch, [ledger ownership and the unit of work](ledger-ownership.md),
-is now agreed under PAY-Q-012. See the [roadmap](handbook-roadmap.md) for the current proposal.
+<a id="scope-of-this-decision"></a>
+- [Scope of this decision](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/calculation-boundary.md#scope-of-this-decision)

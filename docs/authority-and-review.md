@@ -1,104 +1,25 @@
 # Authority and review
 
-**PAY-ARCH-003 / PAY-Q-013 — agreed. User approved the explained boundary.** This horizontal branch
-follows the agreed [employee draft and batch boundary](ledger-ownership.md).
-It establishes distinct responsibilities before selecting role names or a
-permission implementation.
+This chapter has moved to HRMS Core, the canonical payroll documentation source.
 
-## Existing code and operating context
+[Read the canonical chapter](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/authority-and-review.md). The original edition and its rationale are preserved in Git history and Core’s [migration record](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/migration-record.md).
 
-Source: lab revision `737465d5e27888518018e9b1f28f75fcfcac0139`,
-[main.ts](../src/main.ts): `approveInput`, `preparePayrollReport`,
-`reviewPreparationReport`, `approveDraft`, and `commitDraft`.
+Existing section links are forwarded below.
 
-The code distinguishes input approval, local preparation-report review, draft
-approval, and commit. Preparation checks input approval; report review explicitly
-logs that it is local workflow state rather than canonical approval. Draft
-approval checks lifecycle state, and commit requires an approved draft.
+<a id="authority-and-review"></a>
+- [Authority and review](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/authority-and-review.md#authority-and-review)
 
-These are lifecycle gates, not implemented actor authorization. The browser demo
-exposes operations without authenticated actor/scope checks. Its hardcoded
-`hr-admin` proof-review label does not establish an enforced role model or an
-audit trail for draft approval.
+<a id="existing-code-and-operating-context"></a>
+- [Existing code and operating context](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/authority-and-review.md#existing-code-and-operating-context)
 
-The user established that an HR/payroll manager consolidates information into
-payroll through APIs, with a role supporting that work (PAY-INTAKE-001).
-Neither that handoff nor employee ledger ownership determines who may approve
-or commit. Here ownership means whose payroll the records describe; it does not
-automatically grant access or operational permissions to that employee.
+<a id="agreed-boundary"></a>
+- [Agreed boundary](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/authority-and-review.md#agreed-boundary)
 
-## Agreed boundary
+<a id="current-core-comparison"></a>
+- [Current Core comparison](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/authority-and-review.md#current-core-comparison)
 
-| Responsibility | Meaning |
-|---|---|
-| Maintain and accept inputs | Submit, expire/replace, and accept payroll sources under the relevant authority. Accepting an instruction does not approve the resulting payroll draft. |
-| Prepare payroll | Request calculation and create the fixed employee-period draft from eligible sources. Preparation-report review does not substitute for draft approval. |
-| Approve payroll | Accept the exact fixed draft and its review basis. Record who approved which draft; rebuilt drafts require fresh approval. |
-| Commit payroll | Execute posting of the exact selected draft under commit authority, honoring holds, required approval and instruction-application controls. Policy A additionally requires current-source reconciliation; policy B accepts fixed draft authority. |
+<a id="rationale-and-example"></a>
+- [Rationale and example](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/authority-and-review.md#rationale-and-example)
 
-Treat these as separately grantable capabilities scoped to the appropriate
-employer/tenant and employees. Merely holding input-maintenance or preparation
-authority does not confer approval or commit authority. A bulk action must obey
-the same authority and applicable draft-control rules for each employee it covers.
-
-Capabilities are distinct even if an organization's policy grants more than one
-to the same person or role. This decision does not require four job titles or
-decide whether preparer and approver must be different people. An automated
-commit executor would also need appropriate authority and a valid approved
-draft where approval is required; automation is not itself approval.
-
-## Current Core comparison
-
-The agreed capabilities above do not prescribe four separate people. Current
-Core nevertheless enforces a different human actor and effective executor for
-approval, as recorded in [Core PR #162](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/162).
-Keeping distinct capabilities does not authorize removing that safeguard, and
-this handbook does not claim role-policy configurability is implemented.
-See [baseline reconciliation](baseline-reconciliation.md) for this distinction.
-
-## Rationale and example
-
-The example below selects approval and current-source reconciliation as its
-organizational policy. It illustrates those choices without requiring them for
-every organization.
-
-Input acceptance answers whether an instruction may enter payroll preparation.
-Draft approval accepts the resulting combination of salary, instructions, and
-calculation outputs. Commit records that accepted result only if its basis
-still passes reconciliation. Keeping these responsibilities explicit preserves
-accountability as roles and deployment arrangements vary.
-
-Example: a manager submits an accepted bonus instruction and prepares September
-payroll. A payroll approver accepts the resulting fixed employee draft. An
-authorized operator or executor commits it if reconciliation succeeds. Whether
-one person may hold all these capabilities is a separate organizational policy.
-
-Counterexamples: an accepted bonus automatically counts as approval of the
-entire payroll; preparation authority alone permits posting; or a commit
-permission allows changed amounts to replace the approved draft.
-
-## Alternatives and return points
-
-A single broad manager permission would be simpler to assign, but would bundle
-input maintenance, acceptance of calculated money, and posting. Mandatory
-different people for each responsibility would impose a staffing and review
-policy the user has not specified. The agreed capability boundary keeps
-the responsibilities explicit while leaving role composition to policy.
-
-**PAY-Q-013 — approved:** Input maintenance, preparation, draft approval, and
-commit are distinct scoped capabilities. Policy decides which may be held by
-the same person or role; no mandatory separate-person rule was adopted.
-
----
-
-PAY-Q-020 is [closed as superseded](gap-closure-work.md#pay-q-020--withdrawing-approval-without-changing-draft-amounts).
-Under [PAY-ARCH-006](payroll-policy-boundary.md), organizational Layer-2 policy
-selects approval, withdrawal and hold workflow. Layer 1 supplies authorized
-operations and records; distinct capabilities do not mandate one organization’s
-approval sequence for everyone.
-
-The user directed a return to [core-concept clarity](core-coverage.md) before
-further authority or downstream discussion (PAY-PROCESS-008). Role names,
-source-acceptance policy, separation of duties, delegation, revocation, approval
-evidence, and automated execution remain parked. Correction and payment-release
-authority are not granted by this decision.
+<a id="alternatives-and-return-points"></a>
+- [Alternatives and return points](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/authority-and-review.md#alternatives-and-return-points)
