@@ -1,8 +1,8 @@
-import json, sqlite3, tempfile, threading, unittest
+import copy, json, sqlite3, tempfile, threading, unittest
 from pathlib import Path
 from sqlite_lab.payroll import Conflict, Payroll, PayrollError
-from sqlite_lab.prove import run_proof
-from sqlite_lab.records import connect
+from sqlite_lab.prove import _catalogue, run_proof
+from sqlite_lab.records import canonical_key, connect
 
 class PayrollTest(unittest.TestCase):
     def setUp(self):
@@ -13,11 +13,12 @@ class PayrollTest(unittest.TestCase):
         self.employer=self.payroll.define_component("EMPLOYER",1,"employer","Employer","employer_contribution","IN")["key"]
         self.salary_earning=self.payroll.define_earning("EARN-SALARY",1,"E101",self.salary,5_000_000,"2026-01")["key"]
         self.employer_earning=self.payroll.define_earning("EARN-EMPLOYER",1,"E101",self.employer,300_000,"2026-01")["key"]
-        self.loan_instruction=self.payroll.add_instruction("I-LOAN","IV-LOAN-1",1,"E101",self.loan,200_000,"monthly","2026-10","2027-02")["key"]
+        self.loan_version_id="IV-LOAN-1"
+        self.loan_instruction=self.payroll.add_instruction("I-LOAN",self.loan_version_id,1,"E101",self.loan,200_000,"monthly","2026-10","2027-02")["key"]
     def tearDown(self): self.connection.close(); self.temp.cleanup()
     def make_draft(self,month="2026-11",draft_id="D1",with_employer=False,instructions=None):
         earnings=[self.salary_earning]+([self.employer_earning] if with_employer else [])
-        return self.payroll.create_draft(draft_id,"E101",month,earnings,[self.loan_instruction] if instructions is None else list(instructions))
+        return self.payroll.create_draft(draft_id,"E101",month,earnings,[self.loan_version_id] if instructions is None else list(instructions))
 
     def test_explicit_sources_and_fixed_draft_metadata(self):
         draft=self.make_draft()
@@ -42,11 +43,11 @@ class PayrollTest(unittest.TestCase):
     def test_one_time_earning_instruction_adds_gross_and_cannot_reconsume_new_version(self):
         bonus=self.payroll.define_component("BONUS",1,"bonus","Bonus","earning","IN")["key"]
         first=self.payroll.add_instruction("I-BONUS","IV-BONUS-1",1,"E101",bonus,50_000,"one_time","2026-11","2026-11")
-        draft=self.make_draft(draft_id="D-B1",instructions=[first["key"]])
+        draft=self.make_draft(draft_id="D-B1",instructions=[first["value"]["version_id"]])
         self.assertEqual((draft["gross_minor"],draft["deductions_minor"],draft["net_minor"]),(5_050_000,0,5_050_000))
         self.payroll.commit("D-B1","bonus-first",1)
         second=self.payroll.add_instruction_version("I-BONUS","IV-BONUS-2",2,bonus,50_000)
-        self.make_draft(draft_id="D-B2",instructions=[second["key"]])
+        self.make_draft(draft_id="D-B2",instructions=[second["value"]["version_id"]])
         with self.assertRaises(Conflict): self.payroll.commit("D-B2","bonus-second",1)
 
     def test_hold_release_optional_exact_review_and_immutable_draft(self):
@@ -90,6 +91,58 @@ class PayrollTest(unittest.TestCase):
         with self.assertRaises(PayrollError): self.payroll.define_earning("BAD",1,"E101",self.loan_instruction,1,"2026-01")
         with self.assertRaises(sqlite3.IntegrityError): self.connection.execute("INSERT INTO payroll_draft_ledger(tenant,draft_key,entry_id,employee_id,payroll_month,source_key,component_key,direction,amount_minor,currency) VALUES('T2','payroll.draft:D1:1','X','E101','2026-11',?,?,'earning',1,'INR')",(self.salary_earning,self.salary))
 
+    def test_disabled_current_earning_and_instruction_cannot_resurrect_history(self):
+        earning_v1=self.payroll.define_earning("OLD-EARNING",1,"E101",self.salary,10_000,"2026-01")
+        earning_v2={**earning_v1["value"],"revision":2}
+        self.payroll.records._put_l1("T1",canonical_key("payroll.earning","OLD-EARNING",2),earning_v2,"disabled")
+        instruction_v2={**self.payroll.records.get_l1("T1",self.loan_instruction)["value"],"revision":2,"version_id":"IV-LOAN-2"}
+        self.payroll.records._put_l1("T1",canonical_key("payroll.instruction","I-LOAN",2),instruction_v2,"disabled")
+        with self.assertRaises(PayrollError):
+            self.payroll.create_draft("D-OLD-E","E101","2026-11",[earning_v1["key"]],[])
+        with self.assertRaises(PayrollError):
+            self.payroll.create_draft("D-OLD-I","E101","2026-11",[self.salary_earning],[self.loan_version_id])
+
+    def test_existing_draft_snapshot_commits_after_source_is_superseded(self):
+        self.make_draft(instructions=[])
+        old=self.payroll.records.get_l1("T1",self.salary_earning)["value"]
+        self.payroll.records._put_l1(
+            "T1",canonical_key("payroll.earning",old["earning_id"],2),
+            {**old,"revision":2},"disabled",
+        )
+        self.assertEqual(self.payroll.commit("D1","snapshot",1)["status"],"committed")
+
+    def test_instruction_selection_is_strictly_by_opaque_version_id(self):
+        prefix_id="payroll.instruction:opaque\\:version"
+        instruction=self.payroll.add_instruction("PREFIX",prefix_id,1,"E101",self.loan,1_000,"monthly","2026-01")
+        draft=self.payroll.create_draft("D-PREFIX","E101","2026-11",[self.salary_earning],[prefix_id])
+        self.assertEqual(draft["value"]["instruction_keys"],[instruction["key"]])
+        with self.assertRaises(PayrollError):
+            self.payroll.create_draft("D-KEY","E101","2026-11",[self.salary_earning],[instruction["key"]])
+
+    def test_schema_binds_draft_and_posted_rows_to_exact_references(self):
+        draft=self.make_draft()
+        unselected=self.payroll.define_earning("UNSELECTED",1,"E101",self.salary,5_000_000,"2026-01")["key"]
+        base=("T1",draft["key"],"MISMATCH","E101","2026-11",self.salary_earning,self.salary,"earning",5_000_000)
+        mismatches=[
+            base[:3]+("E102",)+base[4:],
+            base[:4]+("2026-12",)+base[5:],
+            base[:5]+(unselected,)+base[6:],
+            base[:6]+(self.loan,)+base[7:],
+            base[:7]+("deduction",)+base[8:],
+            base[:8]+(4_999_999,),
+        ]
+        sql="INSERT INTO payroll_draft_ledger(tenant,draft_key,entry_id,employee_id,payroll_month,source_key,component_key,direction,amount_minor,currency) VALUES(?,?,?,?,?,?,?,?,?,'INR')"
+        for values in mismatches:
+            with self.assertRaises(sqlite3.IntegrityError):
+                self.connection.execute(sql,values)
+        draft_row=self.connection.execute("SELECT * FROM payroll_draft_ledger WHERE draft_key=? LIMIT 1",(draft["key"],)).fetchone()
+        posted=("T1","BAD-POSTED",draft["key"],draft_row["entry_id"],draft_row["employee_id"],draft_row["payroll_month"],draft_row["source_key"],draft_row["component_key"],draft_row["direction"],draft_row["amount_minor"])
+        for index in range(4,10):
+            values=list(posted); values[1]+=str(index)
+            values[index] = ({4:"E102",5:"2026-12",6:unselected,7:self.loan,8:"deduction",9:draft_row["amount_minor"]+1})[index]
+            with self.assertRaises(sqlite3.IntegrityError):
+                self.connection.execute("INSERT INTO payroll_ledger(tenant,ledger_entry_id,draft_key,draft_entry_id,employee_id,payroll_month,source_key,component_key,direction,amount_minor,currency) VALUES(?,?,?,?,?,?,?,?,?,?,'INR')",values)
+
     def test_component_scope_and_stable_identity(self):
         self.payroll.define_component("A",1,"stable","A","earning","IN")
         with self.assertRaises(Conflict): self.payroll.define_component("B",1,"stable","B","earning","IN")
@@ -120,6 +173,16 @@ class PayrollTest(unittest.TestCase):
         with self.assertRaises(Conflict): self.payroll.record_obligation("BAD",salary,5_000_000)
         self.payroll.record_obligation("OB1",committed["employer_liability_entry_id"],300_000)
         with self.assertRaises(Conflict): self.payroll.record_obligation("OB2",committed["employer_liability_entry_id"],300_000)
+
+    def test_elr_rejects_malformed_own_and_reference_identities(self):
+        for call in (
+            lambda: self.payroll.record_remittance("",1,"proof"),
+            lambda: self.payroll.record_obligation("BAD/ID","POSTED",1),
+            lambda: self.payroll.allocate_remittance("A1","BAD/OB","REM1",1),
+            lambda: self.payroll.allocate_remittance("A1","OB1","BAD/REM",1),
+        ):
+            with self.assertRaises(ValueError):
+                call()
 
 class ProofRunnerTest(unittest.TestCase):
     def test_proof_exports_all_rows_and_complete_typed_catalogue(self):
@@ -156,6 +219,32 @@ class ProofRunnerTest(unittest.TestCase):
             self.assertEqual(len(result["role_mapping"]),16)
             self.assertTrue(all(item["evidence"] for item in result["role_mapping"] if item["status"]!="explicit_gap"))
             self.assertTrue(all(any("INDEX" in detail for detail in plan) for plan in result["query_plans"].values()))
+            by_kind={entry["kind"]:entry for entry in catalog["entries"]}
+            self.assertIn("earning_keys and instruction_keys",by_kind["payroll.draft"]["references"])
+            self.assertIn("stable instruction_id",by_kind["payroll.instruction.application"]["validation"])
+            self.assertIn("liability_allocations",by_kind["allocation"]["indexed_queries"])
+
+            missing_component=copy.deepcopy(rows)
+            component=next(row for row in missing_component["payroll_l1_records"] if row["key"]==self._source_key(rows,"component_key"))
+            missing_component["payroll_l1_records"].remove(component)
+            with self.assertRaisesRegex(ValueError,"component_key"):
+                _catalogue(missing_component)
+
+            bad_effect=copy.deepcopy(rows)
+            application=next(row for row in bad_effect["payroll_l1_records"] if row["key"].startswith("payroll.instruction.application:"))
+            application["value"]["effects"][0]["ledger_entry_id"]="MISSING"
+            with self.assertRaisesRegex(ValueError,"application effect"):
+                _catalogue(bad_effect)
+
+            bad_stable_link=copy.deepcopy(rows)
+            application=next(row for row in bad_stable_link["payroll_l1_records"] if row["key"].startswith("payroll.instruction.application:"))
+            application["value"]["instruction_id"]="OTHER"
+            with self.assertRaisesRegex(ValueError,"stable instruction"):
+                _catalogue(bad_stable_link)
+
+    @staticmethod
+    def _source_key(rows, field):
+        return next(row[field] for row in rows["payroll_draft_ledger"])
     def test_proof_refuses_existing_artifacts(self):
         with tempfile.TemporaryDirectory() as directory:
             (Path(directory)/"canonical-rows.json").write_text("user")

@@ -46,6 +46,24 @@ CREATE TABLE payroll_draft_ledger (
 CREATE TRIGGER draft_refs_typed BEFORE INSERT ON payroll_draft_ledger
 WHEN NEW.draft_key NOT LIKE 'payroll.draft:%' OR NEW.component_key NOT LIKE 'payroll.component:%' OR (NEW.source_key NOT LIKE 'payroll.earning:%' AND NEW.source_key NOT LIKE 'payroll.instruction:%')
 BEGIN SELECT RAISE(ABORT,'draft reference type mismatch'); END;
+CREATE TRIGGER draft_refs_exact BEFORE INSERT ON payroll_draft_ledger
+WHEN NOT EXISTS(
+ SELECT 1 FROM payroll_l1_records d
+ JOIN payroll_l1_records s ON s.tenant=d.tenant AND s.key=NEW.source_key
+ JOIN payroll_l1_records c ON c.tenant=d.tenant AND c.key=NEW.component_key
+ WHERE d.tenant=NEW.tenant AND d.key=NEW.draft_key
+ AND json_extract(d.value,'$.employee_id')=NEW.employee_id
+ AND json_extract(d.value,'$.payroll_month')=NEW.payroll_month
+ AND (EXISTS(SELECT 1 FROM json_each(d.value,'$.earning_keys') WHERE value=NEW.source_key)
+      OR EXISTS(SELECT 1 FROM json_each(d.value,'$.instruction_keys') WHERE value=NEW.source_key))
+ AND json_extract(s.value,'$.employee_id')=NEW.employee_id
+ AND json_extract(s.value,'$.component_key')=NEW.component_key
+ AND json_extract(s.value,'$.amount_minor')=NEW.amount_minor
+ AND ((json_extract(c.value,'$.kind')='earning' AND NEW.direction='earning')
+      OR (json_extract(c.value,'$.kind')='deduction' AND NEW.direction='deduction')
+      OR (json_extract(c.value,'$.kind')='employer_contribution' AND NEW.direction IN ('employer_expense','employer_liability')))
+)
+BEGIN SELECT RAISE(ABORT,'draft row must match exact draft and source'); END;
 CREATE INDEX draft_employee_month ON payroll_draft_ledger(tenant,employee_id,payroll_month,draft_key);
 CREATE TRIGGER draft_immutable_update BEFORE UPDATE ON payroll_draft_ledger BEGIN SELECT RAISE(ABORT,'draft ledger is immutable'); END;
 CREATE TRIGGER draft_immutable_delete BEFORE DELETE ON payroll_draft_ledger BEGIN SELECT RAISE(ABORT,'draft ledger is immutable'); END;
@@ -62,6 +80,15 @@ CREATE TABLE payroll_ledger (
  FOREIGN KEY(tenant,component_key) REFERENCES payroll_l1_records(tenant,key)
 );
 CREATE INDEX posted_employee_month ON payroll_ledger(tenant,employee_id,payroll_month,draft_key);
+CREATE TRIGGER posted_matches_draft BEFORE INSERT ON payroll_ledger
+WHEN NOT EXISTS(
+ SELECT 1 FROM payroll_draft_ledger d
+ WHERE d.tenant=NEW.tenant AND d.draft_key=NEW.draft_key AND d.entry_id=NEW.draft_entry_id
+ AND d.employee_id=NEW.employee_id AND d.payroll_month=NEW.payroll_month
+ AND d.source_key=NEW.source_key AND d.component_key=NEW.component_key
+ AND d.direction=NEW.direction AND d.amount_minor=NEW.amount_minor AND d.currency=NEW.currency
+)
+BEGIN SELECT RAISE(ABORT,'posted row must exactly match draft row'); END;
 CREATE TRIGGER posted_immutable_update BEFORE UPDATE ON payroll_ledger BEGIN SELECT RAISE(ABORT,'payroll ledger is immutable'); END;
 CREATE TRIGGER posted_immutable_delete BEFORE DELETE ON payroll_ledger BEGIN SELECT RAISE(ABORT,'payroll ledger is immutable'); END;
 

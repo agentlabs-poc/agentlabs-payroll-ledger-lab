@@ -103,6 +103,24 @@ def _catalogue(rows):
         "remittance": "authority payment with proof",
         "allocation": "amount linking obligation and remittance",
     }
+    notes = {
+        "payroll.component": ("tenant + component_id + numeric revision", "no internal references", "stable code/kind/country identity and tenant/country code uniqueness", "l1_component_revision"),
+        "payroll.earning": ("tenant + earning_id + numeric revision", "component_key; employee_id is external", "positive minor units, effective bounds, exact current component at intake", "l1_earning_effective"),
+        "payroll.instruction": ("tenant + instruction_id + numeric revision; version_id is opaque and unique", "component_key; employee_id is external", "positive minor units, cadence/effective bounds, unique opaque version_id", "l1_instruction_version and l1_instruction_effective"),
+        "payroll.draft": ("tenant + draft_id + fixed revision 1", "earning_keys and instruction_keys select exact source versions; employee_id is external", "balanced integer totals and fixed content_hash snapshot", "l1_draft_employee_month"),
+        "payroll.draft.control": ("tenant + draft_id + numeric revision", "draft_id resolves the fixed draft; actor is external", "monotonic expected revision and immutable hold/cancel history", "exact key/current numeric revision lookup"),
+        "payroll.draft.review": ("tenant + draft_id + review_id", "draft_id plus draft_content_hash and control_revision; actor is external", "approved/rejected decision bound to exact draft and control", "exact key and draft_id/content_hash lookup"),
+        "payroll.instruction.resolution": ("tenant + draft_id + resolution_id", "instruction_key and draft effect draft_entry_id values", "instruction identity matches instruction_key and every effect resolves in that draft", "exact key and draft_id lookup"),
+        "payroll.instruction.application": ("tenant + opaque version_id + application_id", "instruction_key, draft_id and posted effect ledger_entry_id values", "stable instruction_id/version_id link plus monthly or one-time consumption uniqueness", "l1_application_reverse and l1_monthly_application_once/l1_one_time_application_once"),
+        "payroll.operation.receipt": ("tenant + operation subject_id + receipt_id", "outcome draft/source/posted references when emitted; executor is external", "request_hash binds retry input and durable before/after outcome", "l1_receipt_replay"),
+        "payroll.employee.settings": ("tenant + employee_id + numeric revision", "policy_ref is external", "effective month, opaque policy identity/revision and locale", "l2_settings_effective"),
+        "draft": ("tenant + draft_key + entry_id", "draft_key, selected source_key and its component_key; employee_id is external", "exact draft/source employee, month, component, direction and amount agreement", "draft_employee_month"),
+        "posted": ("tenant + ledger_entry_id", "exact draft_key + draft_entry_id row, source_key and component_key", "all copied monetary fields exactly match the referenced draft row", "posted_employee_month"),
+        "obligation": ("tenant + entry_id", "posted_liability_entry_id", "amount exactly matches one posted employer_liability entry", "one_obligation_per_liability"),
+        "remittance": ("tenant + entry_id", "proof_ref is external authority evidence", "positive minor units and nonblank proof_ref", "primary-key identity lookup"),
+        "allocation": ("tenant + entry_id", "obligation_entry_id and remittance_entry_id", "typed references, positive amount and obligation/remittance caps", "liability_allocations"),
+    }
+    _validate_reference_closure(rows)
     entries = []
     for kind in L1_TYPES + ("payroll.employee.settings",):
         table = (
@@ -122,19 +140,11 @@ def _catalogue(rows):
                 "table": table,
                 "layer": "L2" if table.endswith("l2_records") else "L1",
                 "meaning": meanings[kind],
-                "identity": "(tenant,key); canonical type:subject:record",
+                "identity": notes[kind][0],
                 "example": example,
-                "references": (
-                    "canonical keys in value are exact same-tenant references; "
-                    "employee/actor/policy are external where present"
-                ),
-                "validation": (
-                    "closed top-level prototype fields, key/payload identity, "
-                    "targeted types/lifecycle"
-                ),
-                "indexed_queries": (
-                    "exact key plus type-specific current/effective/replay access"
-                ),
+                "references": notes[kind][1],
+                "validation": notes[kind][2],
+                "indexed_queries": notes[kind][3],
             }
         )
     for kind, table in LEDGER_KINDS:
@@ -146,22 +156,65 @@ def _catalogue(rows):
                 "table": table,
                 "layer": "L1 ledger",
                 "meaning": meanings[kind],
-                "identity": "tenant plus table row identity",
+                "identity": notes[kind][0],
                 "example": example,
-                "references": (
-                    "exact tenant-scoped L1/ledger keys or external employee "
-                    "identity"
-                ),
-                "validation": (
-                    "immutable typed shape, integer minor units and "
-                    "reference/cap checks"
-                ),
-                "indexed_queries": (
-                    "exact identity, employee/month or allocation/outstanding lookup"
-                ),
+                "references": notes[kind][1],
+                "validation": notes[kind][2],
+                "indexed_queries": notes[kind][3],
             }
         )
     return {"coverage": {"covered": len(entries), "required": 15}, "entries": entries}
+
+
+def _validate_reference_closure(rows):
+    l1={(row["tenant"],row["key"]):row for row in rows["payroll_l1_records"]}
+    drafts={(row["tenant"],row["value"].get("draft_id")):row for row in rows["payroll_l1_records"] if row["key"].startswith("payroll.draft:")}
+    draft_entries={(row["tenant"],row["draft_key"],row["entry_id"]):row for row in rows["payroll_draft_ledger"]}
+    posted={(row["tenant"],row["ledger_entry_id"]):row for row in rows["payroll_ledger"]}
+    liability={(row["tenant"],row["entry_id"]):row for row in rows["payroll_employer_liability_ledger"]}
+
+    def require(condition, label):
+        if not condition: raise ValueError("unresolved exported "+label)
+
+    for row in rows["payroll_l1_records"]:
+        tenant,key,value=row["tenant"],row["key"],row["value"]
+        if key.startswith(("payroll.earning:","payroll.instruction:")):
+            require((tenant,value["component_key"]) in l1,"component_key")
+        elif key.startswith("payroll.draft:"):
+            for source_key in value.get("earning_keys",[])+value.get("instruction_keys",[]): require((tenant,source_key) in l1,"draft source")
+        elif key.startswith(("payroll.draft.control:","payroll.draft.review:")):
+            require((tenant,value["draft_id"]) in drafts,"draft record")
+        elif key.startswith("payroll.instruction.resolution:"):
+            instruction=l1.get((tenant,value["instruction_key"]))
+            require(instruction and instruction["value"]["instruction_id"]==value["instruction_id"],"stable instruction resolution")
+            draft=drafts.get((tenant,value["draft_id"]))
+            require(draft is not None,"resolution draft")
+            for effect in value["effects"]: require((tenant,draft["key"],effect["draft_entry_id"]) in draft_entries,"resolution effect")
+        elif key.startswith("payroll.instruction.application:"):
+            instruction=l1.get((tenant,value["instruction_key"]))
+            require(instruction and instruction["value"]["instruction_id"]==value["instruction_id"] and instruction["value"]["version_id"]==value["version_id"],"stable instruction application")
+            require((tenant,value["draft_id"]) in drafts,"application draft")
+            for effect in value["effects"]: require((tenant,effect["ledger_entry_id"]) in posted,"application effect")
+        elif key.startswith("payroll.operation.receipt:"):
+            outcome=value["outcome"]
+            if "instruction_key" in outcome: require((tenant,outcome["instruction_key"]) in l1,"receipt instruction")
+            if "draft_key" in outcome: require((tenant,outcome["draft_key"]) in l1,"receipt draft")
+            for entry_id in outcome.get("posted_entry_ids",[]): require((tenant,entry_id) in posted,"receipt posted entry")
+
+    for row in rows["payroll_draft_ledger"]:
+        tenant=row["tenant"]
+        draft=l1.get((tenant,row["draft_key"])); source=l1.get((tenant,row["source_key"])); component=l1.get((tenant,row["component_key"]))
+        require(draft is not None,"draft_key"); require(source is not None,"source_key"); require(component is not None,"component_key")
+        require(row["source_key"] in draft["value"].get("earning_keys",[])+draft["value"].get("instruction_keys",[]),"selected draft source")
+    for row in rows["payroll_ledger"]:
+        original=draft_entries.get((row["tenant"],row["draft_key"],row["draft_entry_id"]))
+        require(original and all(row[field]==original[field] for field in ("employee_id","payroll_month","source_key","component_key","direction","amount_minor","currency")),"posted draft row")
+    for row in rows["payroll_employer_liability_ledger"]:
+        tenant=row["tenant"]
+        if row["row_kind"]=="obligation": require((tenant,row["posted_liability_entry_id"]) in posted,"obligation posted entry")
+        elif row["row_kind"]=="allocation":
+            require(liability.get((tenant,row["obligation_entry_id"]),{}).get("row_kind")=="obligation","allocation obligation")
+            require(liability.get((tenant,row["remittance_entry_id"]),{}).get("row_kind")=="remittance","allocation remittance")
 
 def _run(database):
     timings = {}
@@ -192,7 +245,7 @@ def _run(database):
         employer_earning = payroll.define_earning(
             "EARN-EMPLOYER", 1, "E101", employer, 300_000, "2026-01"
         )["key"]
-        loan_key = payroll.add_instruction(
+        loan = payroll.add_instruction(
             "I-LOAN",
             "IV-LOAN-1",
             1,
@@ -202,8 +255,8 @@ def _run(database):
             "monthly",
             "2026-10",
             "2027-02",
-        )["key"]
-        bonus_key = payroll.add_instruction(
+        )
+        bonus_instruction = payroll.add_instruction(
             "I-BONUS",
             "IV-BONUS-1",
             1,
@@ -213,7 +266,7 @@ def _run(database):
             "one_time",
             "2026-11",
             "2026-11",
-        )["key"]
+        )
         e102 = payroll.define_earning(
             "EARN-E102", 1, "E102", salary, 100_000, "2026-01"
         )["key"]
@@ -228,9 +281,9 @@ def _run(database):
                 "payslip_locale": "en-IN",
             },
         )
-        return salary_earning, employer_earning, loan_key, bonus_key, e102
+        return salary_earning, employer_earning, loan, bonus_instruction, e102
 
-    salary_earning, employer_earning, loan_key, bonus_key, e102 = _stage(
+    salary_earning, employer_earning, loan, bonus_instruction, e102 = _stage(
         timings, "sources", setup
     )
     draft = _stage(
@@ -241,7 +294,7 @@ def _run(database):
             "E101",
             "2026-11",
             [salary_earning, employer_earning],
-            [loan_key],
+            [loan["value"]["version_id"]],
         ),
     )
 
@@ -255,10 +308,10 @@ def _run(database):
 
     def one_time():
         one_time_draft = payroll.create_draft(
-            "D2", "E102", "2026-11", [e102], [bonus_key]
+            "D2", "E102", "2026-11", [e102], [bonus_instruction["value"]["version_id"]]
         )
         first = payroll.commit("D2", "commit-e102", 1)
-        first_instruction = payroll.records.get_l1("T1", bonus_key)["value"]
+        first_instruction = bonus_instruction["value"]
         second = payroll.add_instruction_version(
             "I-BONUS",
             "IV-BONUS-2",
@@ -267,7 +320,7 @@ def _run(database):
             50_000,
         )
         payroll.create_draft(
-            "D3", "E102", "2026-11", [e102], [second["key"]]
+            "D3", "E102", "2026-11", [e102], [second["value"]["version_id"]]
         )
         rejected = False
         try:

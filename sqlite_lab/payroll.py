@@ -228,15 +228,21 @@ class Payroll:
         return None if row is None else {"tenant":row[0],"key":row[1],"value":json.loads(row[2]),"ts":row[3],"state":row[4]}
 
     def record_obligation(self,entry_id,posted_liability_entry_id,amount_minor):
+        _identifier(entry_id, "obligation entry", True)
+        _identifier(posted_liability_entry_id, "posted liability entry", True)
         _money(amount_minor)
         with _write(self.connection):
             try: self.connection.execute("INSERT INTO payroll_employer_liability_ledger(tenant,entry_id,row_kind,amount_minor,posted_liability_entry_id) VALUES(?,?,'obligation',?,?)",(self.tenant,entry_id,amount_minor,posted_liability_entry_id))
             except sqlite3.IntegrityError as exc: raise Conflict("invalid or duplicate liability obligation") from exc
     def record_remittance(self,entry_id,amount_minor,proof_ref):
+        _identifier(entry_id, "remittance entry", True)
         _money(amount_minor)
         if not isinstance(proof_ref,str) or not proof_ref.strip(): raise PayrollError("remittance proof required")
         with _write(self.connection): self.connection.execute("INSERT INTO payroll_employer_liability_ledger(tenant,entry_id,row_kind,amount_minor,proof_ref) VALUES(?,?,'remittance',?,?)",(self.tenant,entry_id,amount_minor,proof_ref))
     def allocate_remittance(self,entry_id,obligation_id,remittance_id,amount_minor):
+        _identifier(entry_id, "allocation entry", True)
+        _identifier(obligation_id, "obligation entry", True)
+        _identifier(remittance_id, "remittance entry", True)
         _money(amount_minor)
         with _write(self.connection):
             o = self.connection.execute("SELECT amount_minor FROM payroll_employer_liability_ledger WHERE tenant=? AND entry_id=? AND row_kind='obligation'",(self.tenant,obligation_id)).fetchone()
@@ -262,15 +268,19 @@ class Payroll:
             if not current or current["key"]!=key: raise PayrollError("component not currently available")
         return row
     def _source(self,key,kind,employee,month,allow_expired=False):
-        if parse_key(key)[0]!=kind: raise PayrollError("source reference type mismatch")
+        record_type, subject, _ = parse_key(key)
+        if record_type!=kind: raise PayrollError("source reference type mismatch")
         row=self.records.get_l1(self.tenant,key)
         if not row or row["state"]!="enabled": raise PayrollError("missing source")
+        current = self.records.current_l1(self.tenant, kind, subject)
+        if not current or current["key"] != key:
+            raise PayrollError("source is not current authority")
         value=row["value"]
         if value["employee_id"]!=employee: raise PayrollError("source outside employee scope")
         if not allow_expired and (month<value["effective_from"] or (value["effective_until"] and month>value["effective_until"])): raise PayrollError("earning outside effective period")
         return value
     def _instruction_key(self,identity):
-        if isinstance(identity,str) and identity.startswith("payroll.instruction:"): return identity
+        _identifier(identity, "instruction version", True)
         row=self.connection.execute("SELECT key FROM payroll_l1_records WHERE tenant=? AND key LIKE 'payroll.instruction:%' AND json_extract(value,'$.version_id')=?",(self.tenant,identity)).fetchone()
         if not row: raise PayrollError("unknown instruction version")
         return row[0]

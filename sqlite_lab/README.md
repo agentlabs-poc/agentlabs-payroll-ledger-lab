@@ -35,7 +35,7 @@ numerically. The 64-character ASCII identity limit remains a prototype choice.
 Earnings and instructions are immutable versioned L1 sources that reference an
 exact component version, employee, integer minor-unit amount, and inclusive
 effective bounds. An instruction also stores an opaque version ID and cadence.
-Draft creation accepts exact earning and instruction record keys. It does not
+Draft creation accepts exact earning keys and opaque instruction version IDs. It does not
 accept a calculation ID or invent salary entitlement from a scalar amount. A
 fixed `payroll.draft:<id>:1` record stores source keys, content hash, employee,
 month, and balanced totals; its monetary lines live in the draft ledger.
