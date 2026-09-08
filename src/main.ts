@@ -18,6 +18,14 @@ type CanonicalDefinitions = {
   identity_rule: string;
   prototype_notice: string;
   open_decision: { id: string; question: string };
+  storage_contract: {
+    status: string;
+    columns: string[];
+    example: { serialized: string; segments: string[] };
+    meaning_rule: string;
+    indexing_rule: string;
+    prototype_notice: string;
+  };
   tables: { name: string; role: string; meaning: string }[];
   record_types: { type: string; layer: string; owner: string; meaning: string; identity: string }[];
 };
@@ -73,6 +81,8 @@ function timelineStage(stage: Stage, index: number): string {
 }
 
 function definitionsPanel(): string {
+  const storage = definitions.storage_contract;
+  const keyColumns = storage.columns.filter((column) => /^key\d+$/.test(column));
   return `<section class="definitions panel">
     <div class="definitions-head"><div><span class="eyebrow">PINNED CANONICAL DEFINITIONS</span><h2>Meaning, ownership, and identity status</h2></div><a href="${definitionsUrl}">Definition source ↗</a></div>
     <p>${escapeHtml(definitions.status)}</p>
@@ -81,6 +91,14 @@ function definitionsPanel(): string {
       <div class="prototype"><b>Prototype snapshot notice</b><p>${escapeHtml(definitions.prototype_notice)}</p></div>
       <div class="open-decision"><b>Open decision · ${escapeHtml(definitions.open_decision.id)}</b><p>${escapeHtml(definitions.open_decision.question)}</p></div>
     </div>
+    <section class="storage-contract">
+      <div><span class="eyebrow">PINNED STORAGE CONTRACT</span><h3>Generic key segments</h3><p>${escapeHtml(storage.status)}</p></div>
+      <div class="key-columns">${storage.columns.map((column) => `<code>${escapeHtml(column)}</code>`).join('')}</div>
+      <div class="key-example"><code>${escapeHtml(storage.example.serialized)}</code><ol>${storage.example.segments.map((segment, index) => `<li><span>${escapeHtml(keyColumns[index] ?? `key${index + 1}`)}</span><code>${escapeHtml(segment)}</code></li>`).join('')}</ol></div>
+      <p><b>Meaning rule</b> ${escapeHtml(storage.meaning_rule)}</p>
+      <p><b>Indexing rule</b> ${escapeHtml(storage.indexing_rule)}</p>
+      <p class="prototype-contract"><b>Snapshot notice</b> ${escapeHtml(storage.prototype_notice)}</p>
+    </section>
     <details open><summary>Five storage tables</summary><div class="definition-list">${definitions.tables.map((item) => `<article><code>${escapeHtml(item.name)}</code><span>${escapeHtml(item.role)}</span><p>${escapeHtml(item.meaning)}</p></article>`).join('')}</div></details>
     <details><summary>Ten canonical record types</summary><div class="definition-list">${definitions.record_types.map((item) => `<article><code>${escapeHtml(item.type)}</code><span>${escapeHtml(item.layer)} · ${escapeHtml(item.owner)}</span><p>${escapeHtml(item.meaning)}</p><small>${escapeHtml(item.identity)}</small></article>`).join('')}</div></details>
   </section>`;

@@ -62,6 +62,20 @@ a { color: #9eebc6; font-size: 12px; }
 .definition-notices .prototype b { color: #ead86b; }
 .definition-notices .open-decision { border-color: #67517b; background: #17121d; }
 .definition-notices .open-decision b { color: #d8b7f1; }
+.storage-contract { margin-bottom: 14px; padding: 14px; border: 1px solid #477862; border-radius: 9px; background: #0b1914; }
+.storage-contract h3 { margin: 4px 0; font-size: 17px; }
+.storage-contract > p { margin-top: 7px; font-size: 12px; }
+.storage-contract > p b { color: #9eebc6; }
+.key-columns { display: flex; gap: 5px; margin-top: 12px; overflow-x: auto; }
+.key-columns code { flex: 0 0 auto; padding: 5px 8px; border: 1px solid #315c4b; border-radius: 5px; color: #8de7b9; background: #07100d; font-size: 11px; }
+.key-example { display: grid; grid-template-columns: minmax(180px, 1fr) 2fr; gap: 12px; align-items: start; margin-top: 10px; }
+.key-example > code { padding: 10px; color: #ead86b; background: #07100d; overflow-wrap: anywhere; }
+.key-example ol { display: flex; gap: 5px; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
+.key-example li { padding: 5px 7px; border-radius: 5px; background: #10231c; }
+.key-example li span, .key-example li code { display: block; }
+.key-example li span { color: #718d81; font-size: 9px; }
+.key-example li code { margin-top: 2px; color: #cfe6dc; font-size: 11px; }
+.storage-contract .prototype-contract { padding: 8px; border-left: 2px solid #d6ac4f; background: #1b170d; }
 .definitions > details { border-top: 1px solid #244338; }
 .definitions > details > summary { padding: 12px 2px; color: #a6c8b9; cursor: pointer; font-size: 13px; font-weight: 700; }
 .definition-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; padding-bottom: 12px; }
@@ -123,6 +137,7 @@ footer pre { text-align: left; }
   .definitions-head a { display: inline-block; margin-top: 8px; }
   .definition-list { grid-template-columns: 1fr; }
   .definition-list span { float: none; display: block; margin-top: 3px; }
+  .key-example { grid-template-columns: 1fr; }
   .timeline::before { left: 13px; }
   .timeline-title { margin-left: 38px; }
   .timeline-step { grid-template-columns: 28px minmax(0, 1fr); gap: 8px; }
