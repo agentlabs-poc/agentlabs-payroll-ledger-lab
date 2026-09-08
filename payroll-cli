@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+"""Run the payroll SQLite command line interface from this checkout."""
+from sqlite_lab.cli import main
+
+
+raise SystemExit(main())
