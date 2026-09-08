@@ -1,8 +1,10 @@
 # Payroll Ledger Lab
 
-The payroll handbook, contracts, decisions, and rationale now live in [HRMS Core](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/handbook.md). Core is the canonical documentation source; the lab retains this browser experiment and forwarding pages for existing links.
+The payroll handbook, contracts, decisions, and rationale now live in [HRMS Core](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/handbook.md). Core is the canonical documentation source; the lab retains this browser experiment and forwarding pages for existing links.
 
-The [independent handbook review](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/feat/payroll-handbook-compat/docs/payroll/handbook/review-2026-09-08.md) records the resolved documentation findings. Reviewed implementation is integrated in [Core draft hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172); complete authenticated handbook acceptance remains pending in [E2E PR #61](https://github.com/agentlabs-poc/agentlabs-hrms-e2e/pull/61).
+Publication order: merge Core hub PR #172 before this forwarding PR so the canonical `main` targets exist.
+
+The [independent handbook review](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/review-2026-09-08.md) records the resolved documentation findings. Reviewed implementation is integrated in [Core draft hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172); complete authenticated handbook acceptance remains pending in [E2E PR #61](https://github.com/agentlabs-poc/agentlabs-hrms-e2e/pull/61).
 
 ## Existing browser lab
 
