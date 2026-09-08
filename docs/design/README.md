@@ -1,5 +1,9 @@
 # Payroll design pins
 
+The umbrella model is **123 Architecture — a new software-design paradigm for
+AI-native applications**. SQLite is the first proving ground for its concrete
+payroll contracts, before production implementation.
+
 **User-directed design home, 2026-09-08.** The user asked that the canonical
 tables and new payroll key/value model be pinned in the lab repo, and proposed
 key/value storage per domain and, subsequently, per layer (L1/L2/L3), with
@@ -8,6 +12,7 @@ indexing rationale and outstanding contract decisions here in readable form.
 
 | Design pin | Contents and status |
 |---|---|
+| [SQLite-first proof plan](sqlite-proof-plan.md) | Executable lab proof before production changes; finite checkpoints and PostgreSQL acceptance boundary. Planned, not executed. |
 | [123 Architecture](123-architecture.md) | Agreed L1 core primitives, L2 software-owned auxiliary primitives and L3 application/AI composition; canonical vocabulary before API contracts. |
 | [Canonical ledger tables](canonical-ledger-tables.md) | Nine user-designated L1 ledger tables, the 16 existing supporting tables, candidate L2 output and deprecated structures. Existing storage inventory, not the replacement schema. |
 | [Payroll records by domain and layer](payroll-records.md) | L1/L2/L3 key/value tables and wrappers, four-column baseline, proposed fifth `state` column, six original entry examples, an L2 employee-settings candidate and all 16 L1 consolidation mappings. |

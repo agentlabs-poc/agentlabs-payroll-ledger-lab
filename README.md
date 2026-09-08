@@ -4,6 +4,7 @@ The payroll handbook, contracts, decisions, and rationale now live in [HRMS Core
 
 ## Current design pins
 
+- [SQLite-first proof before production implementation](docs/design/sqlite-proof-plan.md)
 - [123 Architecture and canonical vocabulary](docs/design/123-architecture.md)
 - [Canonical ledger tables and existing support-table inventory](docs/design/canonical-ledger-tables.md)
 - [Payroll key/value records by domain and layer, wrappers, JSON, state and indexes](docs/design/payroll-records.md)

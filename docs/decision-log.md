@@ -15,6 +15,17 @@ and employee payroll preferences/policy assignment as an L2 use case are also
 pinned. Exact employee-settings fields remain proposed. This records a coherent
 design direction, not a claim of implemented behavior or proven novelty.
 
+The user subsequently directed SQLite-first proof before touching production
+code. The [proof plan](design/sqlite-proof-plan.md) records canonical storage,
+keys, state, wrappers, payroll commit/ELR, failure/retry and query-plan checkpoints.
+It distinguishes lab behavior from later PostgreSQL-specific acceptance. The
+plan is pinned; no prototype or completed proof is claimed.
+
+The user requested the framing **123: a new software-design paradigm for AI-native
+applications**, now pinned in the architecture chapter. The established name
+123 Architecture remains, with 123 Software Design Paradigm as an alternative
+description of the proposed synthesis. The SQLite proof has not yet been executed.
+
 This chapter has moved to HRMS Core, the canonical payroll documentation source.
 
 [Read the canonical chapter](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/decision-log.md). The original edition and its rationale are preserved in Git history and Core’s [migration record](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/migration-record.md).

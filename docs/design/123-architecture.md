@@ -1,5 +1,13 @@
 # 123 Architecture
 
+**123: a new software-design paradigm for AI-native applications.** The user
+requested this framing on 2026-09-08. It names the model being defined here:
+canonical domain primitives, domain/layer-owned persistence and software/AI
+composition through explicit contracts. “New” describes this proposed synthesis;
+it is not a claim that its individual ingredients were invented here or that
+unprecedented originality has been established. The architecture name remains
+**123 Architecture**, also referred to as the **123 Software Design Paradigm**.
+
 **Lab design pin, 2026-09-08.** Retained here at the user's request. Read the [design index](README.md) for status and ownership. This is readable design content, not a forwarding page.
 
 Initial pin reconciled with [Core source at `b72312a`](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/b72312a8203a37ab97669f760099516a2bba1d9d/docs/payroll/handbook/primitive-layers.md). Acceptance and proposal labels below remain in force; the browser lab and production schema are unchanged.
@@ -252,6 +260,35 @@ accepted payloads, references, uniqueness, stale-write protection and atomic
 domain commits. Clients can be stale or bypassed, so client validation alone
 cannot establish those guarantees. Reuse common mechanisms while retaining
 domain-specific invariants.
+
+## SQLite-first proof before production implementation
+
+**User-directed sequence, 2026-09-08:** prove the architecture in SQLite in the
+payroll lab before changing actual production code. Use the canonical contracts
+and representative payroll data to exercise the model, including core tables,
+L1/L2/L3 key/value stores, wrappers, canonical keys, indexes and lifecycle rules.
+
+The lab proof should be executable and repeatable: create an isolated database,
+seed fixtures, run positive/negative scenarios, inspect query plans and preserve
+results. Verify persistence after reopening, rollback on failure, retries and
+competing writes; an in-memory happy path alone is insufficient. Record
+prototype assumptions separately from approved contracts.
+
+SQLite is the first behavioral proving ground, not evidence that PostgreSQL's
+database-specific implementation already works. Keep portable JSON contract
+fixtures; SQLite JSON/JSONB representation is not a PostgreSQL storage contract.
+Verify SQLite foreign-key enforcement for every connection used in the proof.
+Wrapper authorization tests establish that wrapper's scope checks, not production
+database-role or row-security guarantees. PostgreSQL concurrency, permissions,
+indexes, migration compatibility and deployment performance require subsequent
+engine-specific verification before production acceptance.
+
+The sequence is: define/review the contract, prove its behavior in the lab,
+reconcile findings into the handbook, then implement the accepted contract in
+production and run PostgreSQL-specific acceptance. Existing Lab #1 carries the
+proof design; do not create a PR per record type or change production runtime
+merely to make a lab scenario pass. No completed SQLite proof is claimed by
+pinning this sequence.
 
 ## Worked example and rationale
 
