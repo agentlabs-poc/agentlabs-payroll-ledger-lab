@@ -91,7 +91,7 @@ function render(focusSelector?: string): void {
       </section>
       <section class="concepts panel">
         <h2>How the records connect</h2>
-        <p><code>payroll.earning</code> is a salary entitlement; <code>payroll.instruction</code> is a monthly or one-time source. <code>payroll.draft</code> fixes the header, sources, hash, and totals while draft-ledger rows hold amounts. <code>payroll.draft.control</code> records hold/release state, and <code>payroll.draft.review</code> is an optional review bound to exact content.</p>
+        <p><code>payroll.earning</code> links an employee amount and effective dates to one component version; Basic and HRA are distinct earning components. <code>payroll.instruction</code> is a monthly or one-time source. <code>payroll.draft</code> fixes the header, sources, hash, and totals while draft-ledger rows hold amounts. <code>payroll.draft.control</code> records hold/release state, and <code>payroll.draft.review</code> is an optional review bound to exact content.</p>
         <p>A resolution records draft treatment. An application records committed consumption. The operation receipt is durable replay evidence. <code>payroll.draft.*</code> is family shorthand, never a stored record type.</p>
         <p>Keys use <code>&lt;type&gt;:&lt;subject&gt;:&lt;record&gt;</code>; opaque colons and backslashes are escaped. Expand the rows below to inspect exact references.</p>
         <div class="diagram-links"><a href="${storageMap}">Storage map ↗</a><a href="${employeeJourney}">Employee journey ↗</a><a href="/canonical-flow.json" download>Download snapshot JSON ↓</a></div>
