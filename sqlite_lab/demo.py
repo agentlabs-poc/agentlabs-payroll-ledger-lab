@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse, hashlib, json, sqlite3, tempfile
+from contextlib import ExitStack, closing, contextmanager
 from pathlib import Path
 from .payroll import Payroll, PayrollError
 from .records import RecordStore, connect
@@ -34,10 +35,21 @@ def _liability(db):
 def _totals(draft):
  return None if draft is None else {key:draft[key] for key in ("gross_minor","deductions_minor","net_minor")}
 
-def build_demo():
+@contextmanager
+def _demo_database(database):
+ with ExitStack() as stack:
+  if database is None:
+   database=Path(stack.enter_context(tempfile.TemporaryDirectory()))/"demo.sqlite3"
+  else:
+   database=Path(database)
+   if database.exists() and database.stat().st_size: raise FileExistsError("refusing to overwrite or reseed existing database")
+   database.parent.mkdir(parents=True,exist_ok=True)
+  yield stack.enter_context(closing(connect(database)))
+
+def build_demo(database=None):
  root=Path(__file__).parent
- with tempfile.TemporaryDirectory() as directory:
-  db=connect(Path(directory)/"demo.sqlite3"); payroll=Payroll(db,"T1","payroll-admin")
+ with _demo_database(database) as db:
+  payroll=Payroll(db,"T1","payroll-admin")
   stages=[]; obligations={}; posted_sources={}
   def capture(id,title,explanation,employee=None,month=None,draft=None,outcome=None):
    context={"employee_id":employee,"payroll_month":month}
@@ -143,13 +155,12 @@ def build_demo():
    payroll.allocate_remittance(f"ALLOC-B1-{i}",oid,"REM-B-1",100_000 if employee=="E101" else 50_000)
   capture("full-settlement","Authority remittances · fully allocated","Explicit A and B allocations close all INR 36,000; no allocation order is inferred.",outcome={"status":"settled","outstanding_minor":0})
   capture("accounting-handoff","After-exit correction handoff","A correction discovered after payroll eligibility is handed to external accounting; no payroll state is invented.",outcome={"status":"external_accounting_handoff"})
-  db.close()
  return {"source":{"revision":"canonical-three-ledger-v2","sha256":{name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in ("demo.py","schema.sql","records.py","payroll.py")}},
   "fixture":{"tenant":"T1","employees":["E101","E102"],"months":list(MONTHS),"currency":"INR","unit":"minor"},"tables":list(TABLES),
   "catalogue":{"record_types":[*L1_TYPES,"payroll.employee.settings"],"ledger_kinds":["draft","posted","obligation","remittance","allocation"]},"stages":stages}
 
 def main():
- parser=argparse.ArgumentParser(description=__doc__); parser.add_argument("--output",type=Path,required=True); args=parser.parse_args()
- args.output.parent.mkdir(parents=True,exist_ok=True); args.output.write_text(json.dumps(build_demo(),indent=2)+"\n")
+ parser=argparse.ArgumentParser(description=__doc__); parser.add_argument("--db",type=Path); parser.add_argument("--output",type=Path,required=True); args=parser.parse_args()
+ args.output.parent.mkdir(parents=True,exist_ok=True); args.output.write_text(json.dumps(build_demo(args.db),indent=2)+"\n")
 
 if __name__=="__main__": main()
