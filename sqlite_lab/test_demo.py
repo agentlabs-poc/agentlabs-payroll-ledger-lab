@@ -50,7 +50,17 @@ class CanonicalDemoTests(unittest.TestCase):
             self.assertEqual(draft["tables"][table], held["tables"][table])
         self.assertFalse(any(row["key"].startswith("payroll.instruction.application:") for row in held["tables"]["payroll_l1_records"]))
         self.assertEqual(draft["tables"]["payroll_draft_ledger"], released["tables"]["payroll_draft_ledger"])
-        self.assertEqual(4, len(committed["tables"]["payroll_ledger"]))
+        self.assertEqual(5, len(committed["tables"]["payroll_ledger"]))
+        self.assertEqual(
+            {
+                ("payroll.component:BASIC:1", "earning", 3_000_000),
+                ("payroll.component:HRA:1", "earning", 2_000_000),
+                ("payroll.component:EMPLOYER:1", "employer_expense", 300_000),
+                ("payroll.component:EMPLOYER:1", "employer_liability", 300_000),
+                ("payroll.component:LOAN:1", "deduction", 200_000),
+            },
+            {(row["component_key"], row["direction"], row["amount_minor"]) for row in committed["tables"]["payroll_ledger"] if row["employee_id"] == "E101"},
+        )
         self.assertTrue(any(row["key"].startswith("payroll.instruction.application:") for row in committed["tables"]["payroll_l1_records"]))
         self.assertTrue(any(row["value"].get("operation") == "payroll.commit" for row in committed["tables"]["payroll_l1_records"]))
 

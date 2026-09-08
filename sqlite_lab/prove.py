@@ -234,8 +234,11 @@ def _run(database):
     payroll = Payroll(connection, "T1", "U7")
 
     def setup():
-        salary = payroll.define_component(
-            "SALARY", 1, "salary", "Salary", "earning", "IN"
+        basic = payroll.define_component(
+            "BASIC", 1, "basic", "Basic", "earning", "IN"
+        )["key"]
+        hra = payroll.define_component(
+            "HRA", 1, "hra", "House rent allowance", "earning", "IN"
         )["key"]
         loan = payroll.define_component(
             "LOAN", 1, "loan", "Loan", "deduction", "IN"
@@ -251,8 +254,11 @@ def _run(database):
         bonus = payroll.define_component(
             "BONUS", 1, "bonus", "Bonus", "earning", "IN"
         )["key"]
-        salary_earning = payroll.define_earning(
-            "EARN-SALARY", 1, "E101", salary, 5_000_000, "2026-01"
+        basic_earning = payroll.define_earning(
+            "EARN-BASIC", 1, "E101", basic, 3_000_000, "2026-01"
+        )["key"]
+        hra_earning = payroll.define_earning(
+            "EARN-HRA", 1, "E101", hra, 2_000_000, "2026-01"
         )["key"]
         employer_earning = payroll.define_earning(
             "EARN-EMPLOYER", 1, "E101", employer, 300_000, "2026-01"
@@ -280,7 +286,7 @@ def _run(database):
             "2026-11",
         )
         e102 = payroll.define_earning(
-            "EARN-E102", 1, "E102", salary, 100_000, "2026-01"
+            "EARN-E102", 1, "E102", basic, 100_000, "2026-01"
         )["key"]
         payroll.records.put_l2_settings(
             "T1",
@@ -293,9 +299,9 @@ def _run(database):
                 "payslip_locale": "en-IN",
             },
         )
-        return salary_earning, employer_earning, loan, bonus_instruction, e102
+        return basic_earning, hra_earning, employer_earning, loan, bonus_instruction, e102
 
-    salary_earning, employer_earning, loan, bonus_instruction, e102 = _stage(
+    basic_earning, hra_earning, employer_earning, loan, bonus_instruction, e102 = _stage(
         timings, "sources", setup
     )
     draft = _stage(
@@ -305,7 +311,7 @@ def _run(database):
             "D1",
             "E101",
             "2026-11",
-            [salary_earning, employer_earning],
+            [basic_earning, hra_earning, employer_earning],
             [loan["value"]["version_id"]],
         ),
     )

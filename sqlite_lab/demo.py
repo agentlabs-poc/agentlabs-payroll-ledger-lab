@@ -80,10 +80,12 @@ def build_demo() -> dict:
             })
 
         capture("empty", "Empty database", "A fresh schema has no payroll rows.")
-        salary = payroll.define_component("SALARY", 1, "salary", "Salary", "earning", "IN")["key"]
+        basic = payroll.define_component("BASIC", 1, "basic", "Basic", "earning", "IN")["key"]
+        hra = payroll.define_component("HRA", 1, "hra", "House rent allowance", "earning", "IN")["key"]
         employer = payroll.define_component("EMPLOYER", 1, "employer", "Employer contribution", "employer_contribution", "IN")["key"]
         loan = payroll.define_component("LOAN", 1, "loan", "Loan recovery", "deduction", "IN")["key"]
-        salary_earning = payroll.define_earning("EARN-SALARY", 1, "E101", salary, 5_000_000, "2026-01")["key"]
+        basic_earning = payroll.define_earning("EARN-BASIC", 1, "E101", basic, 3_000_000, "2026-01")["key"]
+        hra_earning = payroll.define_earning("EARN-HRA", 1, "E101", hra, 2_000_000, "2026-01")["key"]
         employer_earning = payroll.define_earning("EARN-EMPLOYER", 1, "E101", employer, 300_000, "2026-01")["key"]
         instruction = payroll.add_instruction("I-LOAN", "opaque\\loan-nov-2026", 1, "E101", loan, 200_000, "monthly", "2026-10", "2027-02")
         RecordStore(connection).put_l2_settings("T1", {
@@ -98,7 +100,7 @@ def build_demo() -> dict:
         capture("sources", "Source records", "Components define meaning; earnings are entitlements, while instructions are monthly or one-time inputs. L2 settings are auxiliary.")
 
         draft = payroll.create_draft(
-            "D1", "E101", "2026-11", [salary_earning, employer_earning], [instruction["value"]["version_id"]]
+            "D1", "E101", "2026-11", [basic_earning, hra_earning, employer_earning], [instruction["value"]["version_id"]]
         )
         capture("draft", "Draft snapshot", "payroll.draft fixes source versions, content hash, and totals; payroll_draft_ledger holds its monetary effects. Resolution records describe candidate instruction treatment.")
 

@@ -2,7 +2,7 @@
   "source": {
     "revision": "canonical-three-ledger-v1",
     "sha256": {
-      "demo.py": "6b4956ce4f1f530478850f202c7ef803f1debc32a95378ad5adbae38869a1692",
+      "demo.py": "5f6d2b29dac294d25f53d64e33dab501e1b86e748cea80a1fb3c9b4530be8c64",
       "schema.sql": "952668ff12b244b80cbfe9e9bd49ffe62c1578ea29d9a841e802aea5b1a4fd35",
       "records.py": "87621aa7480b515475cd0abb1203e7fc5863762361d379c96e88c400c1f44cd4",
       "payroll.py": "60f79df6d74eb751b98dd712536dd56d7380fd99957a3dc974897c58a89938e4"
@@ -96,17 +96,32 @@
         "payroll_l1_records": [
           {
             "tenant": "T1",
-            "key": "payroll.component:SALARY:1",
+            "key": "payroll.component:BASIC:1",
             "value": {
-              "code": "salary",
-              "component_id": "SALARY",
+              "code": "basic",
+              "component_id": "BASIC",
               "country_code": "IN",
               "kind": "earning",
-              "label": "Salary",
+              "label": "Basic",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "ts": "2026-09-08T17:45:10.532240+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:HRA:1",
+            "value": {
+              "code": "hra",
+              "component_id": "HRA",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "House rent allowance",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.532729+00:00",
             "state": "enabled"
           },
           {
@@ -121,7 +136,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "ts": "2026-09-08T17:45:10.532924+00:00",
             "state": "enabled"
           },
           {
@@ -136,23 +151,39 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "ts": "2026-09-08T17:45:10.533102+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
-            "key": "payroll.earning:EARN-SALARY:1",
+            "key": "payroll.earning:EARN-BASIC:1",
             "value": {
-              "amount_minor": 5000000,
-              "component_key": "payroll.component:SALARY:1",
-              "earning_id": "EARN-SALARY",
+              "amount_minor": 3000000,
+              "component_key": "payroll.component:BASIC:1",
+              "earning_id": "EARN-BASIC",
               "effective_from": "2026-01",
               "effective_until": null,
               "employee_id": "E101",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "ts": "2026-09-08T17:45:10.533306+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-HRA:1",
+            "value": {
+              "amount_minor": 2000000,
+              "component_key": "payroll.component:HRA:1",
+              "earning_id": "EARN-HRA",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.533498+00:00",
             "state": "enabled"
           },
           {
@@ -168,7 +199,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "ts": "2026-09-08T17:45:10.533685+00:00",
             "state": "enabled"
           },
           {
@@ -186,7 +217,7 @@
               "schema_version": 1,
               "version_id": "opaque\\loan-nov-2026"
             },
-            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "ts": "2026-09-08T17:45:10.533973+00:00",
             "state": "enabled"
           },
           {
@@ -212,7 +243,7 @@
               "schema_version": 1,
               "subject_id": "I-LOAN"
             },
-            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "ts": "2026-09-08T17:45:10.534122+00:00",
             "state": "enabled"
           }
         ],
@@ -231,7 +262,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "ts": "2026-09-08T17:45:10.534263+00:00",
             "state": "enabled"
           }
         ],
@@ -264,17 +295,32 @@
         "payroll_l1_records": [
           {
             "tenant": "T1",
-            "key": "payroll.component:SALARY:1",
+            "key": "payroll.component:BASIC:1",
             "value": {
-              "code": "salary",
-              "component_id": "SALARY",
+              "code": "basic",
+              "component_id": "BASIC",
               "country_code": "IN",
               "kind": "earning",
-              "label": "Salary",
+              "label": "Basic",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "ts": "2026-09-08T17:45:10.532240+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:HRA:1",
+            "value": {
+              "code": "hra",
+              "component_id": "HRA",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "House rent allowance",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.532729+00:00",
             "state": "enabled"
           },
           {
@@ -289,7 +335,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "ts": "2026-09-08T17:45:10.532924+00:00",
             "state": "enabled"
           },
           {
@@ -304,23 +350,39 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "ts": "2026-09-08T17:45:10.533102+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
-            "key": "payroll.earning:EARN-SALARY:1",
+            "key": "payroll.earning:EARN-BASIC:1",
             "value": {
-              "amount_minor": 5000000,
-              "component_key": "payroll.component:SALARY:1",
-              "earning_id": "EARN-SALARY",
+              "amount_minor": 3000000,
+              "component_key": "payroll.component:BASIC:1",
+              "earning_id": "EARN-BASIC",
               "effective_from": "2026-01",
               "effective_until": null,
               "employee_id": "E101",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "ts": "2026-09-08T17:45:10.533306+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-HRA:1",
+            "value": {
+              "amount_minor": 2000000,
+              "component_key": "payroll.component:HRA:1",
+              "earning_id": "EARN-HRA",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.533498+00:00",
             "state": "enabled"
           },
           {
@@ -336,7 +398,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "ts": "2026-09-08T17:45:10.533685+00:00",
             "state": "enabled"
           },
           {
@@ -354,7 +416,7 @@
               "schema_version": 1,
               "version_id": "opaque\\loan-nov-2026"
             },
-            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "ts": "2026-09-08T17:45:10.533973+00:00",
             "state": "enabled"
           },
           {
@@ -380,18 +442,19 @@
               "schema_version": 1,
               "subject_id": "I-LOAN"
             },
-            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "ts": "2026-09-08T17:45:10.534122+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
             "key": "payroll.draft:D1:1",
             "value": {
-              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
               "deductions_minor": 500000,
               "draft_id": "D1",
               "earning_keys": [
-                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-BASIC:1",
+                "payroll.earning:EARN-HRA:1",
                 "payroll.earning:EARN-EMPLOYER:1"
               ],
               "employee_id": "E101",
@@ -404,7 +467,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "ts": "2026-09-08T17:45:10.535177+00:00",
             "state": "enabled"
           },
           {
@@ -421,7 +484,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "ts": "2026-09-08T17:45:10.535658+00:00",
             "state": "enabled"
           },
           {
@@ -442,7 +505,7 @@
               "resolution_id": "RES1",
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "ts": "2026-09-08T17:45:10.535747+00:00",
             "state": "enabled"
           }
         ],
@@ -461,7 +524,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "ts": "2026-09-08T17:45:10.534263+00:00",
             "state": "enabled"
           }
         ],
@@ -469,13 +532,26 @@
           {
             "tenant": "T1",
             "draft_key": "payroll.draft:D1:1",
-            "entry_id": "DE793db74cd6d705234049",
+            "entry_id": "DEea1930c20fc770cbf6a9",
             "employee_id": "E101",
             "payroll_month": "2026-11",
-            "source_key": "payroll.earning:EARN-SALARY:1",
-            "component_key": "payroll.component:SALARY:1",
+            "source_key": "payroll.earning:EARN-BASIC:1",
+            "component_key": "payroll.component:BASIC:1",
             "direction": "earning",
-            "amount_minor": 5000000,
+            "amount_minor": 3000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE95471b7bbbbcc116481f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-HRA:1",
+            "component_key": "payroll.component:HRA:1",
+            "direction": "earning",
+            "amount_minor": 2000000,
             "currency": "INR",
             "row_kind": "draft"
           },
@@ -548,17 +624,32 @@
         "payroll_l1_records": [
           {
             "tenant": "T1",
-            "key": "payroll.component:SALARY:1",
+            "key": "payroll.component:BASIC:1",
             "value": {
-              "code": "salary",
-              "component_id": "SALARY",
+              "code": "basic",
+              "component_id": "BASIC",
               "country_code": "IN",
               "kind": "earning",
-              "label": "Salary",
+              "label": "Basic",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "ts": "2026-09-08T17:45:10.532240+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:HRA:1",
+            "value": {
+              "code": "hra",
+              "component_id": "HRA",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "House rent allowance",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.532729+00:00",
             "state": "enabled"
           },
           {
@@ -573,7 +664,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "ts": "2026-09-08T17:45:10.532924+00:00",
             "state": "enabled"
           },
           {
@@ -588,23 +679,39 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "ts": "2026-09-08T17:45:10.533102+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
-            "key": "payroll.earning:EARN-SALARY:1",
+            "key": "payroll.earning:EARN-BASIC:1",
             "value": {
-              "amount_minor": 5000000,
-              "component_key": "payroll.component:SALARY:1",
-              "earning_id": "EARN-SALARY",
+              "amount_minor": 3000000,
+              "component_key": "payroll.component:BASIC:1",
+              "earning_id": "EARN-BASIC",
               "effective_from": "2026-01",
               "effective_until": null,
               "employee_id": "E101",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "ts": "2026-09-08T17:45:10.533306+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-HRA:1",
+            "value": {
+              "amount_minor": 2000000,
+              "component_key": "payroll.component:HRA:1",
+              "earning_id": "EARN-HRA",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.533498+00:00",
             "state": "enabled"
           },
           {
@@ -620,7 +727,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "ts": "2026-09-08T17:45:10.533685+00:00",
             "state": "enabled"
           },
           {
@@ -638,7 +745,7 @@
               "schema_version": 1,
               "version_id": "opaque\\loan-nov-2026"
             },
-            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "ts": "2026-09-08T17:45:10.533973+00:00",
             "state": "enabled"
           },
           {
@@ -664,18 +771,19 @@
               "schema_version": 1,
               "subject_id": "I-LOAN"
             },
-            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "ts": "2026-09-08T17:45:10.534122+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
             "key": "payroll.draft:D1:1",
             "value": {
-              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
               "deductions_minor": 500000,
               "draft_id": "D1",
               "earning_keys": [
-                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-BASIC:1",
+                "payroll.earning:EARN-HRA:1",
                 "payroll.earning:EARN-EMPLOYER:1"
               ],
               "employee_id": "E101",
@@ -688,7 +796,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "ts": "2026-09-08T17:45:10.535177+00:00",
             "state": "enabled"
           },
           {
@@ -705,7 +813,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "ts": "2026-09-08T17:45:10.535658+00:00",
             "state": "enabled"
           },
           {
@@ -726,7 +834,7 @@
               "resolution_id": "RES1",
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "ts": "2026-09-08T17:45:10.535747+00:00",
             "state": "enabled"
           },
           {
@@ -743,7 +851,7 @@
               "revision": 2,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511421+00:00",
+            "ts": "2026-09-08T17:45:10.536166+00:00",
             "state": "enabled"
           }
         ],
@@ -762,7 +870,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "ts": "2026-09-08T17:45:10.534263+00:00",
             "state": "enabled"
           }
         ],
@@ -770,13 +878,26 @@
           {
             "tenant": "T1",
             "draft_key": "payroll.draft:D1:1",
-            "entry_id": "DE793db74cd6d705234049",
+            "entry_id": "DEea1930c20fc770cbf6a9",
             "employee_id": "E101",
             "payroll_month": "2026-11",
-            "source_key": "payroll.earning:EARN-SALARY:1",
-            "component_key": "payroll.component:SALARY:1",
+            "source_key": "payroll.earning:EARN-BASIC:1",
+            "component_key": "payroll.component:BASIC:1",
             "direction": "earning",
-            "amount_minor": 5000000,
+            "amount_minor": 3000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE95471b7bbbbcc116481f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-HRA:1",
+            "component_key": "payroll.component:HRA:1",
+            "direction": "earning",
+            "amount_minor": 2000000,
             "currency": "INR",
             "row_kind": "draft"
           },
@@ -848,17 +969,32 @@
         "payroll_l1_records": [
           {
             "tenant": "T1",
-            "key": "payroll.component:SALARY:1",
+            "key": "payroll.component:BASIC:1",
             "value": {
-              "code": "salary",
-              "component_id": "SALARY",
+              "code": "basic",
+              "component_id": "BASIC",
               "country_code": "IN",
               "kind": "earning",
-              "label": "Salary",
+              "label": "Basic",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "ts": "2026-09-08T17:45:10.532240+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:HRA:1",
+            "value": {
+              "code": "hra",
+              "component_id": "HRA",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "House rent allowance",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.532729+00:00",
             "state": "enabled"
           },
           {
@@ -873,7 +1009,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "ts": "2026-09-08T17:45:10.532924+00:00",
             "state": "enabled"
           },
           {
@@ -888,23 +1024,39 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "ts": "2026-09-08T17:45:10.533102+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
-            "key": "payroll.earning:EARN-SALARY:1",
+            "key": "payroll.earning:EARN-BASIC:1",
             "value": {
-              "amount_minor": 5000000,
-              "component_key": "payroll.component:SALARY:1",
-              "earning_id": "EARN-SALARY",
+              "amount_minor": 3000000,
+              "component_key": "payroll.component:BASIC:1",
+              "earning_id": "EARN-BASIC",
               "effective_from": "2026-01",
               "effective_until": null,
               "employee_id": "E101",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "ts": "2026-09-08T17:45:10.533306+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-HRA:1",
+            "value": {
+              "amount_minor": 2000000,
+              "component_key": "payroll.component:HRA:1",
+              "earning_id": "EARN-HRA",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.533498+00:00",
             "state": "enabled"
           },
           {
@@ -920,7 +1072,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "ts": "2026-09-08T17:45:10.533685+00:00",
             "state": "enabled"
           },
           {
@@ -938,7 +1090,7 @@
               "schema_version": 1,
               "version_id": "opaque\\loan-nov-2026"
             },
-            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "ts": "2026-09-08T17:45:10.533973+00:00",
             "state": "enabled"
           },
           {
@@ -964,18 +1116,19 @@
               "schema_version": 1,
               "subject_id": "I-LOAN"
             },
-            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "ts": "2026-09-08T17:45:10.534122+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
             "key": "payroll.draft:D1:1",
             "value": {
-              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
               "deductions_minor": 500000,
               "draft_id": "D1",
               "earning_keys": [
-                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-BASIC:1",
+                "payroll.earning:EARN-HRA:1",
                 "payroll.earning:EARN-EMPLOYER:1"
               ],
               "employee_id": "E101",
@@ -988,7 +1141,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "ts": "2026-09-08T17:45:10.535177+00:00",
             "state": "enabled"
           },
           {
@@ -1005,7 +1158,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "ts": "2026-09-08T17:45:10.535658+00:00",
             "state": "enabled"
           },
           {
@@ -1026,7 +1179,7 @@
               "resolution_id": "RES1",
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "ts": "2026-09-08T17:45:10.535747+00:00",
             "state": "enabled"
           },
           {
@@ -1043,7 +1196,7 @@
               "revision": 2,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511421+00:00",
+            "ts": "2026-09-08T17:45:10.536166+00:00",
             "state": "enabled"
           },
           {
@@ -1060,7 +1213,7 @@
               "revision": 3,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511760+00:00",
+            "ts": "2026-09-08T17:45:10.536690+00:00",
             "state": "enabled"
           }
         ],
@@ -1079,7 +1232,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "ts": "2026-09-08T17:45:10.534263+00:00",
             "state": "enabled"
           }
         ],
@@ -1087,13 +1240,26 @@
           {
             "tenant": "T1",
             "draft_key": "payroll.draft:D1:1",
-            "entry_id": "DE793db74cd6d705234049",
+            "entry_id": "DEea1930c20fc770cbf6a9",
             "employee_id": "E101",
             "payroll_month": "2026-11",
-            "source_key": "payroll.earning:EARN-SALARY:1",
-            "component_key": "payroll.component:SALARY:1",
+            "source_key": "payroll.earning:EARN-BASIC:1",
+            "component_key": "payroll.component:BASIC:1",
             "direction": "earning",
-            "amount_minor": 5000000,
+            "amount_minor": 3000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE95471b7bbbbcc116481f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-HRA:1",
+            "component_key": "payroll.component:HRA:1",
+            "direction": "earning",
+            "amount_minor": 2000000,
             "currency": "INR",
             "row_kind": "draft"
           },
@@ -1166,17 +1332,32 @@
         "payroll_l1_records": [
           {
             "tenant": "T1",
-            "key": "payroll.component:SALARY:1",
+            "key": "payroll.component:BASIC:1",
             "value": {
-              "code": "salary",
-              "component_id": "SALARY",
+              "code": "basic",
+              "component_id": "BASIC",
               "country_code": "IN",
               "kind": "earning",
-              "label": "Salary",
+              "label": "Basic",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "ts": "2026-09-08T17:45:10.532240+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:HRA:1",
+            "value": {
+              "code": "hra",
+              "component_id": "HRA",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "House rent allowance",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.532729+00:00",
             "state": "enabled"
           },
           {
@@ -1191,7 +1372,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "ts": "2026-09-08T17:45:10.532924+00:00",
             "state": "enabled"
           },
           {
@@ -1206,23 +1387,39 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "ts": "2026-09-08T17:45:10.533102+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
-            "key": "payroll.earning:EARN-SALARY:1",
+            "key": "payroll.earning:EARN-BASIC:1",
             "value": {
-              "amount_minor": 5000000,
-              "component_key": "payroll.component:SALARY:1",
-              "earning_id": "EARN-SALARY",
+              "amount_minor": 3000000,
+              "component_key": "payroll.component:BASIC:1",
+              "earning_id": "EARN-BASIC",
               "effective_from": "2026-01",
               "effective_until": null,
               "employee_id": "E101",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "ts": "2026-09-08T17:45:10.533306+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-HRA:1",
+            "value": {
+              "amount_minor": 2000000,
+              "component_key": "payroll.component:HRA:1",
+              "earning_id": "EARN-HRA",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.533498+00:00",
             "state": "enabled"
           },
           {
@@ -1238,7 +1435,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "ts": "2026-09-08T17:45:10.533685+00:00",
             "state": "enabled"
           },
           {
@@ -1256,7 +1453,7 @@
               "schema_version": 1,
               "version_id": "opaque\\loan-nov-2026"
             },
-            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "ts": "2026-09-08T17:45:10.533973+00:00",
             "state": "enabled"
           },
           {
@@ -1282,18 +1479,19 @@
               "schema_version": 1,
               "subject_id": "I-LOAN"
             },
-            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "ts": "2026-09-08T17:45:10.534122+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
             "key": "payroll.draft:D1:1",
             "value": {
-              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
               "deductions_minor": 500000,
               "draft_id": "D1",
               "earning_keys": [
-                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-BASIC:1",
+                "payroll.earning:EARN-HRA:1",
                 "payroll.earning:EARN-EMPLOYER:1"
               ],
               "employee_id": "E101",
@@ -1306,7 +1504,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "ts": "2026-09-08T17:45:10.535177+00:00",
             "state": "enabled"
           },
           {
@@ -1323,7 +1521,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "ts": "2026-09-08T17:45:10.535658+00:00",
             "state": "enabled"
           },
           {
@@ -1344,7 +1542,7 @@
               "resolution_id": "RES1",
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "ts": "2026-09-08T17:45:10.535747+00:00",
             "state": "enabled"
           },
           {
@@ -1361,7 +1559,7 @@
               "revision": 2,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511421+00:00",
+            "ts": "2026-09-08T17:45:10.536166+00:00",
             "state": "enabled"
           },
           {
@@ -1378,7 +1576,7 @@
               "revision": 3,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511760+00:00",
+            "ts": "2026-09-08T17:45:10.536690+00:00",
             "state": "enabled"
           },
           {
@@ -1388,12 +1586,12 @@
               "actor": "payroll-admin",
               "control_revision": 3,
               "decision": "approved",
-              "draft_content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "draft_content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
               "draft_id": "D1",
               "review_id": "REV1",
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.512019+00:00",
+            "ts": "2026-09-08T17:45:10.537125+00:00",
             "state": "enabled"
           }
         ],
@@ -1412,7 +1610,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "ts": "2026-09-08T17:45:10.534263+00:00",
             "state": "enabled"
           }
         ],
@@ -1420,13 +1618,26 @@
           {
             "tenant": "T1",
             "draft_key": "payroll.draft:D1:1",
-            "entry_id": "DE793db74cd6d705234049",
+            "entry_id": "DEea1930c20fc770cbf6a9",
             "employee_id": "E101",
             "payroll_month": "2026-11",
-            "source_key": "payroll.earning:EARN-SALARY:1",
-            "component_key": "payroll.component:SALARY:1",
+            "source_key": "payroll.earning:EARN-BASIC:1",
+            "component_key": "payroll.component:BASIC:1",
             "direction": "earning",
-            "amount_minor": 5000000,
+            "amount_minor": 3000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE95471b7bbbbcc116481f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-HRA:1",
+            "component_key": "payroll.component:HRA:1",
+            "direction": "earning",
+            "amount_minor": 2000000,
             "currency": "INR",
             "row_kind": "draft"
           },
@@ -1483,7 +1694,8 @@
         "draft_id": "D1",
         "draft_key": "payroll.draft:D1:1",
         "posted_entry_ids": [
-          "PEca8e136caced406044ca",
+          "PEb8228870d12f87cdf529",
+          "PE86a57bcb6346cd492ecb",
           "PE5e38fcb8288db506f734",
           "PEd3fa4ff6c733d58e8b6a",
           "PEe672463bd7dd5f3520ad"
@@ -1508,17 +1720,32 @@
         "payroll_l1_records": [
           {
             "tenant": "T1",
-            "key": "payroll.component:SALARY:1",
+            "key": "payroll.component:BASIC:1",
             "value": {
-              "code": "salary",
-              "component_id": "SALARY",
+              "code": "basic",
+              "component_id": "BASIC",
               "country_code": "IN",
               "kind": "earning",
-              "label": "Salary",
+              "label": "Basic",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "ts": "2026-09-08T17:45:10.532240+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:HRA:1",
+            "value": {
+              "code": "hra",
+              "component_id": "HRA",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "House rent allowance",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.532729+00:00",
             "state": "enabled"
           },
           {
@@ -1533,7 +1760,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "ts": "2026-09-08T17:45:10.532924+00:00",
             "state": "enabled"
           },
           {
@@ -1548,23 +1775,39 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "ts": "2026-09-08T17:45:10.533102+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
-            "key": "payroll.earning:EARN-SALARY:1",
+            "key": "payroll.earning:EARN-BASIC:1",
             "value": {
-              "amount_minor": 5000000,
-              "component_key": "payroll.component:SALARY:1",
-              "earning_id": "EARN-SALARY",
+              "amount_minor": 3000000,
+              "component_key": "payroll.component:BASIC:1",
+              "earning_id": "EARN-BASIC",
               "effective_from": "2026-01",
               "effective_until": null,
               "employee_id": "E101",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "ts": "2026-09-08T17:45:10.533306+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-HRA:1",
+            "value": {
+              "amount_minor": 2000000,
+              "component_key": "payroll.component:HRA:1",
+              "earning_id": "EARN-HRA",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.533498+00:00",
             "state": "enabled"
           },
           {
@@ -1580,7 +1823,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "ts": "2026-09-08T17:45:10.533685+00:00",
             "state": "enabled"
           },
           {
@@ -1598,7 +1841,7 @@
               "schema_version": 1,
               "version_id": "opaque\\loan-nov-2026"
             },
-            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "ts": "2026-09-08T17:45:10.533973+00:00",
             "state": "enabled"
           },
           {
@@ -1624,18 +1867,19 @@
               "schema_version": 1,
               "subject_id": "I-LOAN"
             },
-            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "ts": "2026-09-08T17:45:10.534122+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
             "key": "payroll.draft:D1:1",
             "value": {
-              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
               "deductions_minor": 500000,
               "draft_id": "D1",
               "earning_keys": [
-                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-BASIC:1",
+                "payroll.earning:EARN-HRA:1",
                 "payroll.earning:EARN-EMPLOYER:1"
               ],
               "employee_id": "E101",
@@ -1648,7 +1892,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "ts": "2026-09-08T17:45:10.535177+00:00",
             "state": "enabled"
           },
           {
@@ -1665,7 +1909,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "ts": "2026-09-08T17:45:10.535658+00:00",
             "state": "enabled"
           },
           {
@@ -1686,7 +1930,7 @@
               "resolution_id": "RES1",
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "ts": "2026-09-08T17:45:10.535747+00:00",
             "state": "enabled"
           },
           {
@@ -1703,7 +1947,7 @@
               "revision": 2,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511421+00:00",
+            "ts": "2026-09-08T17:45:10.536166+00:00",
             "state": "enabled"
           },
           {
@@ -1720,7 +1964,7 @@
               "revision": 3,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511760+00:00",
+            "ts": "2026-09-08T17:45:10.536690+00:00",
             "state": "enabled"
           },
           {
@@ -1730,12 +1974,12 @@
               "actor": "payroll-admin",
               "control_revision": 3,
               "decision": "approved",
-              "draft_content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "draft_content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
               "draft_id": "D1",
               "review_id": "REV1",
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.512019+00:00",
+            "ts": "2026-09-08T17:45:10.537125+00:00",
             "state": "enabled"
           },
           {
@@ -1759,7 +2003,7 @@
               "schema_version": 1,
               "version_id": "opaque\\loan-nov-2026"
             },
-            "ts": "2026-09-08T17:35:49.512530+00:00",
+            "ts": "2026-09-08T17:45:10.537990+00:00",
             "state": "enabled"
           },
           {
@@ -1769,7 +2013,8 @@
               "after": {
                 "committed": true,
                 "posted_entry_ids": [
-                  "PEca8e136caced406044ca",
+                  "PEb8228870d12f87cdf529",
+                  "PE86a57bcb6346cd492ecb",
                   "PE5e38fcb8288db506f734",
                   "PEd3fa4ff6c733d58e8b6a",
                   "PEe672463bd7dd5f3520ad"
@@ -1787,7 +2032,8 @@
                 "draft_key": "payroll.draft:D1:1",
                 "employer_liability_entry_id": "PEd3fa4ff6c733d58e8b6a",
                 "posted_entry_ids": [
-                  "PEca8e136caced406044ca",
+                  "PEb8228870d12f87cdf529",
+                  "PE86a57bcb6346cd492ecb",
                   "PE5e38fcb8288db506f734",
                   "PEd3fa4ff6c733d58e8b6a",
                   "PEe672463bd7dd5f3520ad"
@@ -1799,7 +2045,7 @@
               "schema_version": 1,
               "subject_id": "D1"
             },
-            "ts": "2026-09-08T17:35:49.512622+00:00",
+            "ts": "2026-09-08T17:45:10.538227+00:00",
             "state": "enabled"
           }
         ],
@@ -1818,7 +2064,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "ts": "2026-09-08T17:45:10.534263+00:00",
             "state": "enabled"
           }
         ],
@@ -1826,13 +2072,26 @@
           {
             "tenant": "T1",
             "draft_key": "payroll.draft:D1:1",
-            "entry_id": "DE793db74cd6d705234049",
+            "entry_id": "DEea1930c20fc770cbf6a9",
             "employee_id": "E101",
             "payroll_month": "2026-11",
-            "source_key": "payroll.earning:EARN-SALARY:1",
-            "component_key": "payroll.component:SALARY:1",
+            "source_key": "payroll.earning:EARN-BASIC:1",
+            "component_key": "payroll.component:BASIC:1",
             "direction": "earning",
-            "amount_minor": 5000000,
+            "amount_minor": 3000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE95471b7bbbbcc116481f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-HRA:1",
+            "component_key": "payroll.component:HRA:1",
+            "direction": "earning",
+            "amount_minor": 2000000,
             "currency": "INR",
             "row_kind": "draft"
           },
@@ -1879,15 +2138,29 @@
         "payroll_ledger": [
           {
             "tenant": "T1",
-            "ledger_entry_id": "PEca8e136caced406044ca",
+            "ledger_entry_id": "PEb8228870d12f87cdf529",
             "draft_key": "payroll.draft:D1:1",
-            "draft_entry_id": "DE793db74cd6d705234049",
+            "draft_entry_id": "DEea1930c20fc770cbf6a9",
             "employee_id": "E101",
             "payroll_month": "2026-11",
-            "source_key": "payroll.earning:EARN-SALARY:1",
-            "component_key": "payroll.component:SALARY:1",
+            "source_key": "payroll.earning:EARN-BASIC:1",
+            "component_key": "payroll.component:BASIC:1",
             "direction": "earning",
-            "amount_minor": 5000000,
+            "amount_minor": 3000000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PE86a57bcb6346cd492ecb",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE95471b7bbbbcc116481f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-HRA:1",
+            "component_key": "payroll.component:HRA:1",
+            "direction": "earning",
+            "amount_minor": 2000000,
             "currency": "INR",
             "row_kind": "posted"
           },
@@ -1961,17 +2234,32 @@
         "payroll_l1_records": [
           {
             "tenant": "T1",
-            "key": "payroll.component:SALARY:1",
+            "key": "payroll.component:BASIC:1",
             "value": {
-              "code": "salary",
-              "component_id": "SALARY",
+              "code": "basic",
+              "component_id": "BASIC",
               "country_code": "IN",
               "kind": "earning",
-              "label": "Salary",
+              "label": "Basic",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "ts": "2026-09-08T17:45:10.532240+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:HRA:1",
+            "value": {
+              "code": "hra",
+              "component_id": "HRA",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "House rent allowance",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.532729+00:00",
             "state": "enabled"
           },
           {
@@ -1986,7 +2274,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "ts": "2026-09-08T17:45:10.532924+00:00",
             "state": "enabled"
           },
           {
@@ -2001,23 +2289,39 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "ts": "2026-09-08T17:45:10.533102+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
-            "key": "payroll.earning:EARN-SALARY:1",
+            "key": "payroll.earning:EARN-BASIC:1",
             "value": {
-              "amount_minor": 5000000,
-              "component_key": "payroll.component:SALARY:1",
-              "earning_id": "EARN-SALARY",
+              "amount_minor": 3000000,
+              "component_key": "payroll.component:BASIC:1",
+              "earning_id": "EARN-BASIC",
               "effective_from": "2026-01",
               "effective_until": null,
               "employee_id": "E101",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "ts": "2026-09-08T17:45:10.533306+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-HRA:1",
+            "value": {
+              "amount_minor": 2000000,
+              "component_key": "payroll.component:HRA:1",
+              "earning_id": "EARN-HRA",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.533498+00:00",
             "state": "enabled"
           },
           {
@@ -2033,7 +2337,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "ts": "2026-09-08T17:45:10.533685+00:00",
             "state": "enabled"
           },
           {
@@ -2051,7 +2355,7 @@
               "schema_version": 1,
               "version_id": "opaque\\loan-nov-2026"
             },
-            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "ts": "2026-09-08T17:45:10.533973+00:00",
             "state": "enabled"
           },
           {
@@ -2077,18 +2381,19 @@
               "schema_version": 1,
               "subject_id": "I-LOAN"
             },
-            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "ts": "2026-09-08T17:45:10.534122+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
             "key": "payroll.draft:D1:1",
             "value": {
-              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
               "deductions_minor": 500000,
               "draft_id": "D1",
               "earning_keys": [
-                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-BASIC:1",
+                "payroll.earning:EARN-HRA:1",
                 "payroll.earning:EARN-EMPLOYER:1"
               ],
               "employee_id": "E101",
@@ -2101,7 +2406,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "ts": "2026-09-08T17:45:10.535177+00:00",
             "state": "enabled"
           },
           {
@@ -2118,7 +2423,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "ts": "2026-09-08T17:45:10.535658+00:00",
             "state": "enabled"
           },
           {
@@ -2139,7 +2444,7 @@
               "resolution_id": "RES1",
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "ts": "2026-09-08T17:45:10.535747+00:00",
             "state": "enabled"
           },
           {
@@ -2156,7 +2461,7 @@
               "revision": 2,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511421+00:00",
+            "ts": "2026-09-08T17:45:10.536166+00:00",
             "state": "enabled"
           },
           {
@@ -2173,7 +2478,7 @@
               "revision": 3,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511760+00:00",
+            "ts": "2026-09-08T17:45:10.536690+00:00",
             "state": "enabled"
           },
           {
@@ -2183,12 +2488,12 @@
               "actor": "payroll-admin",
               "control_revision": 3,
               "decision": "approved",
-              "draft_content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "draft_content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
               "draft_id": "D1",
               "review_id": "REV1",
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.512019+00:00",
+            "ts": "2026-09-08T17:45:10.537125+00:00",
             "state": "enabled"
           },
           {
@@ -2212,7 +2517,7 @@
               "schema_version": 1,
               "version_id": "opaque\\loan-nov-2026"
             },
-            "ts": "2026-09-08T17:35:49.512530+00:00",
+            "ts": "2026-09-08T17:45:10.537990+00:00",
             "state": "enabled"
           },
           {
@@ -2222,7 +2527,8 @@
               "after": {
                 "committed": true,
                 "posted_entry_ids": [
-                  "PEca8e136caced406044ca",
+                  "PEb8228870d12f87cdf529",
+                  "PE86a57bcb6346cd492ecb",
                   "PE5e38fcb8288db506f734",
                   "PEd3fa4ff6c733d58e8b6a",
                   "PEe672463bd7dd5f3520ad"
@@ -2240,7 +2546,8 @@
                 "draft_key": "payroll.draft:D1:1",
                 "employer_liability_entry_id": "PEd3fa4ff6c733d58e8b6a",
                 "posted_entry_ids": [
-                  "PEca8e136caced406044ca",
+                  "PEb8228870d12f87cdf529",
+                  "PE86a57bcb6346cd492ecb",
                   "PE5e38fcb8288db506f734",
                   "PEd3fa4ff6c733d58e8b6a",
                   "PEe672463bd7dd5f3520ad"
@@ -2252,7 +2559,7 @@
               "schema_version": 1,
               "subject_id": "D1"
             },
-            "ts": "2026-09-08T17:35:49.512622+00:00",
+            "ts": "2026-09-08T17:45:10.538227+00:00",
             "state": "enabled"
           }
         ],
@@ -2271,7 +2578,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "ts": "2026-09-08T17:45:10.534263+00:00",
             "state": "enabled"
           }
         ],
@@ -2279,13 +2586,26 @@
           {
             "tenant": "T1",
             "draft_key": "payroll.draft:D1:1",
-            "entry_id": "DE793db74cd6d705234049",
+            "entry_id": "DEea1930c20fc770cbf6a9",
             "employee_id": "E101",
             "payroll_month": "2026-11",
-            "source_key": "payroll.earning:EARN-SALARY:1",
-            "component_key": "payroll.component:SALARY:1",
+            "source_key": "payroll.earning:EARN-BASIC:1",
+            "component_key": "payroll.component:BASIC:1",
             "direction": "earning",
-            "amount_minor": 5000000,
+            "amount_minor": 3000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE95471b7bbbbcc116481f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-HRA:1",
+            "component_key": "payroll.component:HRA:1",
+            "direction": "earning",
+            "amount_minor": 2000000,
             "currency": "INR",
             "row_kind": "draft"
           },
@@ -2332,15 +2652,29 @@
         "payroll_ledger": [
           {
             "tenant": "T1",
-            "ledger_entry_id": "PEca8e136caced406044ca",
+            "ledger_entry_id": "PEb8228870d12f87cdf529",
             "draft_key": "payroll.draft:D1:1",
-            "draft_entry_id": "DE793db74cd6d705234049",
+            "draft_entry_id": "DEea1930c20fc770cbf6a9",
             "employee_id": "E101",
             "payroll_month": "2026-11",
-            "source_key": "payroll.earning:EARN-SALARY:1",
-            "component_key": "payroll.component:SALARY:1",
+            "source_key": "payroll.earning:EARN-BASIC:1",
+            "component_key": "payroll.component:BASIC:1",
             "direction": "earning",
-            "amount_minor": 5000000,
+            "amount_minor": 3000000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PE86a57bcb6346cd492ecb",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE95471b7bbbbcc116481f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-HRA:1",
+            "component_key": "payroll.component:HRA:1",
+            "direction": "earning",
+            "amount_minor": 2000000,
             "currency": "INR",
             "row_kind": "posted"
           },
@@ -2425,17 +2759,32 @@
         "payroll_l1_records": [
           {
             "tenant": "T1",
-            "key": "payroll.component:SALARY:1",
+            "key": "payroll.component:BASIC:1",
             "value": {
-              "code": "salary",
-              "component_id": "SALARY",
+              "code": "basic",
+              "component_id": "BASIC",
               "country_code": "IN",
               "kind": "earning",
-              "label": "Salary",
+              "label": "Basic",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "ts": "2026-09-08T17:45:10.532240+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:HRA:1",
+            "value": {
+              "code": "hra",
+              "component_id": "HRA",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "House rent allowance",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.532729+00:00",
             "state": "enabled"
           },
           {
@@ -2450,7 +2799,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "ts": "2026-09-08T17:45:10.532924+00:00",
             "state": "enabled"
           },
           {
@@ -2465,23 +2814,39 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "ts": "2026-09-08T17:45:10.533102+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
-            "key": "payroll.earning:EARN-SALARY:1",
+            "key": "payroll.earning:EARN-BASIC:1",
             "value": {
-              "amount_minor": 5000000,
-              "component_key": "payroll.component:SALARY:1",
-              "earning_id": "EARN-SALARY",
+              "amount_minor": 3000000,
+              "component_key": "payroll.component:BASIC:1",
+              "earning_id": "EARN-BASIC",
               "effective_from": "2026-01",
               "effective_until": null,
               "employee_id": "E101",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "ts": "2026-09-08T17:45:10.533306+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-HRA:1",
+            "value": {
+              "amount_minor": 2000000,
+              "component_key": "payroll.component:HRA:1",
+              "earning_id": "EARN-HRA",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.533498+00:00",
             "state": "enabled"
           },
           {
@@ -2497,7 +2862,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "ts": "2026-09-08T17:45:10.533685+00:00",
             "state": "enabled"
           },
           {
@@ -2515,7 +2880,7 @@
               "schema_version": 1,
               "version_id": "opaque\\loan-nov-2026"
             },
-            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "ts": "2026-09-08T17:45:10.533973+00:00",
             "state": "enabled"
           },
           {
@@ -2541,18 +2906,19 @@
               "schema_version": 1,
               "subject_id": "I-LOAN"
             },
-            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "ts": "2026-09-08T17:45:10.534122+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
             "key": "payroll.draft:D1:1",
             "value": {
-              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
               "deductions_minor": 500000,
               "draft_id": "D1",
               "earning_keys": [
-                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-BASIC:1",
+                "payroll.earning:EARN-HRA:1",
                 "payroll.earning:EARN-EMPLOYER:1"
               ],
               "employee_id": "E101",
@@ -2565,7 +2931,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "ts": "2026-09-08T17:45:10.535177+00:00",
             "state": "enabled"
           },
           {
@@ -2582,7 +2948,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "ts": "2026-09-08T17:45:10.535658+00:00",
             "state": "enabled"
           },
           {
@@ -2603,7 +2969,7 @@
               "resolution_id": "RES1",
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "ts": "2026-09-08T17:45:10.535747+00:00",
             "state": "enabled"
           },
           {
@@ -2620,7 +2986,7 @@
               "revision": 2,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511421+00:00",
+            "ts": "2026-09-08T17:45:10.536166+00:00",
             "state": "enabled"
           },
           {
@@ -2637,7 +3003,7 @@
               "revision": 3,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511760+00:00",
+            "ts": "2026-09-08T17:45:10.536690+00:00",
             "state": "enabled"
           },
           {
@@ -2647,12 +3013,12 @@
               "actor": "payroll-admin",
               "control_revision": 3,
               "decision": "approved",
-              "draft_content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "draft_content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
               "draft_id": "D1",
               "review_id": "REV1",
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.512019+00:00",
+            "ts": "2026-09-08T17:45:10.537125+00:00",
             "state": "enabled"
           },
           {
@@ -2676,7 +3042,7 @@
               "schema_version": 1,
               "version_id": "opaque\\loan-nov-2026"
             },
-            "ts": "2026-09-08T17:35:49.512530+00:00",
+            "ts": "2026-09-08T17:45:10.537990+00:00",
             "state": "enabled"
           },
           {
@@ -2686,7 +3052,8 @@
               "after": {
                 "committed": true,
                 "posted_entry_ids": [
-                  "PEca8e136caced406044ca",
+                  "PEb8228870d12f87cdf529",
+                  "PE86a57bcb6346cd492ecb",
                   "PE5e38fcb8288db506f734",
                   "PEd3fa4ff6c733d58e8b6a",
                   "PEe672463bd7dd5f3520ad"
@@ -2704,7 +3071,8 @@
                 "draft_key": "payroll.draft:D1:1",
                 "employer_liability_entry_id": "PEd3fa4ff6c733d58e8b6a",
                 "posted_entry_ids": [
-                  "PEca8e136caced406044ca",
+                  "PEb8228870d12f87cdf529",
+                  "PE86a57bcb6346cd492ecb",
                   "PE5e38fcb8288db506f734",
                   "PEd3fa4ff6c733d58e8b6a",
                   "PEe672463bd7dd5f3520ad"
@@ -2716,7 +3084,7 @@
               "schema_version": 1,
               "subject_id": "D1"
             },
-            "ts": "2026-09-08T17:35:49.512622+00:00",
+            "ts": "2026-09-08T17:45:10.538227+00:00",
             "state": "enabled"
           }
         ],
@@ -2735,7 +3103,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "ts": "2026-09-08T17:45:10.534263+00:00",
             "state": "enabled"
           }
         ],
@@ -2743,13 +3111,26 @@
           {
             "tenant": "T1",
             "draft_key": "payroll.draft:D1:1",
-            "entry_id": "DE793db74cd6d705234049",
+            "entry_id": "DEea1930c20fc770cbf6a9",
             "employee_id": "E101",
             "payroll_month": "2026-11",
-            "source_key": "payroll.earning:EARN-SALARY:1",
-            "component_key": "payroll.component:SALARY:1",
+            "source_key": "payroll.earning:EARN-BASIC:1",
+            "component_key": "payroll.component:BASIC:1",
             "direction": "earning",
-            "amount_minor": 5000000,
+            "amount_minor": 3000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE95471b7bbbbcc116481f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-HRA:1",
+            "component_key": "payroll.component:HRA:1",
+            "direction": "earning",
+            "amount_minor": 2000000,
             "currency": "INR",
             "row_kind": "draft"
           },
@@ -2796,15 +3177,29 @@
         "payroll_ledger": [
           {
             "tenant": "T1",
-            "ledger_entry_id": "PEca8e136caced406044ca",
+            "ledger_entry_id": "PEb8228870d12f87cdf529",
             "draft_key": "payroll.draft:D1:1",
-            "draft_entry_id": "DE793db74cd6d705234049",
+            "draft_entry_id": "DEea1930c20fc770cbf6a9",
             "employee_id": "E101",
             "payroll_month": "2026-11",
-            "source_key": "payroll.earning:EARN-SALARY:1",
-            "component_key": "payroll.component:SALARY:1",
+            "source_key": "payroll.earning:EARN-BASIC:1",
+            "component_key": "payroll.component:BASIC:1",
             "direction": "earning",
-            "amount_minor": 5000000,
+            "amount_minor": 3000000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PE86a57bcb6346cd492ecb",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE95471b7bbbbcc116481f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-HRA:1",
+            "component_key": "payroll.component:HRA:1",
+            "direction": "earning",
+            "amount_minor": 2000000,
             "currency": "INR",
             "row_kind": "posted"
           },
@@ -2899,17 +3294,32 @@
         "payroll_l1_records": [
           {
             "tenant": "T1",
-            "key": "payroll.component:SALARY:1",
+            "key": "payroll.component:BASIC:1",
             "value": {
-              "code": "salary",
-              "component_id": "SALARY",
+              "code": "basic",
+              "component_id": "BASIC",
               "country_code": "IN",
               "kind": "earning",
-              "label": "Salary",
+              "label": "Basic",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509133+00:00",
+            "ts": "2026-09-08T17:45:10.532240+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.component:HRA:1",
+            "value": {
+              "code": "hra",
+              "component_id": "HRA",
+              "country_code": "IN",
+              "kind": "earning",
+              "label": "House rent allowance",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.532729+00:00",
             "state": "enabled"
           },
           {
@@ -2924,7 +3334,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509476+00:00",
+            "ts": "2026-09-08T17:45:10.532924+00:00",
             "state": "enabled"
           },
           {
@@ -2939,23 +3349,39 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509612+00:00",
+            "ts": "2026-09-08T17:45:10.533102+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
-            "key": "payroll.earning:EARN-SALARY:1",
+            "key": "payroll.earning:EARN-BASIC:1",
             "value": {
-              "amount_minor": 5000000,
-              "component_key": "payroll.component:SALARY:1",
-              "earning_id": "EARN-SALARY",
+              "amount_minor": 3000000,
+              "component_key": "payroll.component:BASIC:1",
+              "earning_id": "EARN-BASIC",
               "effective_from": "2026-01",
               "effective_until": null,
               "employee_id": "E101",
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509759+00:00",
+            "ts": "2026-09-08T17:45:10.533306+00:00",
+            "state": "enabled"
+          },
+          {
+            "tenant": "T1",
+            "key": "payroll.earning:EARN-HRA:1",
+            "value": {
+              "amount_minor": 2000000,
+              "component_key": "payroll.component:HRA:1",
+              "earning_id": "EARN-HRA",
+              "effective_from": "2026-01",
+              "effective_until": null,
+              "employee_id": "E101",
+              "revision": 1,
+              "schema_version": 1
+            },
+            "ts": "2026-09-08T17:45:10.533498+00:00",
             "state": "enabled"
           },
           {
@@ -2971,7 +3397,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.509892+00:00",
+            "ts": "2026-09-08T17:45:10.533685+00:00",
             "state": "enabled"
           },
           {
@@ -2989,7 +3415,7 @@
               "schema_version": 1,
               "version_id": "opaque\\loan-nov-2026"
             },
-            "ts": "2026-09-08T17:35:49.510087+00:00",
+            "ts": "2026-09-08T17:45:10.533973+00:00",
             "state": "enabled"
           },
           {
@@ -3015,18 +3441,19 @@
               "schema_version": 1,
               "subject_id": "I-LOAN"
             },
-            "ts": "2026-09-08T17:35:49.510187+00:00",
+            "ts": "2026-09-08T17:45:10.534122+00:00",
             "state": "enabled"
           },
           {
             "tenant": "T1",
             "key": "payroll.draft:D1:1",
             "value": {
-              "content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
               "deductions_minor": 500000,
               "draft_id": "D1",
               "earning_keys": [
-                "payroll.earning:EARN-SALARY:1",
+                "payroll.earning:EARN-BASIC:1",
+                "payroll.earning:EARN-HRA:1",
                 "payroll.earning:EARN-EMPLOYER:1"
               ],
               "employee_id": "E101",
@@ -3039,7 +3466,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510814+00:00",
+            "ts": "2026-09-08T17:45:10.535177+00:00",
             "state": "enabled"
           },
           {
@@ -3056,7 +3483,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511104+00:00",
+            "ts": "2026-09-08T17:45:10.535658+00:00",
             "state": "enabled"
           },
           {
@@ -3077,7 +3504,7 @@
               "resolution_id": "RES1",
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511163+00:00",
+            "ts": "2026-09-08T17:45:10.535747+00:00",
             "state": "enabled"
           },
           {
@@ -3094,7 +3521,7 @@
               "revision": 2,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511421+00:00",
+            "ts": "2026-09-08T17:45:10.536166+00:00",
             "state": "enabled"
           },
           {
@@ -3111,7 +3538,7 @@
               "revision": 3,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.511760+00:00",
+            "ts": "2026-09-08T17:45:10.536690+00:00",
             "state": "enabled"
           },
           {
@@ -3121,12 +3548,12 @@
               "actor": "payroll-admin",
               "control_revision": 3,
               "decision": "approved",
-              "draft_content_hash": "e1af86729521d6c8612d0c62633d616796f0c7120dc403b6ffb76e92f790e8f5",
+              "draft_content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
               "draft_id": "D1",
               "review_id": "REV1",
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.512019+00:00",
+            "ts": "2026-09-08T17:45:10.537125+00:00",
             "state": "enabled"
           },
           {
@@ -3150,7 +3577,7 @@
               "schema_version": 1,
               "version_id": "opaque\\loan-nov-2026"
             },
-            "ts": "2026-09-08T17:35:49.512530+00:00",
+            "ts": "2026-09-08T17:45:10.537990+00:00",
             "state": "enabled"
           },
           {
@@ -3160,7 +3587,8 @@
               "after": {
                 "committed": true,
                 "posted_entry_ids": [
-                  "PEca8e136caced406044ca",
+                  "PEb8228870d12f87cdf529",
+                  "PE86a57bcb6346cd492ecb",
                   "PE5e38fcb8288db506f734",
                   "PEd3fa4ff6c733d58e8b6a",
                   "PEe672463bd7dd5f3520ad"
@@ -3178,7 +3606,8 @@
                 "draft_key": "payroll.draft:D1:1",
                 "employer_liability_entry_id": "PEd3fa4ff6c733d58e8b6a",
                 "posted_entry_ids": [
-                  "PEca8e136caced406044ca",
+                  "PEb8228870d12f87cdf529",
+                  "PE86a57bcb6346cd492ecb",
                   "PE5e38fcb8288db506f734",
                   "PEd3fa4ff6c733d58e8b6a",
                   "PEe672463bd7dd5f3520ad"
@@ -3190,7 +3619,7 @@
               "schema_version": 1,
               "subject_id": "D1"
             },
-            "ts": "2026-09-08T17:35:49.512622+00:00",
+            "ts": "2026-09-08T17:45:10.538227+00:00",
             "state": "enabled"
           }
         ],
@@ -3209,7 +3638,7 @@
               "revision": 1,
               "schema_version": 1
             },
-            "ts": "2026-09-08T17:35:49.510285+00:00",
+            "ts": "2026-09-08T17:45:10.534263+00:00",
             "state": "enabled"
           }
         ],
@@ -3217,13 +3646,26 @@
           {
             "tenant": "T1",
             "draft_key": "payroll.draft:D1:1",
-            "entry_id": "DE793db74cd6d705234049",
+            "entry_id": "DEea1930c20fc770cbf6a9",
             "employee_id": "E101",
             "payroll_month": "2026-11",
-            "source_key": "payroll.earning:EARN-SALARY:1",
-            "component_key": "payroll.component:SALARY:1",
+            "source_key": "payroll.earning:EARN-BASIC:1",
+            "component_key": "payroll.component:BASIC:1",
             "direction": "earning",
-            "amount_minor": 5000000,
+            "amount_minor": 3000000,
+            "currency": "INR",
+            "row_kind": "draft"
+          },
+          {
+            "tenant": "T1",
+            "draft_key": "payroll.draft:D1:1",
+            "entry_id": "DE95471b7bbbbcc116481f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-HRA:1",
+            "component_key": "payroll.component:HRA:1",
+            "direction": "earning",
+            "amount_minor": 2000000,
             "currency": "INR",
             "row_kind": "draft"
           },
@@ -3270,15 +3712,29 @@
         "payroll_ledger": [
           {
             "tenant": "T1",
-            "ledger_entry_id": "PEca8e136caced406044ca",
+            "ledger_entry_id": "PEb8228870d12f87cdf529",
             "draft_key": "payroll.draft:D1:1",
-            "draft_entry_id": "DE793db74cd6d705234049",
+            "draft_entry_id": "DEea1930c20fc770cbf6a9",
             "employee_id": "E101",
             "payroll_month": "2026-11",
-            "source_key": "payroll.earning:EARN-SALARY:1",
-            "component_key": "payroll.component:SALARY:1",
+            "source_key": "payroll.earning:EARN-BASIC:1",
+            "component_key": "payroll.component:BASIC:1",
             "direction": "earning",
-            "amount_minor": 5000000,
+            "amount_minor": 3000000,
+            "currency": "INR",
+            "row_kind": "posted"
+          },
+          {
+            "tenant": "T1",
+            "ledger_entry_id": "PE86a57bcb6346cd492ecb",
+            "draft_key": "payroll.draft:D1:1",
+            "draft_entry_id": "DE95471b7bbbbcc116481f",
+            "employee_id": "E101",
+            "payroll_month": "2026-11",
+            "source_key": "payroll.earning:EARN-HRA:1",
+            "component_key": "payroll.component:HRA:1",
+            "direction": "earning",
+            "amount_minor": 2000000,
             "currency": "INR",
             "row_kind": "posted"
           },
