@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1480" height="1120" viewBox="0 0 1480 1120" role="img" aria-labelledby="title desc">
+<title id="title">Payroll canonical storage map</title><desc id="desc">Three canonical ledger tables plus one L1 record store and one L2 store. All nine L1 record types, one L2 type, and five ledger entry kinds are shown.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L8 4.5 L0 9 Z" fill="#7C8EA4"/></marker></defs>
+<rect width="1480" height="1120" fill="#F7FAFD"/>
+<g font-family="Noto Sans, Arial, sans-serif" fill="#172B46">
+<text x="48" y="62" font-size="34" font-weight="700" fill="#172B46">Payroll canonical storage</text>
+<text x="48" y="99" font-size="18" font-weight="400" fill="#52647A">Three ledgers. One L1 record store. One separate L2 record store.</text>
+<rect x="48" y="135" width="217" height="30" rx="15" fill="#EAF0FF" stroke="#EAF0FF"/>
+<text x="60" y="155" font-size="12" font-weight="700" fill="#2563EB">15 REQUIRED ROW KINDS</text>
+<text x="48" y="206" font-size="15" font-weight="700" fill="#52647A">L1  /  CORE PAYROLL</text>
+<rect x="1275" y="180" width="156" height="30" rx="15" fill="#E9EFF5" stroke="#E9EFF5"/>
+<text x="1287" y="200" font-size="12" font-weight="700" fill="#52647A">4 physical tables</text>
+<rect x="48" y="230" width="480" height="160" rx="16" fill="white" stroke="#DCE4ED"/>
+<rect x="48" y="230" width="7" height="160" rx="3" fill="#2563EB" stroke="#2563EB"/>
+<text x="73" y="268" font-size="20" font-weight="700" fill="#2563EB" font-family="DejaVu Sans Mono, monospace">payroll_draft_ledger</text>
+<text x="73" y="302" font-size="15" font-weight="400" fill="#52647A">Fixed monetary proposal for one employee</text>
+<rect x="73" y="331" width="138" height="30" rx="15" fill="#EFF5FF" stroke="#EFF5FF"/>
+<text x="85" y="351" font-size="12" font-weight="700" fill="#2563EB">Draft entry</text>
+<rect x="48" y="410" width="480" height="160" rx="16" fill="white" stroke="#DCE4ED"/>
+<rect x="48" y="410" width="7" height="160" rx="3" fill="#087F72" stroke="#087F72"/>
+<text x="73" y="448" font-size="20" font-weight="700" fill="#087F72" font-family="DejaVu Sans Mono, monospace">payroll_ledger</text>
+<text x="73" y="482" font-size="15" font-weight="400" fill="#52647A">Immutable committed payroll effects</text>
+<rect x="73" y="511" width="138" height="30" rx="15" fill="#ECF9F5" stroke="#ECF9F5"/>
+<text x="85" y="531" font-size="12" font-weight="700" fill="#087F72">Posted entry</text>
+<rect x="48" y="590" width="480" height="246" rx="16" fill="white" stroke="#DCE4ED"/>
+<rect x="48" y="590" width="7" height="246" rx="3" fill="#B56808" stroke="#B56808"/>
+<text x="73" y="628" font-size="17" font-weight="700" fill="#B56808" font-family="DejaVu Sans Mono, monospace">payroll_employer_liability_ledger</text>
+<text x="73" y="660" font-size="15" font-weight="400" fill="#52647A">Authority payments and liability facts</text>
+<rect x="73" y="687" width="118" height="30" rx="15" fill="#FFF3DF" stroke="#FFF3DF"/>
+<text x="85" y="707" font-size="12" font-weight="700" fill="#B56808">Obligation</text>
+<text x="203" y="707" font-size="12.5" font-weight="400" fill="#52647A">Amount owed, backed by posted payroll</text>
+<rect x="73" y="732" width="118" height="30" rx="15" fill="#FFF3DF" stroke="#FFF3DF"/>
+<text x="85" y="752" font-size="12" font-weight="700" fill="#B56808">Remittance</text>
+<text x="203" y="752" font-size="12.5" font-weight="400" fill="#52647A">Payment with challan or proof reference</text>
+<rect x="73" y="777" width="118" height="30" rx="15" fill="#FFF3DF" stroke="#FFF3DF"/>
+<text x="85" y="797" font-size="12" font-weight="700" fill="#B56808">Allocation</text>
+<text x="203" y="797" font-size="12.5" font-weight="400" fill="#52647A">Applies payment against an obligation</text>
+<rect x="552" y="230" width="880" height="606" rx="16" fill="white" stroke="#DCE4ED"/>
+<text x="580" y="270" font-size="22" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll_l1_records</text>
+<text x="580" y="302" font-size="15" font-weight="400" fill="#52647A">Canonical records live here. A record type does not create another table.</text>
+<path d="M580 324 L1404 324" fill="none" stroke="#DCE4ED" stroke-width="2"/>
+<rect x="576" y="348" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
+<text x="589" y="377" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.component</text>
+<text x="589" y="407" font-size="13" font-weight="600" fill="#172B46">Component / revision</text>
+<text x="589" y="434" font-size="11.5" font-weight="400" fill="#52647A">Earnings, deductions and</text>
+<text x="589" y="451" font-size="11.5" font-weight="400" fill="#52647A">employer contributions</text>
+<rect x="853" y="348" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
+<text x="866" y="377" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.earning</text>
+<text x="866" y="407" font-size="13" font-weight="600" fill="#172B46">Earning / revision</text>
+<text x="866" y="434" font-size="11.5" font-weight="400" fill="#52647A">Entitlement, amount, effective dates</text>
+<rect x="1130" y="348" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
+<text x="1143" y="377" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.instruction</text>
+<text x="1143" y="407" font-size="13" font-weight="600" fill="#172B46">Instruction / revision</text>
+<text x="1143" y="434" font-size="11.5" font-weight="400" fill="#52647A">Cadence, amount, expiry</text>
+<rect x="576" y="484" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
+<text x="589" y="513" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.draft</text>
+<text x="589" y="543" font-size="13" font-weight="600" fill="#172B46">Draft / fixed revision</text>
+<text x="589" y="570" font-size="11.5" font-weight="400" fill="#52647A">Exact sources, hash and totals</text>
+<rect x="853" y="484" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
+<text x="866" y="513" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.draft.control</text>
+<text x="866" y="543" font-size="13" font-weight="600" fill="#172B46">Draft / control revision</text>
+<text x="866" y="570" font-size="11.5" font-weight="400" fill="#52647A">Hold or release, actor and reason</text>
+<rect x="1130" y="484" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
+<text x="1143" y="513" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.draft.review</text>
+<text x="1143" y="543" font-size="13" font-weight="600" fill="#172B46">Draft / review ID</text>
+<text x="1143" y="570" font-size="11.5" font-weight="400" fill="#52647A">Exact content and control decision</text>
+<rect x="576" y="620" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
+<text x="589" y="649" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.instruction.resolution</text>
+<text x="589" y="679" font-size="13" font-weight="600" fill="#172B46">Draft / resolution ID</text>
+<text x="589" y="706" font-size="11.5" font-weight="400" fill="#52647A">Instruction treatment in the draft</text>
+<rect x="853" y="620" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
+<text x="866" y="649" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.instruction.application</text>
+<text x="866" y="679" font-size="13" font-weight="600" fill="#172B46">Version / application ID</text>
+<text x="866" y="706" font-size="11.5" font-weight="400" fill="#52647A">Permanent consumption and effects</text>
+<rect x="1130" y="620" width="261" height="117" rx="10" fill="#FAF8FE" stroke="#E8E1F3"/>
+<text x="1143" y="649" font-size="12.5" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.operation.receipt</text>
+<text x="1143" y="679" font-size="13" font-weight="600" fill="#172B46">Subject / receipt ID</text>
+<text x="1143" y="706" font-size="11.5" font-weight="400" fill="#52647A">Retry identity and durable outcome</text>
+<text x="580" y="798" font-size="14" font-weight="400" fill="#52647A" font-family="DejaVu Sans Mono, monospace">Shared envelope: tenant | key | value (JSON) | ts | state</text>
+<text x="48" y="879" font-size="15" font-weight="700" fill="#52647A">L2  /  REUSABLE AUXILIARY DATA</text>
+<rect x="48" y="901" width="1384" height="137" rx="16" fill="#F2F0FA" stroke="#E0DBEF"/>
+<text x="72" y="941" font-size="21" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll_l2_records</text>
+<text x="72" y="973" font-size="14" font-weight="400" fill="#52647A">1 physical table</text>
+<rect x="437" y="922" width="384" height="92" rx="10" fill="white" stroke="#DED6EE"/>
+<text x="457" y="951" font-size="16" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.employee.settings</text>
+<text x="457" y="981" font-size="13" font-weight="400" fill="#52647A">Employee / revision · effective preferences</text>
+<text x="855" y="950" font-size="16" font-weight="600" fill="#172B46">Policy references remain auxiliary.</text>
+<text x="855" y="978" font-size="14" font-weight="400" fill="#52647A">Consumers own L3 composition and persistence.</text>
+<text x="855" y="1002" font-size="14" font-weight="400" fill="#52647A">No L3 table or API is supplied.</text>
+<text x="48" y="1081" font-size="15" font-weight="400" fill="#52647A">Table = storage   ·   Record type = meaning   ·   Key = exact instance</text>
+</g></svg>

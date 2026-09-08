@@ -6,6 +6,13 @@ persistence. Each box below is a meaning; only the named tables are storage.
 
 ## Storage map
 
+[Open standalone SVG: Canonical storage map](../diagrams/payroll-canonical-storage.svg)
+
+![Canonical storage map](../diagrams/payroll-canonical-storage.svg)
+
+<details>
+<summary>Mermaid source</summary>
+
 ```mermaid
 flowchart TB
     P[Payroll domain]
@@ -33,12 +40,21 @@ flowchart TB
     S --> ES[payroll.employee.settings]
 ```
 
+</details>
+
 That is **15 required row kinds**: nine L1 record types, one L2 record type,
 one draft-entry kind, one posted-entry kind and three employer-liability kinds.
 Different component directions, source revisions and control states are variations
 within these kinds; they do not create tables or additional canonical types.
 
 ## How an employee payroll connects
+
+[Open standalone SVG: Employee payroll journey](../diagrams/payroll-employee-journey.svg)
+
+![Employee payroll journey](../diagrams/payroll-employee-journey.svg)
+
+<details>
+<summary>Mermaid source</summary>
 
 ```mermaid
 flowchart LR
@@ -62,6 +78,8 @@ flowchart LR
     M[Remittance and challan] --> A[Allocation]
     O --> A
 ```
+
+</details>
 
 Commit writes the posted entries, application evidence and receipt together.
 An instruction resolution describes draft treatment; only committed application
