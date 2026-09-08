@@ -103,6 +103,13 @@ a { color: #9eebc6; font-size: 12px; }
 .contribution-head code { color: #9eebc6; font-size: 12px; overflow-wrap: anywhere; }
 .contribution-head span { color: #819d90; font: 400 11px DM Mono, monospace; overflow-wrap: anywhere; }
 .contribution-head b { margin-left: auto; color: #6f9183; font-size: 9px; white-space: nowrap; }
+.ledger-table-wrap { overflow-x: auto; border-top: 1px solid #1e392f; }
+.ledger-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.ledger-table th, .ledger-table td { padding: 9px 12px; border-bottom: 1px solid #172b24; text-align: left; vertical-align: top; }
+.ledger-table th { color: #718d81; background: #09130f; font-size: 9px; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+.ledger-table td { color: #b9d8ca; }
+.ledger-table code { display: block; max-width: 280px; color: #7ee8b4; font-size: 10px; overflow-wrap: anywhere; }
+.ledger-table .money-cell { font-family: DM Mono, monospace; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .panel-copy { padding: 10px 14px; border-bottom: 1px solid #172b24; color: #809a8f; font-size: 12px; }
 .panel-copy code { color: #8de7b9; }
 .rows { max-height: 440px; overflow: auto; }

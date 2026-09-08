@@ -73,6 +73,22 @@ function jsonDetails(row: Row, isNew: boolean): string {
   </details>`;
 }
 
+function draftLedgerTable(rows: Row[]): string {
+  return `<div class="ledger-table-wrap"><table class="ledger-table">
+    <thead><tr><th>Employee</th><th>Month</th><th>Draft key</th><th>Source key</th><th>Component key</th><th>Earning / expense</th><th>Deduction / liability</th></tr></thead>
+    <tbody>${rows.map((row) => {
+      const amount = Number(row.amount_minor);
+      const isEarning = row.direction === 'earning' || row.direction === 'employer_expense';
+      return `<tr>
+        <td>${escapeHtml(row.employee_id)}</td><td>${escapeHtml(row.payroll_month)}</td>
+        <td><code>${escapeHtml(row.draft_key)}</code></td><td><code>${escapeHtml(row.source_key)}</code></td><td><code>${escapeHtml(row.component_key)}</code></td>
+        <td class="money-cell">${isEarning ? money(amount) : '—'}</td>
+        <td class="money-cell">${isEarning ? '—' : money(amount)}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+
 function timelineStage(stage: Stage, index: number): string {
   const previous = index ? flow.stages[index - 1].tables : {};
   const contributions = Object.entries(stage.tables).flatMap(([table, rows]) => {
@@ -84,6 +100,7 @@ function timelineStage(stage: Stage, index: number): string {
       : [[table, added] as const];
     return groups.map(([type, records]) => `<section class="contribution">
       <div class="contribution-head"><code>${table}</code>${type === table ? '' : `<span>${type}</span>`}<b>${records.length} added</b></div>
+      ${table === 'payroll_draft_ledger' ? draftLedgerTable(records) : ''}
       <div class="rows">${records.map((row) => jsonDetails(row, index === selected)).join('')}</div>
     </section>`);
   });
