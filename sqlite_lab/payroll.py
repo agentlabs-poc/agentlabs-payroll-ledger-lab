@@ -36,11 +36,15 @@ class Payroll:
         self.actor = _identifier(actor, "actor")
         self.records = RecordStore(connection)
 
-    def define_component(self,component_id,revision,code,label,kind,country_code):
+    def define_component(self,component_id,revision,code,label,kind,country_code,authority_payable=False):
+        if type(authority_payable) is not bool: raise PayrollError("authority payable must be boolean")
         value={"schema_version":1,"component_id":component_id,"revision":revision,"code":code,"label":label,"kind":kind,"country_code":country_code}
+        if authority_payable or kind=="employer_contribution": value["authority_payable"]=True
         with _write(self.connection):
             history=self.records.history_l1(self.tenant,"payroll.component",component_id)
-            if history and any(value[f]!=history[0]["value"][f] for f in ("code","kind","country_code")):
+            if history and (any(value[f]!=history[0]["value"][f] for f in ("code","kind","country_code"))
+                    or (value["kind"]=="employer_contribution" or value.get("authority_payable",False))
+                    != (history[0]["value"]["kind"]=="employer_contribution" or history[0]["value"].get("authority_payable",False))):
                 raise Conflict("component identity fields cannot change")
             collision=self.connection.execute("SELECT 1 FROM payroll_l1_records WHERE tenant=? AND key LIKE 'payroll.component:%' AND json_extract(value,'$.country_code')=? AND json_extract(value,'$.code')=? AND json_extract(value,'$.component_id')<>?",(self.tenant,country_code,code,component_id)).fetchone()
             if collision: raise Conflict("component code already owned in tenant/country scope")
@@ -217,6 +221,7 @@ class Payroll:
             posted = []
             mapping = {}
             liabilities = []
+            payables = []
             for row in rows:
                 posted_id = _stable("PE", employee_id, draft_id, row["entry_id"])
                 mapping[row["entry_id"]] = posted_id
@@ -224,6 +229,9 @@ class Payroll:
                 self.connection.execute("INSERT INTO payroll_ledger(tenant,ledger_entry_id,draft_key,draft_entry_id,employee_id,payroll_month,source_key,component_key,direction,amount_minor,currency) VALUES(?,?,?,?,?,?,?,?,?,?,'INR')",(self.tenant,posted_id,draft_key,row["entry_id"],row["employee_id"],row["payroll_month"],row["source_key"],row["component_key"],row["direction"],row["amount_minor"]))
                 if row["direction"] == "employer_liability":
                     liabilities.append(posted_id)
+                    payables.append(posted_id)
+                elif row["direction"] == "deduction" and self.records.get_l1(self.tenant,row["component_key"])["value"].get("authority_payable",False):
+                    payables.append(posted_id)
             for rr in self.connection.execute("SELECT value FROM payroll_l1_records WHERE tenant=? AND key LIKE 'payroll.instruction.resolution:%' AND json_extract(value,'$.employee_id')=? AND json_extract(value,'$.draft_id')=?",(self.tenant,employee_id,draft_id)):
                 resolution = json.loads(rr[0])
                 instruction = self.records.get_l1(
@@ -234,7 +242,7 @@ class Payroll:
                 app={"schema_version":1,"application_id":aid,"instruction_id":instruction["instruction_id"],"instruction_key":resolution["instruction_key"],"version_id":instruction["version_id"],"employee_id":draft["employee_id"],"payroll_month":draft["payroll_month"],"draft_id":draft_id,"cadence":instruction["cadence"],"effects":effects}
                 try: self.records._put_l1(self.tenant,canonical_key("payroll.instruction.application",employee_id,instruction["instruction_id"],aid),app)
                 except sqlite3.IntegrityError as exc: raise Conflict("instruction already consumed") from exc
-            outcome={"status":"committed","draft_id":draft_id,"draft_key":draft_key,"posted_entry_ids":posted,"employer_liability_entry_ids":liabilities}
+            outcome={"status":"committed","draft_id":draft_id,"draft_key":draft_key,"posted_entry_ids":posted,"employer_liability_entry_ids":liabilities,"payable_entry_ids":payables}
             self._store_receipt(
                 employee_id,
                 "payroll.commit",
@@ -259,9 +267,9 @@ class Payroll:
         _identifier(currency, "currency")
         _money(amount_minor)
         with _write(self.connection):
-            posted=self.connection.execute("SELECT payroll_month,currency FROM payroll_ledger WHERE tenant=? AND ledger_entry_id=? AND direction='employer_liability'",(self.tenant,posted_liability_entry_id)).fetchone()
+            posted=self.connection.execute("SELECT p.payroll_month,p.currency FROM payroll_ledger p JOIN payroll_l1_records c ON c.tenant=p.tenant AND c.key=p.component_key WHERE p.tenant=? AND p.ledger_entry_id=? AND (p.direction='employer_liability' OR (p.direction='deduction' AND json_extract(c.value,'$.authority_payable')=1))",(self.tenant,posted_liability_entry_id)).fetchone()
             period=reporting_period or (posted["payroll_month"] if posted else None)
-            if not posted or posted["currency"]!=currency or not MONTH.fullmatch(period): raise PayrollError("obligation scope does not match posted liability")
+            if not posted or posted["currency"]!=currency or not MONTH.fullmatch(period): raise PayrollError("obligation scope does not match posted payable")
             try: self.connection.execute("INSERT INTO payroll_employer_liability_ledger(tenant,entry_id,row_kind,amount_minor,employer_id,authority_id,currency,reporting_period,posted_liability_entry_id) VALUES(?,?,'obligation',?,?,?,?,?,?)",(self.tenant,entry_id,amount_minor,employer_id,authority_id,currency,period,posted_liability_entry_id))
             except sqlite3.IntegrityError as exc: raise Conflict("invalid or duplicate liability obligation") from exc
     def record_remittance(self,entry_id,amount_minor,proof_ref,*,employer_id,authority_id,currency="INR",reporting_period=None):

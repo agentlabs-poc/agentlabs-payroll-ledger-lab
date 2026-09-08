@@ -19,8 +19,8 @@ STATES = {"enabled", "disabled", "deleted"}
 
 SCHEMAS = {
     "payroll.component": {
-        "fields": {"schema_version", "component_id", "revision", "code", "label", "kind", "country_code"},
-        "identity": (("component_id", "text"), ("revision", "revision")),
+        "fields": {"schema_version", "component_id", "revision", "code", "label", "kind", "country_code", "authority_payable"},
+        "identity": (("component_id", "text"), ("revision", "revision")), "optional": {"authority_payable"},
     },
     "payroll.earning": {
         "fields": {"schema_version", "earning_id", "revision", "employee_id", "component_key", "amount_minor", "effective_from", "effective_until"},
@@ -55,8 +55,8 @@ SCHEMAS = {
         "identity": (("employee_id", "text"), ("subject_id", "text"), ("receipt_id", "text")),
     },
     "payroll.employee.settings": {
-        "fields": {"schema_version", "employee_id", "revision", "effective_from", "policy_ref", "payslip_locale"},
-        "identity": (("employee_id", "text"), ("revision", "revision")),
+        "fields": {"schema_version", "employee_id", "revision", "effective_from", "policy_ref", "payslip_locale", "tax"},
+        "identity": (("employee_id", "text"), ("revision", "revision")), "optional": {"tax"},
     },
 }
 
@@ -178,6 +178,9 @@ def _validate(record_type, identity, value):
             _identifier(value[name], name, identity=name == "component_id")
         if not isinstance(value["label"], str) or not value["label"]:
             raise RecordError("label is required")
+        if "authority_payable" in value and (type(value["authority_payable"]) is not bool
+                or value["kind"] == "earning"):
+            raise RecordError("invalid authority payable component")
     elif record_type in {"payroll.earning", "payroll.instruction"}:
         for name in ("earning_id" if record_type == "payroll.earning" else "instruction_id", "employee_id"):
             _identifier(value[name], name, identity=True)
@@ -225,6 +228,17 @@ def _validate(record_type, identity, value):
         _revision(policy["revision"])
         if not isinstance(value["payslip_locale"], str) or not value["payslip_locale"]:
             raise RecordError("locale is required")
+        if "tax" in value:
+            tax = value["tax"]
+            if not isinstance(tax, dict) or set(tax) != {"jurisdiction", "financial_year", "regime"}:
+                raise RecordError("invalid tax selection")
+            match = re.fullmatch(r"([0-9]{4})-([0-9]{2})", tax["financial_year"]) if isinstance(tax.get("financial_year"), str) else None
+            if (tax.get("jurisdiction") != "IN" or tax.get("regime") not in {"old", "new"}
+                    or not match or int(match[2]) != (int(match[1]) + 1) % 100):
+                raise RecordError("invalid tax selection")
+            year = int(match[1])
+            if not f"{year}-04" <= value["effective_from"] <= f"{year + 1}-03":
+                raise RecordError("tax selection outside financial year")
     elif record_type in {"payroll.instruction.resolution", "payroll.instruction.application"}:
         instruction = parse_key(value["instruction_key"])
         if (instruction[0], instruction[1], instruction[2]) != (

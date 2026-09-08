@@ -28,7 +28,7 @@ CREATE TRIGGER component_code_scope BEFORE INSERT ON payroll_l1_records
 WHEN NEW.key LIKE 'payroll.component:%' AND EXISTS(SELECT 1 FROM payroll_l1_records old WHERE old.tenant=NEW.tenant AND old.key LIKE 'payroll.component:%' AND json_extract(old.value,'$.country_code')=json_extract(NEW.value,'$.country_code') AND json_extract(old.value,'$.code')=json_extract(NEW.value,'$.code') AND json_extract(old.value,'$.component_id')<>json_extract(NEW.value,'$.component_id'))
 BEGIN SELECT RAISE(ABORT,'component code conflicts in tenant/country scope'); END;
 CREATE TRIGGER component_identity_stable BEFORE INSERT ON payroll_l1_records
-WHEN NEW.key LIKE 'payroll.component:%' AND EXISTS(SELECT 1 FROM payroll_l1_records old WHERE old.tenant=NEW.tenant AND old.key LIKE 'payroll.component:%' AND json_extract(old.value,'$.component_id')=json_extract(NEW.value,'$.component_id') AND (json_extract(old.value,'$.code')<>json_extract(NEW.value,'$.code') OR json_extract(old.value,'$.kind')<>json_extract(NEW.value,'$.kind') OR json_extract(old.value,'$.country_code')<>json_extract(NEW.value,'$.country_code')))
+WHEN NEW.key LIKE 'payroll.component:%' AND EXISTS(SELECT 1 FROM payroll_l1_records old WHERE old.tenant=NEW.tenant AND old.key LIKE 'payroll.component:%' AND json_extract(old.value,'$.component_id')=json_extract(NEW.value,'$.component_id') AND (json_extract(old.value,'$.code')<>json_extract(NEW.value,'$.code') OR json_extract(old.value,'$.kind')<>json_extract(NEW.value,'$.kind') OR json_extract(old.value,'$.country_code')<>json_extract(NEW.value,'$.country_code') OR CASE WHEN json_extract(old.value,'$.kind')='employer_contribution' THEN 1 ELSE COALESCE(json_extract(old.value,'$.authority_payable'),0) END<>CASE WHEN json_extract(NEW.value,'$.kind')='employer_contribution' THEN 1 ELSE COALESCE(json_extract(NEW.value,'$.authority_payable'),0) END))
 BEGIN SELECT RAISE(ABORT,'component identity fields changed'); END;
 CREATE TRIGGER l1_immutable_update BEFORE UPDATE ON payroll_l1_records BEGIN SELECT RAISE(ABORT,'L1 records are immutable'); END;
 CREATE TRIGGER l1_immutable_delete BEFORE DELETE ON payroll_l1_records BEGIN SELECT RAISE(ABORT,'L1 records are immutable'); END;
@@ -107,8 +107,8 @@ CREATE TABLE payroll_employer_liability_ledger (
 CREATE UNIQUE INDEX one_obligation_per_liability ON payroll_employer_liability_ledger(tenant,posted_liability_entry_id) WHERE row_kind='obligation';
 CREATE INDEX liability_allocations ON payroll_employer_liability_ledger(tenant,obligation_entry_id) WHERE row_kind='allocation';
 CREATE TRIGGER obligation_matches_posted BEFORE INSERT ON payroll_employer_liability_ledger
-WHEN NEW.row_kind='obligation' AND NOT EXISTS(SELECT 1 FROM payroll_ledger p WHERE p.tenant=NEW.tenant AND p.ledger_entry_id=NEW.posted_liability_entry_id AND p.direction='employer_liability' AND p.amount_minor=NEW.amount_minor)
-BEGIN SELECT RAISE(ABORT,'obligation must match posted employer liability'); END;
+WHEN NEW.row_kind='obligation' AND NOT EXISTS(SELECT 1 FROM payroll_ledger p JOIN payroll_l1_records c ON c.tenant=p.tenant AND c.key=p.component_key WHERE p.tenant=NEW.tenant AND p.ledger_entry_id=NEW.posted_liability_entry_id AND (p.direction='employer_liability' OR (p.direction='deduction' AND json_extract(c.value,'$.authority_payable')=1)) AND p.amount_minor=NEW.amount_minor)
+BEGIN SELECT RAISE(ABORT,'obligation must match posted payable'); END;
 CREATE TRIGGER allocation_refs_typed BEFORE INSERT ON payroll_employer_liability_ledger
 WHEN NEW.row_kind='allocation' AND (NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger o WHERE o.tenant=NEW.tenant AND o.entry_id=NEW.obligation_entry_id AND o.row_kind='obligation') OR NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger r WHERE r.tenant=NEW.tenant AND r.entry_id=NEW.remittance_entry_id AND r.row_kind='remittance'))
 BEGIN SELECT RAISE(ABORT,'allocation reference type mismatch'); END;
