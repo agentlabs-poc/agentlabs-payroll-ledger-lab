@@ -1,5 +1,9 @@
 # Canonical HTML payroll walkthrough
 
+> **Identity contract under review:** every employee-owned record must include
+> the employee in its key. The existing serialized examples predate this rule;
+> they are not the final key contract. See [canonical identity definitions](canonical-identities.md).
+
 The HTML demo follows the [three-ledger design](three-ledger-simulation.md).
 It displays actual row snapshots produced by named payroll operations in a
 temporary SQLite database. The browser is a playback and inspection tool;
@@ -89,3 +93,12 @@ migrations, load and exact HTTP-response replay remain separate proof work.
 
 The [retained evidence](../evidence/three-ledger-simulation/README.md) records the
 source-bound checks, complete row catalogue and browser validation.
+
+## Pinned generic key storage
+
+The definitions panel displays the [shared canonical register](canonical-definitions.json),
+including the user's example `payroll.component:BASIC` decoded as `key1 = payroll`,
+`key2 = component`, `key3 = BASIC`. Canonical JSON stays unchanged; these generic
+columns are a storage/index projection. The timeline still shows actual rows from
+the earlier SQLite schema, clearly labelled as such. The [identity contract](canonical-identities.md)
+records pending employee identities and the remaining SQLite proof checkpoints.

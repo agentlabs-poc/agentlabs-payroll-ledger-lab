@@ -1,5 +1,14 @@
 # Canonical payroll records and shared JSON storage
 
+> **Current storage direction:** canonical segments occupy generic `key1`–`key10`
+> columns. `payroll.component:BASIC` becomes `payroll`, `component`, `BASIC`.
+> Single-key rows below describe the existing prototype. See the
+> [agreed segment contract](canonical-identities.md#generic-segment-columns--agreed-storage-direction).
+
+> **Identity contract under review:** every employee-owned record must include
+> the employee in its key. The existing serialized examples predate this rule;
+> they are not the final key contract. See [canonical identity definitions](canonical-identities.md).
+
 > **Superseding user decision:** the target is three canonical ledgers plus
 > `payroll_l1_records`, with `payroll_l2_records` separate and no supplied L3.
 > Read the [current three-ledger design and record catalogue](three-ledger-simulation.md).

@@ -15,7 +15,7 @@ indexing rationale and outstanding contract decisions here in readable form.
 | [SQLite-first proof plan](sqlite-proof-plan.md) | Finite checkpoints for the SQLite lab proof, with production PostgreSQL acceptance kept separate. |
 | [123 Architecture](123-architecture.md) | Agreed L1 core primitives, L2 software-owned auxiliary primitives and L3 application/AI composition; canonical vocabulary before API contracts. |
 | [Canonical ledger tables](canonical-ledger-tables.md) | Current three-ledger target, with the former nine-table designation, 16 supporting roles and deprecated structures retained as historical inventory. |
-| [Payroll records by domain and layer](payroll-records.md) | Supplied L1/L2 key/value tables and wrappers, consumer-owned L3, four-column baseline, proposed fifth `state` column, nine L1 record types, L2 employee settings and all 16 supporting-role mappings. |
+| [Payroll records by domain and layer](payroll-records.md) | Supplied L1/L2 key/value tables and wrappers, consumer-owned L3, generic segment-column target, availability `state`, nine L1 record types, L2 employee settings and all 16 supporting-role mappings. |
 
 ## Domain ownership and minimal storage
 
@@ -36,8 +36,8 @@ Payroll domain
   payroll_employer_liability_ledger  Obligations, remittances, allocations
   payroll_l1_records               Core supporting records
   payroll_l2_records               Reusable software-owned auxiliary data
-    Record stores: tenant | key | value(JSONB) | ts
-          state                    (proposed fifth column)
+    Target record stores: tenant | key1 ... key10 | value(JSON) | ts | state
+    Current SQLite prototype still uses one serialized key column
 
 Other domains, when justified
   Their own domain records and tables for software-owned L1/L2
@@ -77,8 +77,8 @@ indexes without becoming physical columns.
 
 The user specifically required canonical key construction for indexing. Each
 type therefore needs one shared encoder/validator and an explicit subject/record
-identity contract. The `<canonical-type>:<subject-id>:<record-id>`
-shape is documented with its query/index rules in the record chapter; exact
+identity contract. The earlier `<canonical-type>:<subject-id>:<record-id>`
+prototype shape is documented with its query/index rules in the record chapter; exact
 grammar is pinned: dot-delimited type tokens, colon-delimited identity segments,
 and backslash escaping of literal colon/backslash inside identities. Numeric revisions sort numerically, and disabling
 or logically deleting a record must not free its identity for conflicting reuse.
@@ -130,3 +130,10 @@ Read the [canonical row mind map](canonical-row-map.md) for the complete type/re
 
 The [canonical HTML walkthrough](canonical-html-demo.md) displays actual SQLite
 row snapshots through the employee journey, including expandable JSON records.
+
+[Canonical meaning and identity](canonical-identities.md) must be settled before
+employee-owned keys are revised. The [shared definition register](canonical-definitions.json)
+is also rendered in the HTML timeline.
+
+The [agreed generic segment columns](canonical-identities.md#generic-segment-columns--agreed-storage-direction)
+keep canonical meaning outside column names and define the next SQLite proof checkpoints.

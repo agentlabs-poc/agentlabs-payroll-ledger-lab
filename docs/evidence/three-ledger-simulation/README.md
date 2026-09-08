@@ -1,5 +1,9 @@
 # Three-ledger simulation evidence
 
+> These results prove the prototype before the employee-owned key correction.
+> They do not prove the new identity rule. See
+> [canonical identity definitions](../../design/canonical-identities.md).
+
 Verified source: `d7e7b426c4fb33d1115371a30e59d4561dbb723e`. The JSON evidence also binds the exact
 schema and Python operation/export files by SHA-256. This replaces the earlier
 nine-table proof for the current model; the old evidence remains historical.
@@ -55,16 +59,29 @@ and are not committed.
 - [Browser snapshot data](../../../public/canonical-flow.json)
 
 The browser fixture captures ten stages of the E101 journey from actual SQLite
-operations. Its source hashes match the committed executable inputs. Browser
-verification covered all stages, expandable JSON, three ledger panels, separate
-L1/L2 panels, totals and liability distinctions, stage/reset controls, and preserved
-keyboard focus. Desktop (1440px) and mobile (390px) checks found no page overflow.
+operations. Its source hashes match the committed executable inputs. Earlier browser verification covered all stages, expandable JSON, three ledger
+panels, separate L1/L2 panels, totals and liability distinctions, stage/reset
+controls, and preserved keyboard focus. Desktop (1440px) and mobile (390px) checks found no page overflow.
 The built page loaded both bundled SVG diagrams and its JSON with HTTP 200; no
 browser console errors or warnings were reported.
 
 Independent review identified and closed source-authority, reference-binding,
 opaque-version-ID, export-reference and ELR-identifier gaps, then the browser
 focus defect. The final scoped re-review found no new breakage.
+
+## Timeline and definition pin verification
+
+At UI source `f676bf9`, the timeline replaces the earlier separate table explorers.
+CDP compared every rendered row, including its full JSON and table identity, with
+each of the ten selected SQLite snapshots. All ten comparisons matched; the final
+timeline contains 31 rows exactly once. The shared definitions show five storage
+tables, ten record types, the pending employee-identity contract and the approved
+generic segment-column direction. The mobile page at 390px had no horizontal
+page overflow; JSON expansion and Previous-button focus worked.
+
+The definition/source pin documents unchanged canonical JSON and key-derived
+columns. These checks verify presentation and the current captured rows; they do
+not prove the future segment-column schema or its performance. The UI build passed.
 
 ## Scope
 

@@ -1,5 +1,9 @@
 # Payroll Ledger Lab
 
+> **Identity contract under review:** every employee-owned record must include
+> the employee in its key. The existing serialized examples predate this rule;
+> they are not the final key contract. See [canonical identity definitions](docs/design/canonical-identities.md).
+
 The payroll handbook, contracts, decisions, and rationale now live in [HRMS Core](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/handbook.md). Core is the canonical accepted handbook source. The lab retains the browser experiment, forwarding pages for migrated chapters, and the [current design pins](docs/design/README.md) requested by the user.
 
 ## Current design pins

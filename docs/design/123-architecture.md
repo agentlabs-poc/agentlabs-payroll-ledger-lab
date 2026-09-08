@@ -187,7 +187,25 @@ store, combined or eliminated where their information already belongs to a core
 record. L2 storage or consumer L3 composition does not reinstate deprecated run/compensation APIs or
 prove their historical contracts conform.
 
-### Minimal envelope and availability
+### Generic segment columns — current direction
+
+The user approved `tenant | key1 ... key10 | value JSON | ts | state` for the
+shared record envelope. `payroll.component:BASIC` maps to `payroll`, `component`,
+`BASIC` in the first three slots. Canonical record definitions assign meanings and
+order; database column names stay generic. Canonical JSON stays unchanged: its
+serialized key is decoded into these columns for storage and indexing, with
+key/column agreement enforced. Employee-owned identities include the
+employee, and versioned records retain revision identity. This supersedes the
+single physical `key` column target described below; that layout remains the
+current SQLite prototype, not the final contract.
+
+The [canonical identity contract](canonical-identities.md#generic-segment-columns--agreed-storage-direction)
+records the exact example, rationale, indexing and serialization requirements,
+and pending SQLite checkpoints. Indexed prefixes group related keys for fetching;
+they do not physically partition tables or establish a measured speedup. The
+three monetary ledger tables, L1/L2 ownership and consumer-owned L3 remain intact.
+
+### Earlier envelope and availability
 
 The reusable baseline is `tenant / key / value / ts`:
 
@@ -216,7 +234,7 @@ Definitions and validators can be version-controlled artifacts; they do not
 require another metadata table.
 
 A type key describes a meaning; a unique record key locates a particular record.
-The pinned common shape is:
+The earlier serialized prototype shape is:
 
 ```text
 <canonical-type>:<subject-id>:<record-id>

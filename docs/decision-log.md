@@ -107,3 +107,44 @@ because employer contribution has matching gross and deduction effects.
 The correction changes examples and their explanation, not the set of canonical
 tables or the opaque ID contract. Historical evidence and isolated tests may use
 other legal component IDs; they are not the current human-facing scenario.
+
+## 2026-09-08 — Employee ownership is part of canonical key identity
+
+The user rejected employee earning keys without an employee identity. Every
+employee-owned record must include that owner in its key; the complete key must
+uniquely identify the record within its tenant. The user explicitly required
+canonical definitions before implementation, so no employee-key/schema rewrite
+has started. The prior fixed key grammar must be reconciled, not patched ad hoc.
+
+The open earning-identity question is whether one employee/component pair has one
+earning stream with successive versions or may have multiple independent earnings.
+That determines whether an independent earning ID is needed. The shared definition
+register records meanings and owners while leaving this decision open.
+
+The user also requested a chronological HTML view that puts L1 records and ledger
+entries together at their creation step, and displays the canonical definitions.
+This presentation work uses the existing snapshots, with an explicit notice that
+their employee-owned key layout is not the final contract.
+
+## 2026-09-08 — Generic columns hold canonical key segments
+
+The user clarified that `payroll.component:BASIC` must map to `key1 = payroll`,
+`key2 = component`, `key3 = BASIC`, with generic slots up to `key10`. The user
+approved pinning this direction and proceeding. This replaces the proposed
+employee/type-specific column interpretation and the single physical key target.
+Canonical meanings and ordered identity definitions remain in the record contract;
+JSON values remain flexible. Employee identity is still part of employee-owned
+keys, and immutable revision identity is not removed by the short component example.
+
+Rationale: one reusable envelope can support many canonical record types while
+exposing queryable key segments. Matching indexes can narrow prefix lookups and
+group related keys; this is not physical partitioning. No runtime speedup has been
+measured. The [identity contract](design/canonical-identities.md) records pending slot mappings, unused-slot
+uniqueness, escaping, revision ordering and SQLite proof steps. These storage
+mechanics do not resolve the outstanding earning-stream identity decision.
+Production schemas, APIs and CLI remain unchanged.
+
+The user then explicitly clarified: keep canonical JSON unchanged and document
+that the key is decoded into columns. The columns are a storage/index projection
+of that key, not a new payload format or independently writable identity. This
+refinement does not itself settle the earlier employee-owned key correction.

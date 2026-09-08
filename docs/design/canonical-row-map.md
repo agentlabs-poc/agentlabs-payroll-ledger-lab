@@ -1,5 +1,14 @@
 # Payroll canonical row mind map
 
+> **Current storage direction:** canonical segments occupy generic `key1`–`key10`
+> columns. `payroll.component:BASIC` becomes `payroll`, `component`, `BASIC`.
+> Single-key rows below describe the existing prototype. See the
+> [agreed segment contract](canonical-identities.md#generic-segment-columns--agreed-storage-direction).
+
+> **Identity contract under review:** every employee-owned record must include
+> the employee in its key. The existing serialized examples predate this rule;
+> they are not the final key contract. See [canonical identity definitions](canonical-identities.md).
+
 The complete simulation model has **three canonical ledger tables**, **one L1
 record table**, and **one separate L2 record table**. Software supplies no L3
 persistence. Each box below is a meaning; only the named tables are storage.
