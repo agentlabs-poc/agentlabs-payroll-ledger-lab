@@ -98,8 +98,8 @@ remittance, allocation). Every catalogue entry has a meaning, owning table/layer
 identity, complete stored example, references, validation and query/index notes.
 Every required kind must be witnessed; no placeholder examples count as coverage.
 
-Use one connected E101 November example: salary INR 50,000, employer contribution
-INR 3,000 and monthly loan INR 2,000; gross INR 53,000, deductions INR 5,000,
+Use one connected E101 November example: Basic INR 30,000 plus HRA INR 20,000
+(separate earning components and employee records), employer contribution INR 3,000 and monthly loan INR 2,000; gross INR 53,000, deductions INR 5,000,
 net INR 48,000. Loan runs October 2026 through February 2027. Record the INR 3,000
 obligation, INR 2,000 remittance with proof and allocation, leaving INR 1,000 due.
 A separate one-time fixture proves stable consumption across instruction versions.

@@ -50,9 +50,9 @@ Consumers (L3)
 These are working table names. This is one table per domain and owning layer,
 not one per record type. Payroll
 component definitions, controls, reviews, instruction effects and receipts may
-share the L1 store when their reviewed role belongs to L1; the six candidate
-terms are not six new tables. The
-canonical ledgers continue to own money, instructions and committed history.
+share the L1 store when their reviewed role belongs to L1; the nine L1 record types are not nine new tables. The
+canonical ledgers own draft and committed monetary history; versioned
+earnings and instructions live in the L1 record store.
 Other domain table names or implementations are not approved by this example.
 
 The shared envelope does not decide layer ownership. L1 keeps domain integrity
@@ -71,13 +71,13 @@ deployment placement and DDL remain to be reviewed; no new endpoint is implement
 
 For every canonical term, settle meaning, identity, JSON fields, lifecycle,
 operations, queries and indexes together. A type key and a unique record key
-serve different purposes; exact encoding remains open. `ts` is creation evidence,
+serve different purposes; the key grammar is pinned below. `ts` is creation evidence,
 not a revision number. Important JSON query fields can use targeted expression
 indexes without becoming physical columns.
 
 The user specifically required canonical key construction for indexing. Each
 type therefore needs one shared encoder/validator and an explicit subject/record
-identity contract. The proposed `<canonical-type>/<subject-id>/<record-id>`
+identity contract. The `<canonical-type>:<subject-id>:<record-id>`
 shape is documented with its query/index rules in the record chapter; exact
 grammar is pinned: dot-delimited type tokens, colon-delimited identity segments,
 and backslash escaping of literal colon/backslash inside identities. Numeric revisions sort numerically, and disabling
@@ -127,3 +127,6 @@ row catalogue and verification; the earlier result does not prove this new layou
 This supersedes the earlier nine-table target.
 
 Read the [canonical row mind map](canonical-row-map.md) for the complete type/relationship catalogue.
+
+The [canonical HTML walkthrough](canonical-html-demo.md) displays actual SQLite
+row snapshots through the employee journey, including expandable JSON records.

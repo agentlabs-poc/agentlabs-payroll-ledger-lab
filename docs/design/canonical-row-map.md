@@ -128,12 +128,13 @@ without counting the remittance itself as another liability reduction.
 
 ## Connected example
 
-E101's November 2026 simulation starts from explicit versioned salary and employer
-contribution records. Its monthly loan instruction expires after February 2027.
+E101's November 2026 simulation starts from separate Basic, HRA and employer
+contribution components, each referenced by an employee earning record. Its monthly loan instruction expires after February 2027.
 
 | Fact | Amount |
 |---|---:|
-| Salary earning | INR 50,000 |
+| Basic earning | INR 30,000 |
+| HRA earning | INR 20,000 |
 | Employer contribution earning and matching deduction | INR 3,000 |
 | Monthly loan deduction | INR 2,000 |
 | Gross | INR 53,000 |
@@ -142,6 +143,10 @@ contribution records. Its monthly loan instruction expires after February 2027.
 | Employer obligation after posting | INR 3,000 |
 | Challan-backed remittance and allocation | INR 2,000 |
 | Remaining employer liability | INR 1,000 |
+
+Basic and HRA are component meanings; ₹50,000 is their combined salary amount,
+not a component definition. The ₹30,000/₹20,000 split is illustrative, not a
+company policy. Each employee earning references one exact component version.
 
 The same journey includes settings, source definitions, hold/release history,
 review, resolutions, committed applications and operation receipts. A separate
@@ -187,3 +192,9 @@ The executable report retains all 16 supporting-role dispositions. Exact HTTP
 response replay remains an explicit transport gap; a domain receipt is not full
 HTTP transport evidence. PostgreSQL authority, migration and load proof remain
 separate from the complete row-kind catalogue for this simulation.
+
+## Executed examples
+
+The [three-ledger proof](../evidence/three-ledger-simulation/README.md) retains all
+actual rows and the complete 15-kind catalogue. The
+[HTML walkthrough](canonical-html-demo.md) explains its ten-stage browser view.

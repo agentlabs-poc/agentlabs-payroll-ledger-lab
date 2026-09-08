@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1480" height="1510" viewBox="0 0 1480 1510" role="img" aria-labelledby="title desc">
-<title id="title">E101 payroll journey: sources to draft, commit and employer liability</title><desc id="desc">November 2026 example: 50,000 salary plus 3,000 employer contribution, 2,000 loan deduction; gross 53,000, deductions 5,000 and net 48,000. A 3,000 liability has 2,000 allocated with proof, leaving 1,000 outstanding.</desc>
+<title id="title">E101 payroll journey: sources to draft, commit and employer liability</title><desc id="desc">November 2026 example: 30,000 Basic plus 20,000 HRA and 3,000 employer contribution, 2,000 loan deduction; gross 53,000, deductions 5,000 and net 48,000. A 3,000 liability has 2,000 allocated with proof, leaving 1,000 outstanding.</desc>
 <defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L8 4.5 L0 9 Z" fill="#7C8EA4"/></marker></defs>
 <rect width="1480" height="1510" fill="#F7FAFD"/>
 <g font-family="Noto Sans, Arial, sans-serif" fill="#172B46">
@@ -7,15 +7,17 @@
 <text x="48" y="98" font-size="17" font-weight="400" fill="#52647A">E101 · November 2026 · amounts in INR · exact versioned source records</text>
 <rect x="48" y="129" width="1384" height="64" rx="12" fill="#F1EDFA" stroke="#E1D8F0"/>
 <text x="72" y="167" font-size="17" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.component</text>
-<text x="315" y="167" font-size="15" font-weight="400" fill="#52647A">Exact component revisions define salary, loan and employer-contribution meanings.</text>
+<text x="315" y="167" font-size="15" font-weight="400" fill="#52647A">Exact component revisions define Basic, HRA, loan and employer-contribution meanings.</text>
 <path d="M365 193 L365 226" fill="none" stroke="#7C8EA4" stroke-width="2" marker-end="url(#arrow)"/>
 <path d="M1090 193 L1090 226" fill="none" stroke="#7C8EA4" stroke-width="2" marker-end="url(#arrow)"/>
 <rect x="48" y="229" width="674" height="146" rx="16" fill="white" stroke="#DCE4ED"/>
 <text x="72" y="267" font-size="20" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.earning</text>
-<text x="72" y="306" font-size="16" font-weight="400" fill="#52647A">Salary entitlement</text>
-<text x="418" y="306" font-size="16" font-weight="600" fill="#172B46">50,000</text>
-<text x="72" y="337" font-size="16" font-weight="400" fill="#52647A">Employer contribution</text>
-<text x="418" y="337" font-size="16" font-weight="600" fill="#172B46">3,000</text>
+<text x="72" y="299" font-size="16" font-weight="400" fill="#52647A">Basic entitlement</text>
+<text x="418" y="299" font-size="16" font-weight="600" fill="#172B46">30,000</text>
+<text x="72" y="327" font-size="16" font-weight="400" fill="#52647A">HRA entitlement</text>
+<text x="418" y="327" font-size="16" font-weight="600" fill="#172B46">20,000</text>
+<text x="72" y="355" font-size="16" font-weight="400" fill="#52647A">Employer contribution</text>
+<text x="418" y="355" font-size="16" font-weight="600" fill="#172B46">3,000</text>
 <rect x="758" y="229" width="674" height="146" rx="16" fill="white" stroke="#DCE4ED"/>
 <text x="782" y="267" font-size="20" font-weight="700" fill="#6E47B7" font-family="DejaVu Sans Mono, monospace">payroll.instruction</text>
 <text x="782" y="306" font-size="16" font-weight="400" fill="#52647A">Monthly loan deduction</text>
@@ -27,14 +29,16 @@
 <text x="596" y="404" font-size="14" font-weight="400" fill="#52647A">Select exact earning and instruction versions</text>
 <rect x="48" y="441" width="580" height="234" rx="16" fill="white" stroke="#BDD0F7"/>
 <text x="72" y="478" font-size="20" font-weight="700" fill="#2563EB" font-family="DejaVu Sans Mono, monospace">payroll_draft_ledger</text>
-<text x="72" y="513" font-size="14" font-weight="400" fill="#52647A">Salary earning</text>
-<text x="504" y="513" font-size="14" font-weight="600" fill="#172B46">50,000</text>
-<text x="72" y="540" font-size="14" font-weight="400" fill="#52647A">Employer contribution earning</text>
-<text x="504" y="540" font-size="14" font-weight="600" fill="#172B46">3,000</text>
-<text x="72" y="567" font-size="14" font-weight="400" fill="#52647A">Loan deduction</text>
-<text x="504" y="567" font-size="14" font-weight="600" fill="#172B46">2,000</text>
-<text x="72" y="594" font-size="14" font-weight="400" fill="#52647A">Matching employer deduction</text>
-<text x="504" y="594" font-size="14" font-weight="600" fill="#172B46">3,000</text>
+<text x="72" y="506" font-size="14" font-weight="400" fill="#52647A">Basic earning</text>
+<text x="504" y="506" font-size="14" font-weight="600" fill="#172B46">30,000</text>
+<text x="72" y="530" font-size="14" font-weight="400" fill="#52647A">HRA earning</text>
+<text x="504" y="530" font-size="14" font-weight="600" fill="#172B46">20,000</text>
+<text x="72" y="554" font-size="14" font-weight="400" fill="#52647A">Employer contribution earning</text>
+<text x="504" y="554" font-size="14" font-weight="600" fill="#172B46">3,000</text>
+<text x="72" y="578" font-size="14" font-weight="400" fill="#52647A">Loan deduction</text>
+<text x="504" y="578" font-size="14" font-weight="600" fill="#172B46">2,000</text>
+<text x="72" y="602" font-size="14" font-weight="400" fill="#52647A">Matching employer deduction</text>
+<text x="504" y="602" font-size="14" font-weight="600" fill="#172B46">3,000</text>
 <path d="M72 616 L604 616" fill="none" stroke="#DCE4ED" stroke-width="2"/>
 <text x="72" y="648" font-size="15" font-weight="700" fill="#2563EB">Gross 53,000   ·   Deductions 5,000   ·   Net 48,000</text>
 <rect x="660" y="441" width="772" height="234" rx="16" fill="white" stroke="#DCE4ED"/>

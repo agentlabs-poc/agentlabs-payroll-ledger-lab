@@ -1,0 +1,281 @@
+{
+  "catalogue_coverage": {
+    "covered": 15,
+    "required": 15
+  },
+  "former_nine_table_replacement": {
+    "payroll_calculation_revisions": "payroll_l1_records",
+    "payroll_calculations": "payroll_l1_records",
+    "payroll_draft_entries": "payroll_draft_ledger",
+    "payroll_instruction_versions": "payroll_l1_records",
+    "payroll_instructions": "payroll_l1_records",
+    "payroll_ledger_entries": "payroll_ledger",
+    "payroll_statutory_allocations": "payroll_employer_liability_ledger:allocation",
+    "payroll_statutory_obligations": "payroll_employer_liability_ledger:obligation",
+    "payroll_statutory_remittances": "payroll_employer_liability_ledger:remittance"
+  },
+  "gaps": [
+    "exact HTTP response replay",
+    "PostgreSQL authority, migration, concurrency and load",
+    "external employee, actor and policy referents"
+  ],
+  "outcomes": {
+    "E101_november": {
+      "commit": {
+        "draft_id": "D1",
+        "draft_key": "payroll.draft:D1:1",
+        "employer_liability_entry_id": "PEd3fa4ff6c733d58e8b6a",
+        "posted_entry_ids": [
+          "PEb8228870d12f87cdf529",
+          "PE86a57bcb6346cd492ecb",
+          "PE5e38fcb8288db506f734",
+          "PEd3fa4ff6c733d58e8b6a",
+          "PEe672463bd7dd5f3520ad"
+        ],
+        "status": "committed"
+      },
+      "totals": {
+        "deductions_minor": 500000,
+        "gross_minor": 5300000,
+        "net_minor": 4800000
+      }
+    },
+    "employer_liability": {
+      "before_allocation_minor": 300000,
+      "outstanding_minor": 100000,
+      "proof_ref": "challan:REM1"
+    },
+    "one_time_earning": {
+      "commit": {
+        "draft_id": "D2",
+        "draft_key": "payroll.draft:D2:1",
+        "employer_liability_entry_id": null,
+        "posted_entry_ids": [
+          "PE9d3668406f772d6e0f92",
+          "PE68fd5e3e9ce30682ab06"
+        ],
+        "status": "committed"
+      },
+      "second_version_rejected": true,
+      "totals": {
+        "deductions_minor": 0,
+        "gross_minor": 150000,
+        "net_minor": 150000
+      }
+    }
+  },
+  "query_plans": {
+    "draft_employee_month": [
+      "SEARCH payroll_draft_ledger USING INDEX draft_employee_month (tenant=? AND employee_id=? AND payroll_month=?)"
+    ],
+    "earning_effective": [
+      "SEARCH payroll_l1_records USING INDEX l1_earning_effective (tenant=? AND <expr>=? AND <expr><?)"
+    ],
+    "elr_allocations": [
+      "SEARCH payroll_employer_liability_ledger USING INDEX liability_allocations (tenant=? AND obligation_entry_id=?)"
+    ],
+    "instruction_application_reverse_lookup": [
+      "SEARCH payroll_l1_records USING INDEX l1_application_reverse (tenant=? AND <expr>=? AND <expr>=? AND <expr>=?)"
+    ],
+    "instruction_version": [
+      "SEARCH payroll_l1_records USING INDEX l1_instruction_version (tenant=? AND <expr>=?)"
+    ],
+    "operation_replay": [
+      "SEARCH payroll_l1_records USING INDEX l1_receipt_replay (tenant=? AND <expr>=? AND <expr>=? AND <expr>=? AND <expr>=?)"
+    ],
+    "posted_employee_month": [
+      "SEARCH payroll_ledger USING INDEX posted_employee_month (tenant=? AND employee_id=? AND payroll_month=?)"
+    ]
+  },
+  "role_mapping": [
+    {
+      "evidence": [
+        "payroll.component:BASIC:1",
+        "payroll.component:HRA:1",
+        "payroll.component:LOAN:1",
+        "payroll.component:EMPLOYER:1",
+        "payroll.component:BONUS:1"
+      ],
+      "role": "payroll_fields",
+      "status": "witnessed"
+    },
+    {
+      "evidence": [
+        "payroll.component:BASIC:1",
+        "payroll.component:HRA:1",
+        "payroll.component:LOAN:1",
+        "payroll.component:EMPLOYER:1",
+        "payroll.component:BONUS:1"
+      ],
+      "role": "payroll_component_versions",
+      "status": "witnessed"
+    },
+    {
+      "evidence": [
+        "payroll.draft:D1:1",
+        "payroll.draft:D2:1",
+        "payroll.draft:D3:1"
+      ],
+      "role": "payroll_calculation_candidates",
+      "status": "witnessed_combined"
+    },
+    {
+      "evidence": [
+        "payroll.draft.control:D1:1",
+        "payroll.draft.control:D1:2",
+        "payroll.draft.control:D1:3",
+        "payroll.draft.control:D2:1",
+        "payroll.draft.control:D3:1"
+      ],
+      "role": "payroll_draft_controls",
+      "status": "witnessed"
+    },
+    {
+      "evidence": [
+        "payroll.draft.control:D1:1",
+        "payroll.draft.control:D1:2",
+        "payroll.draft.control:D1:3",
+        "payroll.draft.control:D2:1",
+        "payroll.draft.control:D3:1"
+      ],
+      "role": "payroll_draft_control_events",
+      "status": "witnessed_combined"
+    },
+    {
+      "evidence": [
+        "payroll.draft.review:D1:R1"
+      ],
+      "role": "payroll_employee_candidate_reviews",
+      "status": "witnessed"
+    },
+    {
+      "evidence": [
+        "payroll.operation.receipt:I-LOAN:RCPT25086f502c4a3b4da8b7",
+        "payroll.operation.receipt:I-BONUS:RCPT065dc0bc837114bb4b2b",
+        "payroll.operation.receipt:D1:RCPT6fa7a372ed390ee760bc",
+        "payroll.operation.receipt:D2:RCPT0893503658d47d780345",
+        "payroll.operation.receipt:I-BONUS:RCPT85072e66e4ac7460f5fe"
+      ],
+      "role": "payroll_employee_finalization_receipts",
+      "status": "witnessed"
+    },
+    {
+      "evidence": [
+        "payroll.instruction.application:IV-LOAN-1:APPc5df085ad3ef2bb6fa06",
+        "payroll.instruction.application:IV-BONUS-1:APP64464155b52d6cceb006"
+      ],
+      "role": "payroll_instruction_applications",
+      "status": "witnessed"
+    },
+    {
+      "evidence": [
+        "payroll.instruction.application:IV-LOAN-1:APPc5df085ad3ef2bb6fa06",
+        "payroll.instruction.application:IV-BONUS-1:APP64464155b52d6cceb006"
+      ],
+      "role": "payroll_instruction_application_effects",
+      "status": "witnessed_combined"
+    },
+    {
+      "evidence": [
+        "payroll.instruction.resolution:D1:RES1",
+        "payroll.instruction.resolution:D2:RES1",
+        "payroll.instruction.resolution:D3:RES1"
+      ],
+      "role": "payroll_candidate_instruction_resolutions",
+      "status": "witnessed"
+    },
+    {
+      "evidence": [
+        "payroll.instruction.resolution:D1:RES1",
+        "payroll.instruction.resolution:D2:RES1",
+        "payroll.instruction.resolution:D3:RES1"
+      ],
+      "role": "payroll_candidate_instruction_resolution_links",
+      "status": "witnessed_combined"
+    },
+    {
+      "evidence": [
+        "payroll.operation.receipt:I-LOAN:RCPT25086f502c4a3b4da8b7",
+        "payroll.operation.receipt:I-BONUS:RCPT065dc0bc837114bb4b2b",
+        "payroll.operation.receipt:D1:RCPT6fa7a372ed390ee760bc",
+        "payroll.operation.receipt:D2:RCPT0893503658d47d780345",
+        "payroll.operation.receipt:I-BONUS:RCPT85072e66e4ac7460f5fe"
+      ],
+      "role": "payroll_entry_batches",
+      "status": "witnessed_combined"
+    },
+    {
+      "evidence": [
+        "payroll.draft:D1:1",
+        "payroll.draft:D2:1",
+        "payroll.draft:D3:1",
+        "payroll.operation.receipt:I-LOAN:RCPT25086f502c4a3b4da8b7",
+        "payroll.operation.receipt:I-BONUS:RCPT065dc0bc837114bb4b2b",
+        "payroll.operation.receipt:D1:RCPT6fa7a372ed390ee760bc",
+        "payroll.operation.receipt:D2:RCPT0893503658d47d780345",
+        "payroll.operation.receipt:I-BONUS:RCPT85072e66e4ac7460f5fe"
+      ],
+      "role": "payroll_candidate_batches",
+      "status": "witnessed_combined"
+    },
+    {
+      "evidence": [
+        "payroll.operation.receipt:I-LOAN:RCPT25086f502c4a3b4da8b7",
+        "payroll.operation.receipt:I-BONUS:RCPT065dc0bc837114bb4b2b",
+        "payroll.operation.receipt:I-BONUS:RCPT85072e66e4ac7460f5fe"
+      ],
+      "role": "payroll_source_authority_actions",
+      "status": "witnessed_combined"
+    },
+    {
+      "evidence": [],
+      "gap": "exact transport response replay unimplemented",
+      "role": "payroll_http_idempotency",
+      "status": "explicit_gap"
+    },
+    {
+      "evidence": [
+        "payroll.operation.receipt:I-LOAN:RCPT25086f502c4a3b4da8b7",
+        "payroll.operation.receipt:I-BONUS:RCPT065dc0bc837114bb4b2b",
+        "payroll.operation.receipt:D1:RCPT6fa7a372ed390ee760bc",
+        "payroll.operation.receipt:D2:RCPT0893503658d47d780345",
+        "payroll.operation.receipt:I-BONUS:RCPT85072e66e4ac7460f5fe"
+      ],
+      "role": "payroll_mutation_evidence",
+      "status": "witnessed_combined"
+    }
+  ],
+  "row_counts": {
+    "payroll_draft_ledger": 9,
+    "payroll_employer_liability_ledger": 3,
+    "payroll_l1_records": 31,
+    "payroll_l2_records": 1,
+    "payroll_ledger": 7
+  },
+  "runtime": {
+    "python": "3.14.4",
+    "sqlite": "3.46.1"
+  },
+  "scope": "SQLite three-ledger simulation; no L3",
+  "source_hashes": {
+    "payroll.py": "60f79df6d74eb751b98dd712536dd56d7380fd99957a3dc974897c58a89938e4",
+    "prove.py": "441a1cf699a7a0b2319aa0d60630607d4d3a2c3896c6e7a3ffdeacd702b9e761",
+    "records.py": "87621aa7480b515475cd0abb1203e7fc5863762361d379c96e88c400c1f44cd4",
+    "schema.sql": "952668ff12b244b80cbfe9e9bd49ffe62c1578ea29d9a841e802aea5b1a4fd35"
+  },
+  "source_revision": "d7e7b426c4fb33d1115371a30e59d4561dbb723e",
+  "storage": {
+    "database_bytes": 131072,
+    "measured_index_bytes": 57344,
+    "page_count": 32,
+    "page_size": 4096
+  },
+  "timings_ms": {
+    "commit_E101": 1.332,
+    "draft_E101": 0.841,
+    "initialize": 2.372,
+    "liability": 0.434,
+    "one_time": 1.593,
+    "sources": 2.005
+  }
+}

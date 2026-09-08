@@ -83,3 +83,27 @@ history and employee-atomic operations while reducing table count. The user then
 requested commit/push and a return to simulation with all canonical row examples
 and a complete mind map. The [design](design/three-ledger-simulation.md) defines this SQLite-only step.
 No production runtime/API/CLI/migration changes are authorized here.
+
+## 2026-09-08 — Canonical browser alignment and component meaning
+
+The user requested that the HTML demo reflect the three canonical ledgers and
+L1 records, and explicitly accepted JSON. The page now displays captured rows
+from actual SQLite operations. Rationale: a second browser payroll engine can
+drift from the executable model; a snapshot viewer keeps the examples inspectable
+without introducing another write API or business-rule implementation.
+
+The user then corrected the broad `SALARY` example: components should represent
+meanings such as Basic and HRA. Each has its own component definition; an employee
+earning supplies the employee, amount and effective dates and references one exact
+component version. A salary total does not become an additional component or
+ledger. This distinction is reflected in the current JSON, diagrams and row maps.
+
+The illustrative E101 fixture uses Basic ₹30,000 plus HRA ₹20,000. This split is
+example data, not an agreed organizational compensation policy. Employer
+contribution ₹3,000 and loan ₹2,000 preserve gross ₹53,000, deductions ₹5,000 and
+net ₹48,000. The three earning sources produce five draft/posted monetary lines
+because employer contribution has matching gross and deduction effects.
+
+The correction changes examples and their explanation, not the set of canonical
+tables or the opaque ID contract. Historical evidence and isolated tests may use
+other legal component IDs; they are not the current human-facing scenario.

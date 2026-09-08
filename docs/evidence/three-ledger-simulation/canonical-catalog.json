@@ -1,0 +1,424 @@
+{
+  "coverage": {
+    "covered": 15,
+    "required": 15
+  },
+  "entries": [
+    {
+      "category": "L1 record",
+      "example": {
+        "key": "payroll.component:BASIC:1",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T17:47:53.266755+00:00",
+        "value": {
+          "code": "basic",
+          "component_id": "BASIC",
+          "country_code": "IN",
+          "kind": "earning",
+          "label": "Basic",
+          "revision": 1,
+          "schema_version": 1
+        }
+      },
+      "identity": "tenant + component_id + numeric revision",
+      "indexed_queries": "l1_component_revision",
+      "kind": "payroll.component",
+      "layer": "L1",
+      "meaning": "versioned payroll component meaning",
+      "references": "no internal references",
+      "table": "payroll_l1_records",
+      "validation": "stable code/kind/country identity and tenant/country code uniqueness"
+    },
+    {
+      "category": "L1 record",
+      "example": {
+        "key": "payroll.earning:EARN-BASIC:1",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T17:47:53.267554+00:00",
+        "value": {
+          "amount_minor": 3000000,
+          "component_key": "payroll.component:BASIC:1",
+          "earning_id": "EARN-BASIC",
+          "effective_from": "2026-01",
+          "effective_until": null,
+          "employee_id": "E101",
+          "revision": 1,
+          "schema_version": 1
+        }
+      },
+      "identity": "tenant + earning_id + numeric revision",
+      "indexed_queries": "l1_earning_effective",
+      "kind": "payroll.earning",
+      "layer": "L1",
+      "meaning": "versioned employee earning entitlement",
+      "references": "component_key; employee_id is external",
+      "table": "payroll_l1_records",
+      "validation": "positive minor units, effective bounds, exact current component at intake"
+    },
+    {
+      "category": "L1 record",
+      "example": {
+        "key": "payroll.instruction:I-LOAN:1",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T17:47:53.267972+00:00",
+        "value": {
+          "amount_minor": 200000,
+          "cadence": "monthly",
+          "component_key": "payroll.component:LOAN:1",
+          "effective_from": "2026-10",
+          "effective_until": "2027-02",
+          "employee_id": "E101",
+          "instruction_id": "I-LOAN",
+          "revision": 1,
+          "schema_version": 1,
+          "version_id": "IV-LOAN-1"
+        }
+      },
+      "identity": "tenant + instruction_id + numeric revision; version_id is opaque and unique",
+      "indexed_queries": "l1_instruction_version and l1_instruction_effective",
+      "kind": "payroll.instruction",
+      "layer": "L1",
+      "meaning": "versioned employee earning/deduction instruction",
+      "references": "component_key; employee_id is external",
+      "table": "payroll_l1_records",
+      "validation": "positive minor units, cadence/effective bounds, unique opaque version_id"
+    },
+    {
+      "category": "L1 record",
+      "example": {
+        "key": "payroll.draft:D1:1",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T17:47:53.268998+00:00",
+        "value": {
+          "content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
+          "deductions_minor": 500000,
+          "draft_id": "D1",
+          "earning_keys": [
+            "payroll.earning:EARN-BASIC:1",
+            "payroll.earning:EARN-HRA:1",
+            "payroll.earning:EARN-EMPLOYER:1"
+          ],
+          "employee_id": "E101",
+          "gross_minor": 5300000,
+          "instruction_keys": [
+            "payroll.instruction:I-LOAN:1"
+          ],
+          "net_minor": 4800000,
+          "payroll_month": "2026-11",
+          "revision": 1,
+          "schema_version": 1
+        }
+      },
+      "identity": "tenant + draft_id + fixed revision 1",
+      "indexed_queries": "l1_draft_employee_month",
+      "kind": "payroll.draft",
+      "layer": "L1",
+      "meaning": "fixed employee/month draft metadata",
+      "references": "earning_keys and instruction_keys select exact source versions; employee_id is external",
+      "table": "payroll_l1_records",
+      "validation": "balanced integer totals and fixed content_hash snapshot"
+    },
+    {
+      "category": "L1 record",
+      "example": {
+        "key": "payroll.draft.control:D1:1",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T17:47:53.269319+00:00",
+        "value": {
+          "actor": "U7",
+          "cancelled": false,
+          "draft_id": "D1",
+          "employee_id": "E101",
+          "held": false,
+          "payroll_month": "2026-11",
+          "reason": "created",
+          "revision": 1,
+          "schema_version": 1
+        }
+      },
+      "identity": "tenant + draft_id + numeric revision",
+      "indexed_queries": "exact key/current numeric revision lookup",
+      "kind": "payroll.draft.control",
+      "layer": "L1",
+      "meaning": "versioned hold/cancel control",
+      "references": "draft_id resolves the fixed draft; actor is external",
+      "table": "payroll_l1_records",
+      "validation": "monotonic expected revision and immutable hold/cancel history"
+    },
+    {
+      "category": "L1 record",
+      "example": {
+        "key": "payroll.draft.review:D1:R1",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T17:47:53.269972+00:00",
+        "value": {
+          "actor": "U7",
+          "control_revision": 3,
+          "decision": "approved",
+          "draft_content_hash": "5c1eb1f2cebc7f320e185e24654ce1582bd9a251202c7b2c0c491b106182fdcb",
+          "draft_id": "D1",
+          "review_id": "R1",
+          "schema_version": 1
+        }
+      },
+      "identity": "tenant + draft_id + review_id",
+      "indexed_queries": "exact key and draft_id/content_hash lookup",
+      "kind": "payroll.draft.review",
+      "layer": "L1",
+      "meaning": "exact-content review evidence",
+      "references": "draft_id plus draft_content_hash and control_revision; actor is external",
+      "table": "payroll_l1_records",
+      "validation": "approved/rejected decision bound to exact draft and control"
+    },
+    {
+      "category": "L1 record",
+      "example": {
+        "key": "payroll.instruction.resolution:D1:RES1",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T17:47:53.269391+00:00",
+        "value": {
+          "disposition": "applied",
+          "draft_id": "D1",
+          "effects": [
+            {
+              "amount_minor": 200000,
+              "currency": "INR",
+              "draft_entry_id": "DE7328a0ac6583cd256b8f"
+            }
+          ],
+          "instruction_id": "I-LOAN",
+          "instruction_key": "payroll.instruction:I-LOAN:1",
+          "resolution_id": "RES1",
+          "schema_version": 1
+        }
+      },
+      "identity": "tenant + draft_id + resolution_id",
+      "indexed_queries": "exact key and draft_id lookup",
+      "kind": "payroll.instruction.resolution",
+      "layer": "L1",
+      "meaning": "draft effect resolution",
+      "references": "instruction_key and draft effect draft_entry_id values",
+      "table": "payroll_l1_records",
+      "validation": "instruction identity matches instruction_key and every effect resolves in that draft"
+    },
+    {
+      "category": "L1 record",
+      "example": {
+        "key": "payroll.instruction.application:IV-LOAN-1:APPc5df085ad3ef2bb6fa06",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T17:47:53.270633+00:00",
+        "value": {
+          "application_id": "APPc5df085ad3ef2bb6fa06",
+          "cadence": "monthly",
+          "draft_id": "D1",
+          "effects": [
+            {
+              "amount_minor": 200000,
+              "currency": "INR",
+              "ledger_entry_id": "PEe672463bd7dd5f3520ad"
+            }
+          ],
+          "employee_id": "E101",
+          "instruction_id": "I-LOAN",
+          "instruction_key": "payroll.instruction:I-LOAN:1",
+          "payroll_month": "2026-11",
+          "schema_version": 1,
+          "version_id": "IV-LOAN-1"
+        }
+      },
+      "identity": "tenant + opaque version_id + application_id",
+      "indexed_queries": "l1_application_reverse and l1_monthly_application_once/l1_one_time_application_once",
+      "kind": "payroll.instruction.application",
+      "layer": "L1",
+      "meaning": "permanent posted instruction application",
+      "references": "instruction_key, draft_id and posted effect ledger_entry_id values",
+      "table": "payroll_l1_records",
+      "validation": "stable instruction_id/version_id link plus monthly or one-time consumption uniqueness"
+    },
+    {
+      "category": "L1 record",
+      "example": {
+        "key": "payroll.operation.receipt:I-LOAN:RCPT25086f502c4a3b4da8b7",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T17:47:53.268096+00:00",
+        "value": {
+          "after": {
+            "instruction_key": "payroll.instruction:I-LOAN:1"
+          },
+          "before": {
+            "instruction_exists": false
+          },
+          "executor": "U7",
+          "idempotency_key": "IV-LOAN-1",
+          "operation": "payroll.instruction.create",
+          "outcome": {
+            "instruction_key": "payroll.instruction:I-LOAN:1",
+            "status": "created",
+            "version_id": "IV-LOAN-1"
+          },
+          "receipt_id": "RCPT25086f502c4a3b4da8b7",
+          "request_hash": "2ce302dcc7fdab5021f3b9b2fa188b2548151e380b92370ca7dc1a211b030085",
+          "schema_version": 1,
+          "subject_id": "I-LOAN"
+        }
+      },
+      "identity": "tenant + operation subject_id + receipt_id",
+      "indexed_queries": "l1_receipt_replay",
+      "kind": "payroll.operation.receipt",
+      "layer": "L1",
+      "meaning": "durable actor/retry/outcome evidence",
+      "references": "outcome draft/source/posted references when emitted; executor is external",
+      "table": "payroll_l1_records",
+      "validation": "request_hash binds retry input and durable before/after outcome"
+    },
+    {
+      "category": "L2 record",
+      "example": {
+        "key": "payroll.employee.settings:E101:1",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T17:47:53.268529+00:00",
+        "value": {
+          "effective_from": "2026-01",
+          "employee_id": "E101",
+          "payslip_locale": "en-IN",
+          "policy_ref": {
+            "id": "standard",
+            "revision": 1
+          },
+          "revision": 1,
+          "schema_version": 1
+        }
+      },
+      "identity": "tenant + employee_id + numeric revision",
+      "indexed_queries": "l2_settings_effective",
+      "kind": "payroll.employee.settings",
+      "layer": "L2",
+      "meaning": "effective L2 employee preferences and opaque policy reference",
+      "references": "policy_ref is external",
+      "table": "payroll_l2_records",
+      "validation": "effective month, opaque policy identity/revision and locale"
+    },
+    {
+      "category": "ledger row",
+      "example": {
+        "amount_minor": 3000000,
+        "component_key": "payroll.component:BASIC:1",
+        "currency": "INR",
+        "direction": "earning",
+        "draft_key": "payroll.draft:D1:1",
+        "employee_id": "E101",
+        "entry_id": "DEea1930c20fc770cbf6a9",
+        "payroll_month": "2026-11",
+        "row_kind": "draft",
+        "source_key": "payroll.earning:EARN-BASIC:1",
+        "tenant": "T1"
+      },
+      "identity": "tenant + draft_key + entry_id",
+      "indexed_queries": "draft_employee_month",
+      "kind": "draft",
+      "layer": "L1 ledger",
+      "meaning": "immutable proposed monetary line",
+      "references": "draft_key, selected source_key and its component_key; employee_id is external",
+      "table": "payroll_draft_ledger",
+      "validation": "exact draft/source employee, month, component, direction and amount agreement"
+    },
+    {
+      "category": "ledger row",
+      "example": {
+        "amount_minor": 3000000,
+        "component_key": "payroll.component:BASIC:1",
+        "currency": "INR",
+        "direction": "earning",
+        "draft_entry_id": "DEea1930c20fc770cbf6a9",
+        "draft_key": "payroll.draft:D1:1",
+        "employee_id": "E101",
+        "ledger_entry_id": "PEb8228870d12f87cdf529",
+        "payroll_month": "2026-11",
+        "row_kind": "posted",
+        "source_key": "payroll.earning:EARN-BASIC:1",
+        "tenant": "T1"
+      },
+      "identity": "tenant + ledger_entry_id",
+      "indexed_queries": "posted_employee_month",
+      "kind": "posted",
+      "layer": "L1 ledger",
+      "meaning": "immutable committed monetary line",
+      "references": "exact draft_key + draft_entry_id row, source_key and component_key",
+      "table": "payroll_ledger",
+      "validation": "all copied monetary fields exactly match the referenced draft row"
+    },
+    {
+      "category": "ledger row",
+      "example": {
+        "amount_minor": 300000,
+        "entry_id": "OB1",
+        "obligation_entry_id": null,
+        "posted_liability_entry_id": "PEd3fa4ff6c733d58e8b6a",
+        "proof_ref": null,
+        "remittance_entry_id": null,
+        "row_kind": "obligation",
+        "tenant": "T1"
+      },
+      "identity": "tenant + entry_id",
+      "indexed_queries": "one_obligation_per_liability",
+      "kind": "obligation",
+      "layer": "L1 ledger",
+      "meaning": "posted employer-liability obligation",
+      "references": "posted_liability_entry_id",
+      "table": "payroll_employer_liability_ledger",
+      "validation": "amount exactly matches one posted employer_liability entry"
+    },
+    {
+      "category": "ledger row",
+      "example": {
+        "amount_minor": 200000,
+        "entry_id": "REM1",
+        "obligation_entry_id": null,
+        "posted_liability_entry_id": null,
+        "proof_ref": "challan:REM1",
+        "remittance_entry_id": null,
+        "row_kind": "remittance",
+        "tenant": "T1"
+      },
+      "identity": "tenant + entry_id",
+      "indexed_queries": "primary-key identity lookup",
+      "kind": "remittance",
+      "layer": "L1 ledger",
+      "meaning": "authority payment with proof",
+      "references": "proof_ref is external authority evidence",
+      "table": "payroll_employer_liability_ledger",
+      "validation": "positive minor units and nonblank proof_ref"
+    },
+    {
+      "category": "ledger row",
+      "example": {
+        "amount_minor": 200000,
+        "entry_id": "ALLOC1",
+        "obligation_entry_id": "OB1",
+        "posted_liability_entry_id": null,
+        "proof_ref": null,
+        "remittance_entry_id": "REM1",
+        "row_kind": "allocation",
+        "tenant": "T1"
+      },
+      "identity": "tenant + entry_id",
+      "indexed_queries": "liability_allocations",
+      "kind": "allocation",
+      "layer": "L1 ledger",
+      "meaning": "amount linking obligation and remittance",
+      "references": "obligation_entry_id and remittance_entry_id",
+      "table": "payroll_employer_liability_ledger",
+      "validation": "typed references, positive amount and obligation/remittance caps"
+    }
+  ]
+}
