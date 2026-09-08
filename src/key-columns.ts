@@ -1,7 +1,23 @@
+const identityArity = {
+  'payroll.component': 2,
+  'payroll.earning': 3,
+  'payroll.instruction': 3,
+  'payroll.draft': 3,
+  'payroll.draft.control': 3,
+  'payroll.draft.review': 3,
+  'payroll.instruction.resolution': 3,
+  'payroll.instruction.application': 3,
+  'payroll.operation.receipt': 3,
+  'payroll.employee.settings': 2,
+} as const;
+
 export function decodeKeyColumns(key: string): string[] {
   const separator = key.indexOf(':');
   if (separator < 1) throw new Error('invalid canonical key');
-  const columns = key.slice(0, separator).split('.');
+  const type = key.slice(0, separator);
+  const expectedIdentities = identityArity[type as keyof typeof identityArity];
+  if (expectedIdentities === undefined) throw new Error('invalid canonical key');
+  const columns = type.split('.');
   const identities = [''];
   for (let index = separator + 1; index < key.length; index += 1) {
     const character = key[index];
@@ -16,6 +32,6 @@ export function decodeKeyColumns(key: string): string[] {
     }
   }
   const decoded = [...columns, ...identities];
-  if (identities.length !== 2 || decoded.some((part) => !part) || decoded.length > 10) throw new Error('invalid canonical key');
+  if (identities.length !== expectedIdentities || decoded.some((part) => !part) || decoded.length > 10) throw new Error('invalid canonical key');
   return decoded;
 }
