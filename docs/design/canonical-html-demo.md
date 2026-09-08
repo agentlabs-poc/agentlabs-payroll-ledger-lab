@@ -102,3 +102,10 @@ including the user's example `payroll.component:BASIC` decoded as `key1 = payrol
 columns are a storage/index projection. The timeline still shows actual rows from
 the earlier SQLite schema, clearly labelled as such. The [identity contract](canonical-identities.md)
 records pending employee identities and the remaining SQLite proof checkpoints.
+
+Expanded L1/L2 timeline records also show a decoded key-column preview alongside
+the unchanged captured JSON. All ten generic slots are visible; unused slots are
+labelled without choosing a physical null/empty representation. This preview is
+derived from each existing snapshot key, so it does not invent missing employee
+identity or claim the new storage schema has been implemented. Monetary ledger
+rows retain their original representation.
