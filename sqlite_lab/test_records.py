@@ -160,6 +160,29 @@ class RecordStoreTest(unittest.TestCase):
             1,
         )
 
+    def test_current_and_effective_settings_accept_escaped_employee_identity(self):
+        employee_id = "EMP:101\\A"
+        self.store.put_l2_settings("T1", {
+            "schema_version": 1, "employee_id": employee_id, "revision": 1,
+            "effective_from": "2026-11", "policy_ref": {"id": "P:1", "revision": 1},
+            "payslip_locale": "en-IN",
+        })
+        self.assertEqual(
+            self.store.current_l2_settings("T1", employee_id)["value"]["employee_id"],
+            employee_id,
+        )
+        self.assertEqual(
+            self.store.effective_l2_settings("T1", employee_id, "2026-11")["value"]["employee_id"],
+            employee_id,
+        )
+
+    def test_generic_reads_reject_malformed_canonical_keys(self):
+        malformed = "payroll.component:sub\\.ject:1"
+        with self.assertRaises(RecordError):
+            self.store.get_l1("T1", malformed)
+        with self.assertRaises(RecordError):
+            self.store.get_l2("T1", malformed)
+
     def test_foreign_keys_are_enabled_for_every_connection(self):
         self.assertEqual(self.connection.execute("PRAGMA foreign_keys").fetchone()[0], 1)
 

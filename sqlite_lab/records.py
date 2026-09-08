@@ -220,6 +220,7 @@ class RecordStore:
         return self._put("payroll_l2_records", tenant, key, value, state)
 
     def _get(self, table, tenant, key):
+        parse_key(key)
         return _row(self.connection.execute(
             f"SELECT tenant,key,value,ts,state FROM {table} WHERE tenant=? AND key=?",
             (tenant, key),
@@ -251,7 +252,7 @@ class RecordStore:
         return history[-1]
 
     def current_l2_settings(self, tenant, employee_id):
-        _identifier(employee_id, "employee")
+        _identifier(employee_id, "employee", identity=True)
         return _row(self.connection.execute(
             "SELECT tenant,key,value,ts,state FROM payroll_l2_records "
             "WHERE tenant=? AND json_extract(value,'$.employee_id')=? "
@@ -260,6 +261,7 @@ class RecordStore:
         ).fetchone())
 
     def effective_l2_settings(self, tenant, employee_id, payroll_month):
+        _identifier(employee_id, "employee", identity=True)
         if not MONTH.fullmatch(payroll_month):
             raise RecordError("invalid payroll month")
         row = _row(self.connection.execute(

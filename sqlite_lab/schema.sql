@@ -73,6 +73,29 @@ ON payroll_l2_records (
 )
 WHERE key LIKE 'payroll.employee.settings:%';
 
+CREATE TRIGGER component_code_scope BEFORE INSERT ON payroll_l1_records
+WHEN NEW.key LIKE 'payroll.component:%' AND EXISTS (
+    SELECT 1 FROM payroll_l1_records old
+    WHERE old.tenant = NEW.tenant
+      AND old.key LIKE 'payroll.component:%'
+      AND json_extract(old.value, '$.country_code') = json_extract(NEW.value, '$.country_code')
+      AND json_extract(old.value, '$.code') = json_extract(NEW.value, '$.code')
+      AND json_extract(old.value, '$.component_id') <> json_extract(NEW.value, '$.component_id')
+)
+BEGIN SELECT RAISE(ABORT, 'component code conflicts in tenant/country scope'); END;
+
+CREATE TRIGGER component_identity_stable BEFORE INSERT ON payroll_l1_records
+WHEN NEW.key LIKE 'payroll.component:%' AND EXISTS (
+    SELECT 1 FROM payroll_l1_records old
+    WHERE old.tenant = NEW.tenant
+      AND old.key LIKE 'payroll.component:%'
+      AND json_extract(old.value, '$.component_id') = json_extract(NEW.value, '$.component_id')
+      AND (json_extract(old.value, '$.code') <> json_extract(NEW.value, '$.code')
+        OR json_extract(old.value, '$.kind') <> json_extract(NEW.value, '$.kind')
+        OR json_extract(old.value, '$.country_code') <> json_extract(NEW.value, '$.country_code'))
+)
+BEGIN SELECT RAISE(ABORT, 'component identity fields changed'); END;
+
 CREATE TRIGGER l1_immutable_update BEFORE UPDATE ON payroll_l1_records
 BEGIN SELECT RAISE(ABORT, 'L1 records are immutable'); END;
 CREATE TRIGGER l1_immutable_delete BEFORE DELETE ON payroll_l1_records
@@ -148,7 +171,7 @@ CREATE TABLE payroll_ledger_entries (
     employee_id TEXT NOT NULL,
     payroll_month TEXT NOT NULL,
     component_id TEXT NOT NULL,
-    direction TEXT NOT NULL CHECK (direction IN ('earning', 'deduction', 'employer_contribution')),
+    direction TEXT NOT NULL CHECK (direction IN ('earning', 'deduction', 'employer_expense', 'employer_liability')),
     amount_minor INTEGER NOT NULL CHECK (amount_minor >= 0),
     PRIMARY KEY (tenant, ledger_entry_id),
     FOREIGN KEY (tenant, draft_id)
@@ -159,16 +182,29 @@ CREATE TABLE payroll_statutory_obligations (
     tenant TEXT NOT NULL,
     obligation_id TEXT NOT NULL,
     ledger_entry_id TEXT NOT NULL,
-    amount_minor INTEGER NOT NULL CHECK (amount_minor > 0),
+    amount_minor INTEGER NOT NULL CHECK (typeof(amount_minor) = 'integer' AND amount_minor > 0),
     PRIMARY KEY (tenant, obligation_id),
+    UNIQUE (tenant, ledger_entry_id),
     FOREIGN KEY (tenant, ledger_entry_id)
       REFERENCES payroll_ledger_entries(tenant, ledger_entry_id)
 );
 
+CREATE TRIGGER obligation_requires_posted_liability
+BEFORE INSERT ON payroll_statutory_obligations
+WHEN NOT EXISTS (
+    SELECT 1 FROM payroll_ledger_entries entry
+    WHERE entry.tenant = NEW.tenant
+      AND entry.ledger_entry_id = NEW.ledger_entry_id
+      AND entry.direction = 'employer_liability'
+      AND entry.amount_minor = NEW.amount_minor
+)
+BEGIN SELECT RAISE(ABORT, 'obligation must match posted employer liability'); END;
+
 CREATE TABLE payroll_statutory_remittances (
     tenant TEXT NOT NULL,
     remittance_id TEXT NOT NULL,
-    amount_minor INTEGER NOT NULL CHECK (amount_minor > 0),
+    amount_minor INTEGER NOT NULL CHECK (typeof(amount_minor) = 'integer' AND amount_minor > 0),
+    proof_ref TEXT NOT NULL CHECK (typeof(proof_ref) = 'text' AND length(trim(proof_ref)) > 0),
     PRIMARY KEY (tenant, remittance_id)
 );
 
@@ -177,7 +213,7 @@ CREATE TABLE payroll_statutory_allocations (
     allocation_id TEXT NOT NULL,
     obligation_id TEXT NOT NULL,
     remittance_id TEXT NOT NULL,
-    amount_minor INTEGER NOT NULL CHECK (amount_minor > 0),
+    amount_minor INTEGER NOT NULL CHECK (typeof(amount_minor) = 'integer' AND amount_minor > 0),
     PRIMARY KEY (tenant, allocation_id),
     FOREIGN KEY (tenant, obligation_id)
       REFERENCES payroll_statutory_obligations(tenant, obligation_id),

@@ -231,7 +231,7 @@ class PayrollTest(unittest.TestCase):
         self.make_draft(instructions=(), employer_contribution_minor=300_000)
         committed = self.payroll.commit("D1", "immutable", 1)
         self.payroll.record_obligation("OB1", committed["employer_liability_entry_id"], 300_000)
-        self.payroll.record_remittance("REM1", 100_000)
+        self.payroll.record_remittance("REM1", 100_000, "challan:REM1")
         self.payroll.allocate_remittance("ALLOC1", "OB1", "REM1", 100_000)
         updates = [
             "UPDATE payroll_instruction_versions SET amount_minor=1 WHERE tenant='T1'",
@@ -251,12 +251,85 @@ class PayrollTest(unittest.TestCase):
         self.assertIsNotNone(liability_entry)
         self.payroll.record_obligation("OB1", liability_entry, 300_000)
         self.assertEqual(self.payroll.elr_outstanding("OB1"), 300_000)
-        self.payroll.record_remittance("REM1", 200_000)
+        self.payroll.record_remittance("REM1", 200_000, "challan:REM1")
         self.payroll.allocate_remittance("ALLOC1", "OB1", "REM1", 200_000)
         self.assertEqual(self.payroll.elr_outstanding("OB1"), 100_000)
-        self.payroll.record_remittance("REM2", 200_000)
+        self.payroll.record_remittance("REM2", 200_000, "challan:REM2")
         with self.assertRaises(PayrollError):
             self.payroll.allocate_remittance("ALLOC2", "OB1", "REM2", 200_000)
+
+    def test_elr_requires_exact_integer_money_and_nonempty_remittance_proof(self):
+        self.make_draft(instructions=(), employer_contribution_minor=300_000)
+        committed = self.payroll.commit("D1", "elr-types", 1)
+        liability = committed["employer_liability_entry_id"]
+        for amount in (True, 1.5):
+            with self.subTest(operation="obligation", amount=amount), self.assertRaises(PayrollError):
+                self.payroll.record_obligation("OB-invalid", liability, amount)
+            with self.subTest(operation="remittance", amount=amount), self.assertRaises(PayrollError):
+                self.payroll.record_remittance("REM-invalid", amount, "challan:x")
+        for proof_ref in ("", "   ", None):
+            with self.subTest(proof_ref=proof_ref), self.assertRaises(PayrollError):
+                self.payroll.record_remittance("REM-invalid", 100_000, proof_ref)
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.connection.execute(
+                "INSERT INTO payroll_statutory_obligations VALUES('T1','OB-real',?,1.5)",
+                (liability,),
+            )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.connection.execute(
+                "INSERT INTO payroll_statutory_remittances VALUES('T1','REM-real',1.5,'challan:x')"
+            )
+        self.payroll.record_obligation("OB1", liability, 300_000)
+        self.payroll.record_remittance("REM1", 300_000, "challan:REM1")
+        for amount in (False, 0.5):
+            with self.subTest(operation="allocation", amount=amount), self.assertRaises(PayrollError):
+                self.payroll.allocate_remittance("ALLOC-invalid", "OB1", "REM1", amount)
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.connection.execute(
+                "INSERT INTO payroll_statutory_allocations VALUES('T1','ALLOC-real','OB1','REM1',0.5)"
+            )
+
+    def test_obligation_must_match_unique_posted_employer_liability(self):
+        self.make_draft(instructions=(), employer_contribution_minor=300_000)
+        committed = self.payroll.commit("D1", "elr-backing", 1)
+        rows = self.connection.execute(
+            "SELECT ledger_entry_id,direction,amount_minor FROM payroll_ledger_entries "
+            "WHERE tenant='T1' AND draft_id='D1' ORDER BY rowid"
+        ).fetchall()
+        salary, expense, liability = rows
+        self.assertEqual(expense["direction"], "employer_expense")
+        self.assertEqual(liability["direction"], "employer_liability")
+        self.assertEqual(committed["employer_liability_entry_id"], liability["ledger_entry_id"])
+        for entry_id, amount in ((salary["ledger_entry_id"], 5_000_000),
+                                 (expense["ledger_entry_id"], 300_000),
+                                 (liability["ledger_entry_id"], 299_999)):
+            with self.subTest(entry_id=entry_id, amount=amount), self.assertRaises(PayrollError):
+                self.payroll.record_obligation("OB-invalid", entry_id, amount)
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.connection.execute(
+                "INSERT INTO payroll_statutory_obligations "
+                "VALUES('T1','OB-direct-salary',?,5000000)",
+                (salary["ledger_entry_id"],),
+            )
+        self.payroll.record_obligation("OB1", liability["ledger_entry_id"], 300_000)
+        with self.assertRaises(Conflict):
+            self.payroll.record_obligation("OB2", liability["ledger_entry_id"], 300_000)
+
+    def test_component_scope_is_unique_and_identity_fields_are_stable_across_revisions(self):
+        self.payroll.define_component("C-A", 1, "stable", "First label", "earning", "IN")
+        with self.assertRaises(Conflict):
+            self.payroll.define_component("C-B", 1, "stable", "Other", "earning", "IN")
+        different_country = self.payroll.define_component(
+            "C-C", 1, "stable", "US component", "earning", "US"
+        )
+        self.assertEqual(different_country["value"]["component_id"], "C-C")
+        revised = self.payroll.define_component("C-A", 2, "stable", "New label", "earning", "IN")
+        self.assertEqual(revised["value"]["label"], "New label")
+        for code, kind, country in (("changed", "earning", "IN"),
+                                    ("stable", "deduction", "IN"),
+                                    ("stable", "earning", "US")):
+            with self.subTest(code=code, kind=kind, country=country), self.assertRaises(Conflict):
+                self.payroll.define_component("C-A", 3, code, "Drift", kind, country)
 
     def test_disabling_component_creates_new_current_revision_without_revival(self):
         disabled = self.payroll.disable_component("LOAN", 1)
@@ -284,6 +357,10 @@ class ProofRunnerTest(unittest.TestCase):
                                if item["role"] == "payroll_source_authority_actions")
             self.assertEqual(source_role["status"], "witnessed")
             self.assertGreaterEqual(len(source_role["evidence"]), 2)
+            self.assertEqual(
+                result["outcomes"]["employer_liability_fixture"]["remittance_proof_ref"],
+                "challan:REM1",
+            )
             self.assertTrue((Path(directory) / "evidence.json").is_file())
             self.assertTrue((Path(directory) / "proof.sqlite3").is_file())
 

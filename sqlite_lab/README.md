@@ -47,8 +47,10 @@ The retained form refuses to replace an existing `proof.sqlite3` or
   `payroll.employee.settings` write in this proof.
 - Component definitions and controls are immutable revisions. A disabled newest
   component remains authoritative and prevents new use; an older enabled revision
-  is not revived. Receipts and applications cannot change availability because
-  all L1 rows are immutable.
+  is not revived. Component code is unique within tenant/country scope, and code,
+  kind and country stay stable across one component's revisions while its label
+  may change. Receipts and applications cannot change availability because all L1
+  rows are immutable.
 - Employee settings choose the latest effective month and then numeric revision.
   `policy_ref` is opaque. Its referent, policy semantics and authorization are not
   validated by this lab.
@@ -71,9 +73,12 @@ The retained form refuses to replace an existing `proof.sqlite3` or
   required, it binds the exact immutable draft content hash and control revision.
   The lab adds no maker/checker rule.
 - The employer-contribution fixture posts equal expense and liability entries so
-  it does not alter the salary/loan totals. An obligation is outstanding until an
-  explicit remittance allocation, and allocation cannot exceed the obligation or
-  remittance. Accounting and bank workflows are outside this proof.
+  it does not alter the salary/loan totals and preserves those distinct posted
+  roles. An obligation must exactly match one positive posted employer-liability
+  entry, which can back only one obligation. ELR amounts require exact integer
+  minor units. A remittance requires a nonempty proof reference, and allocation
+  cannot exceed the obligation or remittance. Accounting and bank workflows are
+  outside this proof.
 
 The test suite uses real temporary SQLite files. It covers the literal E101
 November 2026 gross 5,000,000, loan deduction 200,000 and net 4,800,000; inclusive
@@ -94,6 +99,6 @@ This result does not establish production folding, compatibility or performance.
 PostgreSQL JSON/index behavior, constraints, isolation, database roles/RLS,
 authentication, permissions, migration/data reconciliation and representative
 load remain unproved. Platform-shared component definitions, exact HTTP response
-replay, source-authority operation coverage, a salary-source contract and an
-auxiliary policy contract are also open. SQLite serializes writers, so the
+replay, upstream source tracing, a salary-source contract and an auxiliary policy
+contract are also open. SQLite serializes writers, so the
 two-connection result does not predict PostgreSQL concurrency or throughput.

@@ -90,11 +90,12 @@ def _run(database: Path):
         outcome = payroll.commit("D4", "commit-e201-contribution", 1)
         payroll.record_obligation("OB1", outcome["employer_liability_entry_id"], 300_000)
         before = payroll.elr_outstanding("OB1")
-        payroll.record_remittance("REM1", 200_000)
+        payroll.record_remittance("REM1", 200_000, "challan:REM1")
         payroll.allocate_remittance("ALLOC1", "OB1", "REM1", 200_000)
         after = payroll.elr_outstanding("OB1")
         return {"outstanding_before_remittance_minor": before,
-                "outstanding_after_allocation_minor": after}
+                "outstanding_after_allocation_minor": after,
+                "remittance_proof_ref": "challan:REM1"}
     elr = _stage(timings, "employer_liability", employer_liability_journey)
 
     row_counts = {table: connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]

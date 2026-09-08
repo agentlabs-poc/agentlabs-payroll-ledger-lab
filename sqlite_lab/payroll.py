@@ -27,6 +27,12 @@ def _stable_id(prefix, *parts):
     return prefix + hashlib.sha256("\x1f".join(parts).encode()).hexdigest()[:20]
 
 
+def _positive_minor_units(value):
+    if type(value) is not int or value <= 0:
+        raise PayrollError("amount must be a positive integer number of minor units")
+    return value
+
+
 @contextmanager
 def _write(connection):
     connection.execute("BEGIN IMMEDIATE")
@@ -52,9 +58,27 @@ class Payroll:
             "code": code, "label": label, "kind": kind, "country_code": country_code,
         }
         with _write(self.connection):
-            return self.records._put_l1(
-                self.tenant, canonical_key("payroll.component", component_id, revision), value
-            )
+            history = self.records.history_l1(self.tenant, "payroll.component", component_id)
+            if history:
+                original = history[0]["value"]
+                if any(value[field] != original[field] for field in ("code", "kind", "country_code")):
+                    raise Conflict("component identity fields cannot change across revisions")
+            collision = self.connection.execute(
+                "SELECT 1 FROM payroll_l1_records WHERE tenant=? "
+                "AND key LIKE 'payroll.component:%' "
+                "AND json_extract(value,'$.country_code')=? "
+                "AND json_extract(value,'$.code')=? "
+                "AND json_extract(value,'$.component_id')<>? LIMIT 1",
+                (self.tenant, country_code, code, component_id),
+            ).fetchone()
+            if collision:
+                raise Conflict("component code is already owned in tenant/country scope")
+            try:
+                return self.records._put_l1(
+                    self.tenant, canonical_key("payroll.component", component_id, revision), value
+                )
+            except sqlite3.IntegrityError as exc:
+                raise Conflict("component definition conflicts with existing identity") from exc
 
     def disable_component(self, component_id, expected_revision, reason="disabled"):
         with _write(self.connection):
@@ -306,8 +330,7 @@ class Payroll:
             entry_map = {}
             for entry in draft_entries:
                 posted_id = _stable_id("PE", draft_id, entry["entry_id"])
-                posted_direction = ("employer_contribution" if entry["direction"].startswith("employer_")
-                                    else entry["direction"])
+                posted_direction = entry["direction"]
                 self.connection.execute(
                     "INSERT INTO payroll_ledger_entries(tenant,ledger_entry_id,draft_id,employee_id,payroll_month,component_id,direction,amount_minor) VALUES(?,?,?,?,?,?,?,?)",
                     (self.tenant, posted_id, draft_id, draft["employee_id"], draft["payroll_month"],
@@ -384,20 +407,44 @@ class Payroll:
                 "ts": row["ts"], "state": row["state"]}
 
     def record_obligation(self, obligation_id, ledger_entry_id, amount_minor):
+        _identifier(obligation_id, "obligation", identity=True)
+        _identifier(ledger_entry_id, "ledger entry", identity=True)
+        _positive_minor_units(amount_minor)
         with _write(self.connection):
+            entry = self.connection.execute(
+                "SELECT direction,amount_minor FROM payroll_ledger_entries "
+                "WHERE tenant=? AND ledger_entry_id=?",
+                (self.tenant, ledger_entry_id),
+            ).fetchone()
+            if (entry is None or entry["direction"] != "employer_liability" or
+                    entry["amount_minor"] != amount_minor):
+                raise PayrollError("obligation must exactly match a posted employer liability")
+            if self.connection.execute(
+                "SELECT 1 FROM payroll_statutory_obligations WHERE tenant=? AND ledger_entry_id=?",
+                (self.tenant, ledger_entry_id),
+            ).fetchone():
+                raise Conflict("posted employer liability already has an obligation")
             self.connection.execute(
                 "INSERT INTO payroll_statutory_obligations(tenant,obligation_id,ledger_entry_id,amount_minor) VALUES(?,?,?,?)",
                 (self.tenant, obligation_id, ledger_entry_id, amount_minor),
             )
 
-    def record_remittance(self, remittance_id, amount_minor):
+    def record_remittance(self, remittance_id, amount_minor, proof_ref):
+        _identifier(remittance_id, "remittance", identity=True)
+        _positive_minor_units(amount_minor)
+        if not isinstance(proof_ref, str) or not proof_ref.strip():
+            raise PayrollError("remittance requires a nonempty proof reference")
         with _write(self.connection):
             self.connection.execute(
-                "INSERT INTO payroll_statutory_remittances(tenant,remittance_id,amount_minor) VALUES(?,?,?)",
-                (self.tenant, remittance_id, amount_minor),
+                "INSERT INTO payroll_statutory_remittances(tenant,remittance_id,amount_minor,proof_ref) VALUES(?,?,?,?)",
+                (self.tenant, remittance_id, amount_minor, proof_ref),
             )
 
     def allocate_remittance(self, allocation_id, obligation_id, remittance_id, amount_minor):
+        for value, label in ((allocation_id, "allocation"), (obligation_id, "obligation"),
+                             (remittance_id, "remittance")):
+            _identifier(value, label, identity=True)
+        _positive_minor_units(amount_minor)
         with _write(self.connection):
             obligation = self.connection.execute(
                 "SELECT amount_minor FROM payroll_statutory_obligations WHERE tenant=? AND obligation_id=?",
@@ -407,7 +454,7 @@ class Payroll:
                 "SELECT amount_minor FROM payroll_statutory_remittances WHERE tenant=? AND remittance_id=?",
                 (self.tenant, remittance_id),
             ).fetchone()
-            if obligation is None or remittance is None or amount_minor <= 0:
+            if obligation is None or remittance is None:
                 raise PayrollError("invalid allocation")
             allocated_obligation = self.connection.execute(
                 "SELECT COALESCE(SUM(amount_minor),0) FROM payroll_statutory_allocations WHERE tenant=? AND obligation_id=?",
