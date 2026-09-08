@@ -250,4 +250,19 @@ class ProofRunnerTest(unittest.TestCase):
             (Path(directory)/"canonical-rows.json").write_text("user")
             with self.assertRaises(FileExistsError): run_proof(Path(directory))
 
+    def test_catalogue_rejects_unresolved_review_and_receipt_references(self):
+        with tempfile.TemporaryDirectory() as directory:
+            run_proof(Path(directory))
+            rows=json.loads((Path(directory)/"canonical-rows.json").read_text())
+
+        for label,change in (
+            ("review control",lambda rs: next(r for r in rs if r["key"].startswith("payroll.draft.review:"))["value"].__setitem__("control_revision",99)),
+            ("receipt control",lambda rs: next(r for r in rs if r["value"].get("operation")=="payroll.commit")["value"]["before"].__setitem__("control_revision",99)),
+            ("receipt liability",lambda rs: next(r for r in rs if r["value"].get("outcome",{}).get("employer_liability_entry_id"))["value"]["outcome"].__setitem__("employer_liability_entry_id","MISSING")),
+            ("receipt after posted entry",lambda rs: next(r for r in rs if r["value"].get("operation")=="payroll.commit")["value"]["after"]["posted_entry_ids"].__setitem__(0,"MISSING")),
+        ):
+            broken=copy.deepcopy(rows); change(broken["payroll_l1_records"])
+            with self.subTest(label=label), self.assertRaisesRegex(ValueError,label):
+                _catalogue(broken)
+
 if __name__=="__main__": unittest.main()

@@ -10,7 +10,7 @@ import tempfile
 import time
 from pathlib import Path
 from .payroll import Conflict, Payroll
-from .records import connect
+from .records import canonical_key, connect
 
 TABLES = (
     "payroll_l1_records",
@@ -176,14 +176,21 @@ def _validate_reference_closure(rows):
     def require(condition, label):
         if not condition: raise ValueError("unresolved exported "+label)
 
+    def has_control(tenant,draft_id,revision):
+        control=l1.get((tenant,canonical_key("payroll.draft.control",draft_id,revision)))
+        return control and control["value"]["draft_id"]==draft_id and control["value"]["revision"]==revision
+
     for row in rows["payroll_l1_records"]:
         tenant,key,value=row["tenant"],row["key"],row["value"]
         if key.startswith(("payroll.earning:","payroll.instruction:")):
             require((tenant,value["component_key"]) in l1,"component_key")
         elif key.startswith("payroll.draft:"):
             for source_key in value.get("earning_keys",[])+value.get("instruction_keys",[]): require((tenant,source_key) in l1,"draft source")
-        elif key.startswith(("payroll.draft.control:","payroll.draft.review:")):
+        elif key.startswith("payroll.draft.control:"):
             require((tenant,value["draft_id"]) in drafts,"draft record")
+        elif key.startswith("payroll.draft.review:"):
+            require((tenant,value["draft_id"]) in drafts,"draft record")
+            require(has_control(tenant,value["draft_id"],value["control_revision"]),"review control")
         elif key.startswith("payroll.instruction.resolution:"):
             instruction=l1.get((tenant,value["instruction_key"]))
             require(instruction and instruction["value"]["instruction_id"]==value["instruction_id"],"stable instruction resolution")
@@ -200,6 +207,11 @@ def _validate_reference_closure(rows):
             if "instruction_key" in outcome: require((tenant,outcome["instruction_key"]) in l1,"receipt instruction")
             if "draft_key" in outcome: require((tenant,outcome["draft_key"]) in l1,"receipt draft")
             for entry_id in outcome.get("posted_entry_ids",[]): require((tenant,entry_id) in posted,"receipt posted entry")
+            liability_id=outcome.get("employer_liability_entry_id")
+            if liability_id: require(posted.get((tenant,liability_id),{}).get("direction")=="employer_liability","receipt liability")
+            before=value["before"]
+            if "control_revision" in before: require(has_control(tenant,value["subject_id"],before["control_revision"]),"receipt control")
+            for entry_id in value["after"].get("posted_entry_ids",[]): require((tenant,entry_id) in posted,"receipt after posted entry")
 
     for row in rows["payroll_draft_ledger"]:
         tenant=row["tenant"]
