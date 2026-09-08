@@ -245,7 +245,15 @@ class PayrollTest(unittest.TestCase):
                 self.connection.execute(statement)
 
     def test_elr_outstanding_reduces_only_after_allocation_and_rejects_overallocation(self):
-        self.make_draft(instructions=(), employer_contribution_minor=300_000)
+        draft = self.make_draft(instructions=(), employer_contribution_minor=300_000)
+        self.assertEqual(draft["gross_minor"], 5_300_000)
+        self.assertEqual(draft["deductions_minor"], 300_000)
+        self.assertEqual(draft["net_minor"], 5_000_000)
+        persisted = self.connection.execute(
+            "SELECT gross_minor,deductions_minor,net_minor FROM payroll_calculation_revisions "
+            "WHERE tenant='T1' AND draft_id='D1'"
+        ).fetchone()
+        self.assertEqual(tuple(persisted), (5_300_000, 300_000, 5_000_000))
         committed = self.payroll.commit("D1", "contribution", 1)
         liability_entry = committed["employer_liability_entry_id"]
         self.assertIsNotNone(liability_entry)

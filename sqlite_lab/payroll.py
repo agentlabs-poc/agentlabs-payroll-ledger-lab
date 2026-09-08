@@ -223,7 +223,11 @@ class Payroll:
                      "direction": "employer_liability", "amount_minor": employer_contribution_minor,
                      "instruction_version_id": None},
                 ])
-            deductions = sum(entry["amount_minor"] for entry in entries if entry["direction"] == "deduction")
+            gross = salary_minor + employer_contribution_minor
+            deductions = (
+                sum(entry["amount_minor"] for entry in entries if entry["direction"] == "deduction")
+                + employer_contribution_minor
+            )
             candidate = {"employee_id": employee_id, "payroll_month": payroll_month,
                          "external_salary_minor": salary_minor, "entries": entries}
             content_hash = _hash(candidate)
@@ -234,7 +238,7 @@ class Payroll:
             self.connection.execute(
                 "INSERT INTO payroll_calculation_revisions(tenant,calculation_id,revision,draft_id,candidate_identity,content_hash,gross_minor,deductions_minor,net_minor) VALUES(?,?,?,?,?,?,?,?,?)",
                 (self.tenant, calculation_id, 1, draft_id, _hash({"calculation_id": calculation_id, "revision": 1}),
-                 content_hash, salary_minor, deductions, salary_minor - deductions),
+                 content_hash, gross, deductions, gross - deductions),
             )
             for entry in entries:
                 self.connection.execute(
@@ -257,8 +261,8 @@ class Payroll:
                     self.tenant, canonical_key("payroll.instruction.resolution", draft_id, resolution_id), value
                 )
             return {"draft_id": draft_id, "content_hash": content_hash,
-                    "gross_minor": salary_minor, "deductions_minor": deductions,
-                    "net_minor": salary_minor - deductions, "entries": entries}
+                    "gross_minor": gross, "deductions_minor": deductions,
+                    "net_minor": gross - deductions, "entries": entries}
 
     def set_draft_control(self, draft_id, held, cancelled, reason, expected_revision):
         with _write(self.connection):

@@ -73,9 +73,10 @@ The retained form refuses to replace an existing `proof.sqlite3` or
   required, it binds the exact immutable draft content hash and control revision.
   The lab adds no maker/checker rule.
 - The employer-contribution fixture posts equal expense and liability entries so
-  it does not alter the salary/loan totals and preserves those distinct posted
-  roles. An obligation must exactly match one positive posted employer-liability
-  entry, which can back only one obligation. ELR amounts require exact integer
+  the contribution increases gross and deductions equally, leaves net unchanged,
+  and preserves those distinct posted roles. An obligation must exactly match one
+  positive posted employer-liability entry, which can back only one obligation.
+  ELR amounts require exact integer
   minor units. A remittance requires a nonempty proof reference, and allocation
   cannot exceed the obligation or remittance. Accounting and bank workflows are
   outside this proof.
