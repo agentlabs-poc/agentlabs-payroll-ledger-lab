@@ -209,3 +209,31 @@ The user additionally required a prefix to signify meaning. The format is
 `<canonical-type-prefix>_<snowflake-base36>`, e.g. `earning_9do1sj396nf9`.
 Prefixes describe stable entity types; the 13-character limit applies only to
 the numeric suffix. This preserves meaning when an ID is copied out of its key.
+
+## 2026-09-09 — Karnataka fixture and tax-regime layer
+
+The user requested meaningful PF, profession-tax and salary income-tax entries,
+then clarified that old/new regime selection is an L2 candidate. Keep it as
+optional validated employee-settings data; do not invent an L1 tax-regime type.
+L3 supplies the projection and monthly tax instruction. Component meaning,
+amount records and posted monetary invariants remain L1.
+
+The realistic fixture exposed a gap: employee PF/PT/TDS withholding must also
+create employer authority liabilities. Add an optional stable authority-payable
+component flag so those remain single deduction rows without inflated gross.
+Exact posted references and amount matching still govern ELR obligations. Keep
+ordinary loans out of authority liabilities and preserve the existing three
+ledgers. Default demo leaves liabilities unpaid; settlement is explicitly selected.
+See [Karnataka demonstration](design/karnataka-payroll-demo.md) for assumptions,
+canonical entries, source basis and the old/new projections.
+
+## 2026-09-09 — Natural CLI and reset
+
+The user named the executable `payroll-cli` and requested saved repetitive
+parameters, natural commands, and a single complete reset command. Database,
+tenant, actor and format live in local CLI configuration with explicit-option
+overrides. Noun/verb aliases map directly to the existing L1/L2 operations;
+canonical JSON inputs and the original operation names remain supported.
+`reset` is scoped to the configured known local payroll database, clears all
+its tenants' data, recreates the same five tables, and preserves configuration.
+It does not reset arbitrary databases or change production services.

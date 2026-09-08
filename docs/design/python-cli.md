@@ -30,46 +30,57 @@ existing Python primitives using their original argument names:
 L2 owns software-provided auxiliary data. Currently implemented operations are
 `put_l2_settings`, `get_l2`, `current_l2_settings`, `effective_l2_settings`.
 Reusable compensation templates are a possible L2 concept, not an implemented
-command. Tax regime settings are not implemented in the current settings schema.
+command. Optional India tax-regime selection is represented in L2 settings; calculation stays in the L3 example. See the [Karnataka fixture](karnataka-payroll-demo.md).
 
 `ledger` reads the three canonical monetary ledgers. `records l1` and
 `records l2` list the respective record stores. All reads are tenant-scoped.
 No command exposes unrestricted SQL or raw writes to L1 records.
 
-## Commands
+## Natural commands and saved defaults
 
-Run from the Lab repository root. Initialize a new database explicitly:
+From the Lab repo, configure the CLI once:
 
 ```sh
-python3 -m sqlite_lab.cli --db /tmp/payroll-cli.sqlite --tenant T1 --actor payroll-admin init
+./payroll-cli configure --db /tmp/payroll.sqlite --tenant T1 --actor payroll-admin
+./payroll-cli reset
 ```
 
-Invoke a primitive with a JSON object from a file or standard input:
+`configure` saves database, tenant, actor and output preferences in
+`.payroll-cli.json`. Use `--config PATH` or `PAYROLL_CLI_CONFIG` for a separate
+configuration. Explicit CLI options override saved defaults. The local config
+is not committed to Git.
+
+`reset` empties **all tenants' payroll data in the configured local demo database**
+and recreates the five tables, preserving CLI configuration. It refuses an
+unrelated database. This is an explicit demo reset, not a production migration.
+
+Commands use domain nouns and verbs:
 
 ```sh
-python3 -m sqlite_lab.cli --db /tmp/payroll-cli.sqlite --tenant T1 --actor payroll-admin l1 define_component --input - <<'JSON'
-{"component_id":"BASIC","revision":1,"code":"basic","label":"Basic","kind":"earning","country_code":"IN"}
+./payroll-cli component define --input - <<'JSON'
+{"component_id":"BASIC","revision":1,"code":"BASIC","label":"Basic","kind":"earning","country_code":"IN"}
 JSON
+
+./payroll-cli settings set --input settings.json
+./payroll-cli earning define --input earning.json
+./payroll-cli instruction add --input instruction.json
+./payroll-cli draft create --input draft.json
+./payroll-cli draft review --input review.json
+./payroll-cli draft commit --input commit.json
+./payroll-cli --format table ledger payroll
+./payroll-cli --format table ledger liability
 ```
 
-The same envelope applies to `l1 <operation>` and `l2 <operation>`. Operation
-arguments follow the Python primitive contract; tenant and actor come from CLI
-options. Read errors and rejected operations return a nonzero exit status.
+The JSON files above are supplied operation inputs, not files automatically
+created by configuring the CLI. Use `--input -` to supply a JSON object on stdin.
+Canonical argument names and integer minor-unit amounts are preserved. Settings
+commands map to L2; component/earning/instruction/draft/liability commands map to
+L1. The interface itself does not own company policy.
 
-Inspect actual persisted ledgers as tables:
-
-```sh
-python3 -m sqlite_lab.cli --db /tmp/payroll-cli.sqlite --tenant T1 --actor payroll-admin --format table ledger payroll_draft_ledger
-python3 -m sqlite_lab.cli --db /tmp/payroll-cli.sqlite --tenant T1 --actor payroll-admin --format table ledger payroll_ledger
-python3 -m sqlite_lab.cli --db /tmp/payroll-cli.sqlite --tenant T1 --actor payroll-admin --format table ledger payroll_employer_liability_ledger
-python3 -m sqlite_lab.cli --db /tmp/payroll-cli.sqlite --tenant T1 --actor payroll-admin records l1
-python3 -m sqlite_lab.cli --db /tmp/payroll-cli.sqlite --tenant T1 --actor payroll-admin records l2
-```
-
-List the full grouped inventory with `operations` (using the same database, tenant and actor options).
-
-The default output is JSON. Original integer minor-unit amounts remain canonical;
-formatted amounts are only presentation.
+The original `python3 -m sqlite_lab.cli ... l1 <operation>` and `l2 <operation>`
+forms remain available. `operations` prints their explicit inventory. `records l1`
+and `records l2` list tenant-owned records. Full canonical ledger table names are
+also accepted, alongside `draft`, `payroll` and `liability` display aliases.
 
 ## L3 consumer walkthrough
 
@@ -78,6 +89,13 @@ individual L1/L2 operations:
 
 ```sh
 python3 -m sqlite_lab.cli_demo --db /tmp/payroll-cli-walkthrough.sqlite
+```
+
+Use `--step` to display each actual CLI command, its JSON input and result,
+with Enter to advance:
+
+```sh
+python3 -m sqlite_lab.cli_demo --db /tmp/payroll-cli-stepped.sqlite --step
 ```
 
 It leaves SQLite available for further CLI inspection. The consumer chooses the
@@ -115,11 +133,13 @@ Current example IDs are supplied fixtures, not evidence of a working distributed
 Snowflake generator. Epoch, worker coordination and generator wiring remain a
 separate implementation task.
 
-## Demonstrated result
+## Karnataka example
 
-The L3 example executes 26 CLI calls before final ledger display. Its actual
-assertions cover gross ₹58,000, deductions ₹5,000 and net ₹53,000, a rejected
-held commit, identical commit replay, and ₹3,000 remaining outstanding after
-remittance until allocation closes it. SQLite retains six draft entries, six
-committed entries, three ELR entries and the L1/L2 records. Timings include
-Python subprocess startup and are illustrative local execution measurements.
+The current CLI consumer uses actual canonical salary, EPF/EPS, Karnataka
+profession-tax and income-tax withholding components. Select `--tax-regime new`
+or `--tax-regime old`; `--step` displays each command. The default stops with
+unpaid authority obligations; add `--settle` to demonstrate remittance and allocation.
+
+[Fixture assumptions, amounts and source basis](karnataka-payroll-demo.md) are
+explicit. The earlier generic 26-call example remains historical evidence; its
+₹58,000 gross and ₹3,000 liability are not the current Karnataka fixture amounts.

@@ -37,11 +37,14 @@ primitives and runnable commands. L3 consumer Python scripts invoke the CLI;
 the CLI calls the existing primitives in process. Production HRMS core remains Go.
 
 ```sh
-python3 -m sqlite_lab.cli --help
+./payroll-cli --help
 python3 -m sqlite_lab.cli_demo --db /tmp/payroll-cli-walkthrough.sqlite
 ```
 
-Use a fresh database path. The walkthrough retains it for subsequent CLI queries.
+Use a fresh database path, or an empty database prepared by `payroll-cli reset`.
+The walkthrough retains it for subsequent CLI queries. Use `--tax-regime old`
+to compare the [Karnataka example](docs/design/karnataka-payroll-demo.md) with
+the default new regime; obligations stay unpaid unless `--settle` is selected.
 Generated IDs follow the [prefixed Snowflake Base36 direction](docs/design/canonical-generated-ids.md);
 current demo IDs are supplied fixtures and generator wiring remains separate.
 

@@ -38,7 +38,7 @@
       "type": "payroll.component",
       "layer": "L1",
       "owner": "Tenant",
-      "meaning": "A reusable payroll component definition, such as Basic or HRA, with its earning, deduction or employer-contribution meaning. It does not hold an employee amount.",
+      "meaning": "A reusable payroll component definition, such as Basic or HRA, with its earning, deduction or employer-contribution meaning. It does not hold an employee amount. An optional stable authority_payable flag marks deductions owed to an authority; it does not turn them into employer earnings.",
       "identity": "payroll.component:<component_id>:<revision>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
       "key_fields": [
         "component_id",
@@ -145,7 +145,7 @@
       "type": "payroll.employee.settings",
       "layer": "L2",
       "owner": "Employee",
-      "meaning": "Auxiliary employee payroll preferences and an opaque policy reference. Settings do not authorize commit or define earnings.",
+      "meaning": "Auxiliary employee payroll preferences and an opaque policy reference. Settings do not authorize commit or define earnings. Optional India tax-regime selection is an L2 candidate; L3 supplies tax calculation and L1 receives the resulting instruction.",
       "identity": "payroll.employee.settings:<employee_id>:<revision>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
       "key_fields": [
         "employee_id",
