@@ -5,7 +5,31 @@ Review date: 2026-09-09. Runtime baseline: `5dd02ba`.
 This reviews the Python CLI/in-process SQLite reference against the current
 three-ledger design and subsequent canonical decisions. It does not certify
 production Go/PostgreSQL implementation or all possible payroll policies.
-The review found material gaps; the lab is not fully conformant yet.
+The review found material gaps. The five reproduced defects below were then
+fixed at the user's request. The explicit unimplemented items remain outside
+that correction; passing tests do not establish complete production conformance.
+
+## Fix verification
+
+All **58 test methods pass** after the corrections (0.510 seconds in the root
+verification run). The five original defect descriptions below are retained as
+history, with executable checks now passing.
+
+- Commit finality uses durable commit evidence, including drafts with no monetary
+  rows. Same-request replay remains available.
+- Commit checks stable instruction consumption across cadence changes inside
+  the existing transaction. No new bulk operation or cadence-policy API was added.
+- Commit, hold/release, review and component-disable control inputs enforce
+  boolean flags and positive integer revisions without boolean coercion.
+- Existing database acceptance compares tables, indexes, triggers and their
+  normalized definitions against the current `schema.sql`, before reset writes.
+  This intentionally remains a prototype compatibility check, not a migration.
+- Catalogue validation checks payable existence, receipt ownership/membership,
+  draft identity and the exact component's payable classification.
+
+The benchmark verifier now derives net from actual posted gross minus deductions,
+rather than copying the expected net into the measured result. The 3,000-employee
+run was stopped at the user's request; a fresh 100-employee run replaces it.
 
 ## Scope and evidence
 
@@ -19,7 +43,7 @@ negative catalogue test still searched for the obsolete singular receipt field
 `employer_liability_entry_id`. That assertion did not run. New boundary tests
 retain failing assertions openly; a reproduced defect is not marked as passed.
 
-Final review verification: **58 test methods, 53 passing and 5 failing methods**,
+Pre-fix review verification: **58 test methods, 53 passing and 5 failing methods**,
 with 8 failure reports because the malformed-control test has four subcases.
 There were no test errors. The complete run took 0.747 seconds. Fifteen focused
 test methods were added. The obsolete catalogue fixture was corrected; its new
@@ -31,7 +55,10 @@ Run the evidence again with:
 python3 -m unittest discover -s sqlite_lab -p 'test_*.py' -v
 ```
 
-## Use-case map
+## Original review use-case map
+
+Gap assessments in this table describe the pre-fix review. The fix verification
+above supersedes the five defect statuses.
 
 | Area | Evidence | Assessment |
 |---|---|---|
@@ -54,7 +81,7 @@ python3 -m unittest discover -s sqlite_lab -p 'test_*.py' -v
 | Catalogue reference closure | Corrected negative catalogue fixture plus new generic payable case | Employer-liability reference check passes; missing generic payable reference is accepted |
 | 3,000 employees and one month | Separate running benchmark | Pending; volume is not proof of edge-case correctness |
 
-## Reproduced defects
+## Reproduced defects, now fixed
 
 1. **Commit accepts wrong JSON types.** A boolean control revision compares
    equal to integer revision 1. Policy flags are coerced with `bool(...)` or
@@ -111,15 +138,15 @@ The catalogue failure is in the existing `sqlite_lab/test_payroll.py`.
 
 ## Benchmark integrity
 
-The 3,000-employee subprocess benchmark continues against unchanged runtime
-files in a separate workspace-disk database. Review additions are tests and
-documentation only. Small test executions share the host, so the benchmark is
+The original 3,000-employee subprocess benchmark ran against unchanged runtime
+files in a separate workspace-disk database until the user stopped it. That review
+added only tests and documentation. Small test executions shared the host, so it was
 not an isolated-machine performance measurement. The CLI boundary run occurred
 at approximately 02:09:50 IST and took under one second. The payroll edge run
 at approximately 02:13:21 IST took 0.058 seconds. The root verification of all
 15 new tests took 0.290 seconds. Per-command resource
 measurements do not include the separate review processes.
 
-Runtime fixes must use a separate checkout while this benchmark runs, or wait
-until it finishes. Changing imported runtime files during the subprocess run
-would mix implementations in one result.
+Runtime fixes were applied only after the 3,000-employee process stopped.
+Changing imported runtime files during a subprocess benchmark would mix
+implementations in one result; the replacement run uses the fixed code throughout.

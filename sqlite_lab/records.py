@@ -136,6 +136,26 @@ def parse_key(key: str):
     return record_type, *parsed
 
 
+def _schema_signature(connection):
+    return tuple(
+        (row[0], row[1], row[2], " ".join((row[3] or "").split()))
+        for row in connection.execute(
+            "SELECT type,name,tbl_name,sql FROM sqlite_master "
+            "WHERE type IN ('table','index','trigger') AND name NOT LIKE 'sqlite_%' "
+            "ORDER BY type,name"
+        )
+    )
+
+
+def _expected_schema_signature(schema):
+    authority = sqlite3.connect(":memory:")
+    try:
+        authority.executescript(schema)
+        return _schema_signature(authority)
+    finally:
+        authority.close()
+
+
 def connect(path: str | Path) -> sqlite3.Connection:
     connection = sqlite3.connect(path, timeout=1, isolation_level=None)
     connection.row_factory = sqlite3.Row
@@ -148,10 +168,10 @@ def connect(path: str | Path) -> sqlite3.Connection:
     )}
     expected = {"payroll_l1_records", "payroll_l2_records", "payroll_draft_ledger",
                 "payroll_ledger", "payroll_employer_liability_ledger"}
+    schema = Path(__file__).with_name("schema.sql").read_text()
     if not names:
-        schema = Path(__file__).with_name("schema.sql").read_text()
         connection.executescript(schema)
-    elif names != expected:
+    elif names != expected or _schema_signature(connection) != _expected_schema_signature(schema):
         connection.close()
         raise RuntimeError("incompatible payroll SQLite prototype; create a fresh database")
     return connection

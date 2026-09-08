@@ -211,6 +211,22 @@ def _validate_reference_closure(rows):
             for entry_id in outcome.get("posted_entry_ids",[]): require((tenant,entry_id) in posted,"receipt posted entry")
             for liability_id in outcome.get("employer_liability_entry_ids",[]):
                 require(posted.get((tenant,liability_id),{}).get("direction")=="employer_liability","receipt liability")
+            expected_draft=canonical_key("payroll.draft",value["employee_id"],value["subject_id"],1)
+            for payable_id in outcome.get("payable_entry_ids",[]):
+                payable=posted.get((tenant,payable_id))
+                component=l1.get((tenant,payable["component_key"])) if payable else None
+                require(
+                    payable is not None
+                    and payable_id in outcome.get("posted_entry_ids",[])
+                    and payable["employee_id"]==value["employee_id"]
+                    and payable["draft_key"]==expected_draft
+                    and (payable["direction"]=="employer_liability" or (
+                        payable["direction"]=="deduction"
+                        and component is not None
+                        and component["value"].get("authority_payable") is True
+                    )),
+                    "receipt payable",
+                )
             before=value["before"]
             if "control_revision" in before: require(has_control(tenant,value["employee_id"],value["subject_id"],before["control_revision"]),"receipt control")
             for entry_id in value["after"].get("posted_entry_ids",[]): require((tenant,entry_id) in posted,"receipt after posted entry")

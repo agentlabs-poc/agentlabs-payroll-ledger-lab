@@ -217,9 +217,9 @@ def _verify(database, employees):
         sums = {
             "gross_minor": connection.execute("SELECT SUM(CASE WHEN direction IN ('earning','employer_expense') THEN amount_minor ELSE 0 END) FROM payroll_ledger WHERE tenant=?", (TENANT,)).fetchone()[0],
             "deductions_minor": connection.execute("SELECT SUM(CASE WHEN direction IN ('deduction','employer_liability') THEN amount_minor ELSE 0 END) FROM payroll_ledger WHERE tenant=?", (TENANT,)).fetchone()[0],
-            "net_minor": employees * NET_MINOR,
             "payable_minor": connection.execute("SELECT COALESCE(SUM(amount_minor),0) FROM payroll_employer_liability_ledger WHERE tenant=? AND row_kind='obligation'", (TENANT,)).fetchone()[0],
         }
+        sums["net_minor"] = sums["gross_minor"] - sums["deductions_minor"]
     finally:
         connection.close()
     expected_counts = {"l1_records": employees * 29 + 10, "l2_records": employees, "draft_rows": employees * 12, "posted_rows": employees * 12, "obligations": employees * 5, "remittances": 0, "allocations": 0}

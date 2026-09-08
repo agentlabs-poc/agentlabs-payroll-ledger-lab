@@ -19,6 +19,9 @@ def _stable(prefix,*parts): return prefix+hashlib.sha256("\x1f".join(parts).enco
 def _money(value):
     if type(value) is not int or value <= 0: raise PayrollError("amount must be positive integer minor units")
     return value
+def _revision(value,label="revision"):
+    if type(value) is not int or value <= 0: raise PayrollError(f"{label} must be a positive integer")
+    return value
 @contextmanager
 def _write(connection):
     connection.execute("BEGIN IMMEDIATE")
@@ -52,6 +55,7 @@ class Payroll:
             except sqlite3.IntegrityError as exc: raise Conflict("component identity conflict") from exc
 
     def disable_component(self,component_id,expected_revision,reason="disabled"):
+        _revision(expected_revision,"expected revision")
         with _write(self.connection):
             history=self.records.history_l1(self.tenant,"payroll.component",component_id)
             if not history or history[-1]["value"]["revision"]!=expected_revision: raise Conflict("stale component revision")
@@ -161,15 +165,18 @@ class Payroll:
             return {**draft,**value,"entries":lines}
 
     def set_draft_control(self,draft_id,employee_id,held,cancelled,reason,expected_revision):
+        if type(held) is not bool or type(cancelled) is not bool: raise PayrollError("draft control flags must be boolean")
+        _revision(expected_revision,"expected revision")
         with _write(self.connection):
             self._require_open_draft(employee_id,draft_id)
             h=self.records.history_l1(self.tenant,"payroll.draft.control",employee_id,draft_id)
             if not h or h[-1]["value"]["revision"]!=expected_revision: raise Conflict("stale control revision")
             if h[-1]["value"]["cancelled"]: raise PayrollError("draft is cancelled")
-            value={**h[-1]["value"],"revision":expected_revision+1,"actor":self.actor,"held":bool(held),"cancelled":bool(cancelled),"reason":reason}
+            value={**h[-1]["value"],"revision":expected_revision+1,"actor":self.actor,"held":held,"cancelled":cancelled,"reason":reason}
             return self.records._put_l1(self.tenant,canonical_key("payroll.draft.control",employee_id,draft_id,value["revision"]),value)["value"]
 
     def review_draft(self,draft_id,employee_id,review_id,content_hash,control_revision,decision):
+        _revision(control_revision,"control revision")
         if decision not in {"approved","rejected"}: raise PayrollError("invalid review")
         with _write(self.connection):
             self._require_open_draft(employee_id,draft_id)
@@ -183,13 +190,16 @@ class Payroll:
             return self.records._put_l1(self.tenant,canonical_key("payroll.draft.review",employee_id,draft_id,review_id),value)
 
     def commit(self,draft_id,employee_id,idempotency_key,expected_control_revision,approval_required=False,reconcile_sources=False,fresh_review_required=False):
+        _revision(expected_control_revision,"expected control revision")
+        if any(type(flag) is not bool for flag in (approval_required,reconcile_sources,fresh_review_required)):
+            raise PayrollError("commit flags must be boolean")
         request = {
             "draft_id": draft_id,
             "idempotency_key": idempotency_key,
             "expected_control_revision": expected_control_revision,
-            "approval_required": bool(approval_required),
-            "reconcile_sources": bool(reconcile_sources),
-            "fresh_review_required": bool(fresh_review_required),
+            "approval_required": approval_required,
+            "reconcile_sources": reconcile_sources,
+            "fresh_review_required": fresh_review_required,
         }
         request_hash = _hash(request)
         with _write(self.connection):
@@ -200,7 +210,7 @@ class Payroll:
                 return prior["value"]["outcome"]
             draft = self._draft(employee_id,draft_id)
             draft_key = canonical_key("payroll.draft", employee_id, draft_id, 1)
-            if self.connection.execute("SELECT 1 FROM payroll_ledger WHERE tenant=? AND draft_key=?",(self.tenant,draft_key)).fetchone(): raise Conflict("draft already committed")
+            if self._draft_committed(employee_id,draft_id): raise Conflict("draft already committed")
             if reconcile_sources and draft["source_basis"] != self._source_basis(employee_id,draft["payroll_month"]): raise Conflict("draft source basis changed")
             control=self.records.current_l1(self.tenant,"payroll.draft.control",employee_id,draft_id)
             if not control or control["value"]["revision"]!=expected_control_revision: raise Conflict("control changed")
@@ -212,7 +222,10 @@ class Payroll:
                 review_args.append(expected_control_revision)
             if approval_required and not self.connection.execute(review_sql,review_args).fetchone(): raise PayrollError("approval required")
             for instruction_key in draft["instruction_keys"]:
-                self._validate_adjustment(self.records.get_l1(self.tenant,instruction_key)["value"],draft["payroll_month"])
+                instruction = self.records.get_l1(self.tenant,instruction_key)["value"]
+                self._validate_adjustment(instruction,draft["payroll_month"])
+                consumed = self.connection.execute("SELECT 1 FROM payroll_l1_records WHERE tenant=? AND key LIKE 'payroll.instruction.application:%' AND json_extract(value,'$.employee_id')=? AND json_extract(value,'$.instruction_id')=? AND (json_extract(value,'$.cadence')='one_time' OR json_extract(value,'$.payroll_month')=?)",(self.tenant,employee_id,instruction["instruction_id"],draft["payroll_month"])).fetchone()
+                if consumed: raise Conflict("instruction already consumed")
             rows = self.connection.execute(
                 "SELECT * FROM payroll_draft_ledger "
                 "WHERE tenant=? AND draft_key=? ORDER BY rowid",
@@ -332,11 +345,12 @@ class Payroll:
             raise PayrollError("adjustment must reference earlier posted payroll for employee")
     def _require_open_draft(self,employee_id,draft_id):
         self._draft(employee_id,draft_id)
-        draft_key=canonical_key("payroll.draft",employee_id,draft_id,1)
-        if self.connection.execute("SELECT 1 FROM payroll_ledger WHERE tenant=? AND draft_key=?",(self.tenant,draft_key)).fetchone():
+        if self._draft_committed(employee_id,draft_id):
             raise PayrollError("draft is posted")
         control=self.records.current_l1(self.tenant,"payroll.draft.control",employee_id,draft_id)
         if control and control["value"]["cancelled"]: raise PayrollError("draft is cancelled")
+    def _draft_committed(self,employee_id,draft_id):
+        return self.connection.execute("SELECT 1 FROM payroll_l1_records WHERE tenant=? AND key LIKE 'payroll.operation.receipt:%' AND json_extract(value,'$.employee_id')=? AND json_extract(value,'$.operation')='payroll.commit' AND json_extract(value,'$.subject_id')=? AND json_extract(value,'$.outcome.status')='committed'",(self.tenant,employee_id,draft_id)).fetchone() is not None
     def _source(self,key,kind,employee,month,allow_expired=False):
         parsed = parse_key(key)
         if len(parsed) != 4:

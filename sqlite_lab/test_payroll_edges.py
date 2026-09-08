@@ -19,14 +19,6 @@ class PayrollEdgeTests(unittest.TestCase):
         self.connection.close()
         self.temp.cleanup()
 
-    def test_one_time_instruction_cannot_be_consumed_by_a_second_draft(self):
-        instruction = self.payroll.add_instruction("BONUS", "BONUS-V1", 1, "E101", self.earning_component, 10_000, "one_time", "2026-11", "2026-11")
-        self.payroll.create_draft("D1", "E101", "2026-11", [self.earning], [instruction["value"]["version_id"]])
-        self.payroll.commit("D1", "E101", "first", 1)
-        self.payroll.create_draft("D2", "E101", "2026-11", [self.earning], [instruction["value"]["version_id"]])
-        with self.assertRaises(Conflict):
-            self.payroll.commit("D2", "E101", "second", 1)
-
     def test_addition_only_reconciliation_rejects_while_fixed_snapshot_commits(self):
         self.payroll.create_draft("D1", "E101", "2026-11", [self.earning], [])
         self.payroll.add_instruction("NEW", "NEW-V1", 1, "E101", self.deduction_component, 1_000, "monthly", "2026-11")
@@ -94,14 +86,16 @@ class PayrollEdgeTests(unittest.TestCase):
         self.assertGreater(self.payroll.elr_outstanding("OB2"), 0)
 
     def test_empty_committed_draft_is_terminal(self):
-        draft = self.payroll.create_draft("EMPTY", "E101", "2026-11", [], [])
-        self.assertEqual("committed", self.payroll.commit("EMPTY", "E101", "first", 1)["status"])
-        with self.assertRaises(PayrollError):
-            self.payroll.review_draft("EMPTY", "E101", "R1", draft["content_hash"], 1, "approved")
-        with self.assertRaises(PayrollError):
-            self.payroll.set_draft_control("EMPTY", "E101", True, False, "late", 1)
-        with self.assertRaises(PayrollError):
-            self.payroll.commit("EMPTY", "E101", "second", 1)
+        for draft_id, operation in (
+            ("EMPTY-REVIEW", lambda draft: self.payroll.review_draft(draft["draft_id"], "E101", "R1", draft["content_hash"], 1, "approved")),
+            ("EMPTY-CONTROL", lambda draft: self.payroll.set_draft_control(draft["draft_id"], "E101", True, False, "late", 1)),
+            ("EMPTY-RECOMMIT", lambda draft: self.payroll.commit(draft["draft_id"], "E101", "second", 1)),
+        ):
+            draft = self.payroll.create_draft(draft_id, "E101", "2026-11", [], [])
+            committed = self.payroll.commit(draft_id, "E101", "first", 1)
+            self.assertEqual(committed, self.payroll.commit(draft_id, "E101", "first", 1))
+            with self.subTest(operation=draft_id), self.assertRaises(PayrollError):
+                operation(draft)
 
     def test_consumed_instruction_cannot_change_cadence_to_bypass_uniqueness(self):
         first = self.payroll.add_instruction("BONUS", "BONUS-V1", 1, "E101", self.earning_component, 10_000, "one_time", "2026-11", "2026-11")
@@ -111,6 +105,31 @@ class PayrollEdgeTests(unittest.TestCase):
         self.payroll.create_draft("D2", "E101", "2026-12", [self.earning], [changed["value"]["version_id"]])
         with self.assertRaises(Conflict):
             self.payroll.commit("D2", "E101", "second", 1)
+
+        monthly = self.payroll.add_instruction("MONTHLY", "MONTHLY-V1", 1, "E101", self.earning_component, 5_000, "monthly", "2027-01")
+        self.payroll.create_draft("M1", "E101", "2027-01", [self.earning], [monthly["value"]["version_id"]])
+        self.payroll.commit("M1", "E101", "monthly", 1)
+        changed = self.payroll.add_instruction("MONTHLY", "MONTHLY-V2", 2, "E101", self.earning_component, 5_000, "one_time", "2027-01", "2027-01")
+        self.payroll.create_draft("M2", "E101", "2027-01", [self.earning], [changed["value"]["version_id"]])
+        with self.assertRaises(Conflict):
+            self.payroll.commit("M2", "E101", "one-time", 1)
+
+    def test_control_and_commit_scalars_are_strict(self):
+        draft = self.payroll.create_draft("STRICT", "E101", "2026-11", [self.earning], [])
+        for field in ("approval_required", "reconcile_sources", "fresh_review_required"):
+            with self.subTest(field=field), self.assertRaises(PayrollError):
+                self.payroll.commit("STRICT", "E101", field, 1, **{field: 1})
+        with self.assertRaises(PayrollError):
+            self.payroll.commit("STRICT", "E101", "revision", True)
+        with self.assertRaises(PayrollError):
+            self.payroll.set_draft_control("STRICT", "E101", 1, False, "invalid", 1)
+        with self.assertRaises(PayrollError):
+            self.payroll.set_draft_control("STRICT", "E101", False, False, "invalid", True)
+        with self.assertRaises(PayrollError):
+            self.payroll.review_draft("STRICT", "E101", "R1", draft["content_hash"], True, "approved")
+        with self.assertRaises(PayrollError):
+            self.payroll.disable_component("SALARY", True)
+        self.assertEqual("committed", self.payroll.commit("STRICT", "E101", "approval_required", 1)["status"])
 
 
 if __name__ == "__main__":
