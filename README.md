@@ -1,8 +1,10 @@
 # Payroll Ledger Lab
 
-> **Identity contract under review:** every employee-owned record must include
-> the employee in its key. The existing serialized examples predate this rule;
-> they are not the final key contract. See [canonical identity definitions](docs/design/canonical-identities.md).
+> **Current status:** 123 Architecture, canonical employee-owned keys, the HTML
+> walkthrough and Python/SQLite proof are published here. The Go/PostgreSQL
+> implementation is consolidated in [Core draft hub #191](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/191),
+> not yet merged into Core main. See the [Python/Core reconciliation](docs/design/python-core-reconciliation.md)
+> for prototype limits.
 
 The payroll handbook, contracts, decisions, and rationale now live in [HRMS Core](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/handbook.md). Core is the canonical accepted handbook source. The lab retains the browser experiment, forwarding pages for migrated chapters, and the [current design pins](docs/design/README.md) requested by the user.
 
@@ -13,22 +15,25 @@ The payroll handbook, contracts, decisions, and rationale now live in [HRMS Core
 - [Canonical ledger tables and existing support-table inventory](docs/design/canonical-ledger-tables.md)
 - [Payroll key/value records by domain and layer, wrappers, JSON, state and indexes](docs/design/payroll-records.md)
 
-The proposed shape is one key/value table per domain and software-owned layer
-(L1/L2), with `tenant`,
-`key`, `value` and `ts`, plus a proposed `state` column. Payroll owns its canonical
-terms and indexes; other domains may reuse the shape with their own contracts.
-Domain-specific APIs and general wrappers can operate owned records while
-preserving L1 domain operations and authority boundaries.
-Consumers own L3 composition and storage; this software supplies no L3 table/API.
-The pins contain full design content and distinguish accepted direction from
-remaining proposals. The SQLite and browser simulations exercise the pinned prototype contracts.
-Production schema and API migration remain separate work.
+The canonical shape is three monetary ledgers plus one record store per domain
+and layer: L1, L2 and L3. Records use `tenant`, `key1`–`key10`, JSON `value`,
+`ts` and availability `state`; their canonical serialized keys retain their meaning.
+Core provides L3 storage/access only; consumers own its workflow and payload meaning.
+The Python prototype currently implements five tables (the three ledgers and
+L1/L2 records); it does not yet implement the L3 store.
+
+Approved follow-ups: payroll corrections use positive minor-unit amounts with
+explicit increase/decrease effect and an earlier posted-entry reference; L3
+records use immutable revisions. These decisions do not mean the Python
+prototype already implements those features.
 
 ## Migrated handbook
 
-Publication order: merge Core hub PR #172 before this forwarding PR so the canonical `main` targets exist.
-
-The [independent handbook review](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/review-2026-09-08.md) records the resolved documentation findings. Reviewed implementation is integrated in [Core draft hub PR #172](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/172); complete authenticated handbook acceptance remains pending in [E2E PR #61](https://github.com/agentlabs-poc/agentlabs-hrms-e2e/pull/61).
+Historical handbook links target Core's accepted handbook location. The current
+123 replacement is tracked in [Core draft hub #191](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/191);
+its [canonical contract](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/refactor/payroll-123-from-v0.1.1/docs/payroll-123-canonical-records.md)
+is the implementation reference until that hub reaches main. Earlier hub #172
+is superseded. Publishing this Lab does not certify Core release readiness.
 
 ## Python CLI and persistent SQLite
 

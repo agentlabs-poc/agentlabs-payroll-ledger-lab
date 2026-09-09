@@ -1,5 +1,7 @@
 # Python lab / Core contract reconciliation
 
+Current implementation tracking: [Core hub #191](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/191). The historical comparison below describes this Python prototype. Component tombstone deletion is now defined and implemented in Core; category-preserving increase/decrease adjustments and immutable L3 revisions are approved for implementation. These Python features remain unimplemented; “awaiting confirmation” below is historical, not a current decision gate.
+
 Authority: Core `docs/payroll-123-api-proposal.md` and `docs/payroll-123-canonical-records.md`, commit `f17321c` (19 method/path pairs). The Python lab exposes CLI/in-process primitives, not an HTTP server. Multiple CLI aliases do not add Core APIs.
 
 ## Operation map
