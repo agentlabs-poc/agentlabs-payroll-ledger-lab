@@ -1,0 +1,176 @@
+{
+  "examples": [
+    {
+      "record_type": "payroll.component",
+      "row": {
+        "key": "payroll.component:EMPLOYER:1",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T16:12:12.750875+00:00",
+        "value": {
+          "code": "employer",
+          "component_id": "EMPLOYER",
+          "country_code": "IN",
+          "kind": "employer_contribution",
+          "label": "Employer contribution",
+          "revision": 1,
+          "schema_version": 1
+        }
+      },
+      "table": "payroll_l1_records"
+    },
+    {
+      "record_type": "payroll.draft.control",
+      "row": {
+        "key": "payroll.draft.control:D1:1",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T16:12:12.751601+00:00",
+        "value": {
+          "actor": "U7",
+          "cancelled": false,
+          "draft_id": "D1",
+          "employee_id": "E101",
+          "held": false,
+          "payroll_month": "2026-11",
+          "reason": "created",
+          "revision": 1,
+          "schema_version": 1
+        }
+      },
+      "table": "payroll_l1_records"
+    },
+    {
+      "record_type": "payroll.draft.review",
+      "row": {
+        "key": "payroll.draft.review:D1:R1",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T16:12:12.752050+00:00",
+        "value": {
+          "actor": "U7",
+          "control_revision": 3,
+          "decision": "approved",
+          "draft_content_hash": "b628bc4fc8884b52e47f06c09eb8cc6730e3115cd202499e5444a57f02f530e7",
+          "draft_id": "D1",
+          "review_id": "R1",
+          "schema_version": 1
+        }
+      },
+      "table": "payroll_l1_records"
+    },
+    {
+      "record_type": "payroll.instruction.application",
+      "row": {
+        "key": "payroll.instruction.application:IV-LOAN-1:APPc5df085ad3ef2bb6fa06",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T16:12:12.752346+00:00",
+        "value": {
+          "application_id": "APPc5df085ad3ef2bb6fa06",
+          "cadence": "monthly",
+          "draft_id": "D1",
+          "effects": [
+            {
+              "amount_minor": 200000,
+              "currency": "INR",
+              "ledger_entry_id": "PE42a1ce14f8bb2631d314"
+            }
+          ],
+          "employee_id": "E101",
+          "instruction_id": "I-LOAN",
+          "instruction_version_id": "IV-LOAN-1",
+          "payroll_month": "2026-11",
+          "schema_version": 1
+        }
+      },
+      "table": "payroll_l1_records"
+    },
+    {
+      "record_type": "payroll.instruction.resolution",
+      "row": {
+        "key": "payroll.instruction.resolution:D1:RES1",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T16:12:12.751670+00:00",
+        "value": {
+          "disposition": "applied",
+          "draft_id": "D1",
+          "effects": [
+            {
+              "amount_minor": 200000,
+              "currency": "INR",
+              "draft_entry_id": "D1.instruction.1"
+            }
+          ],
+          "instruction_version_id": "IV-LOAN-1",
+          "resolution_id": "RES1",
+          "schema_version": 1
+        }
+      },
+      "table": "payroll_l1_records"
+    },
+    {
+      "record_type": "payroll.operation.receipt",
+      "row": {
+        "key": "payroll.operation.receipt:D1:RCPT5825c7d1cc1d900f7146",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T16:12:12.752437+00:00",
+        "value": {
+          "after": {
+            "calculation_status": "committed",
+            "posted_entry_ids": [
+              "PEc8f73aa1d39a2c3a9df7",
+              "PE42a1ce14f8bb2631d314"
+            ]
+          },
+          "before": {
+            "calculation_status": "draft",
+            "control_revision": 3
+          },
+          "executor": "U7",
+          "idempotency_key": "commit-e101-nov26",
+          "operation": "payroll.commit",
+          "outcome": {
+            "draft_id": "D1",
+            "employer_liability_entry_id": null,
+            "posted_entry_ids": [
+              "PEc8f73aa1d39a2c3a9df7",
+              "PE42a1ce14f8bb2631d314"
+            ],
+            "status": "committed"
+          },
+          "receipt_id": "RCPT5825c7d1cc1d900f7146",
+          "request_hash": "96c1259a7c309325bf19d80270e9c1ddc254d0e8f334b77b23c55698f94ce7a5",
+          "schema_version": 1,
+          "subject_id": "D1"
+        }
+      },
+      "table": "payroll_l1_records"
+    },
+    {
+      "record_type": "payroll.employee.settings",
+      "row": {
+        "key": "payroll.employee.settings:E101:1",
+        "state": "enabled",
+        "tenant": "T1",
+        "ts": "2026-09-08T16:12:12.750962+00:00",
+        "value": {
+          "effective_from": "2026-01",
+          "employee_id": "E101",
+          "payslip_locale": "en-IN",
+          "policy_ref": {
+            "id": "standard",
+            "revision": 1
+          },
+          "revision": 1,
+          "schema_version": 1
+        }
+      },
+      "table": "payroll_l2_records"
+    }
+  ],
+  "scope": "SQLite prototype payloads; pinned record vocabulary, not accepted production schemas",
+  "source_commit": "44de62d61965f624b180016801c8068716802ba5"
+}

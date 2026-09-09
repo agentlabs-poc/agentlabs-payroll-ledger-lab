@@ -1,155 +1,239 @@
 # HRMS Payroll Handbook — decision log
 
-This log records the discussion behind the [handbook](handbook.md).
-The [roadmap](handbook-roadmap.md) identifies the current question and return
-point. Process directions and user-confirmed operating facts are recorded
-separately below.
+New design discussion is pinned locally in [Payroll design pins](design/README.md):
+123 Architecture, canonical ledger tables, domain-owned key/value storage and
+candidate entries. This preserves the user's subsequent lab-design direction;
+the migrated handbook decision history below still belongs to Core.
 
-| ID | Status | Direction | Evidence and consequence |
-|---|---|---|---|
-| PAY-PROCESS-001 | User direction | Create an HRMS payroll handbook following the permission-scope lab example. | User: "like agentlabs-permission-scope-lab we need to create handbook for hrms payroll". Use the existing handbook as a process reference; its authorization decisions do not become payroll decisions. |
-| PAY-PROCESS-002 | User direction; interpretation corrected by PAY-PROCESS-004 | Understand ground realities first. | User: "understand the ground realities first". The assistant initially interpreted this as requiring an operating interview before core concepts; the user subsequently corrected that order. |
-| PAY-PROCESS-003 | User direction | Establish and pin the overall goal and outcome. | User: "before we start setup over all goal and the outcome", followed by "pin it" after the goal was presented. The charter is saved in the handbook and linked from the README. |
-| PAY-PROCESS-004 | User direction; current | Start with code concepts, understand the existing model completely, then confirm and refine it. | The user identified the Payroll Ledger, draft ledger, earnings, monthly instructions, and one-time instructions as the core concepts from which the flow was formulated. The attendance question was outside the current conceptual discussion. [Core concepts](core-concepts.md) is now the starting chapter. |
-| PAY-PROCESS-005 | User direction | Preserve rationale with decisions. | User: "just make sure you record rationale as well". Keep definitions, reasons, worked examples, counterexamples, consequences, and unresolved details in the chapter, with the log linking to them. |
-| PAY-PROCESS-006 | User direction; current sequencing | Move horizontally through high-impact areas first. | User: "you should move horizontally with high impact areas first". Establish major concepts and responsibility boundaries before revisiting detailed lifecycle, schema, concurrency, and recovery questions. The user reiterated this direction after approving PAY-ARCH-001. Preserve parked details and return points in the roadmap. |
-| PAY-PROCESS-007 | User direction | Separate recorded agreements from the next proposal with a visible transition. | User requested a separator between committed decisions and next items. Agreement status is distinct from payroll commit or Git commit. |
-| PAY-PROCESS-008 | User direction; current sequencing clarification | Establish core-concept clarity before further broader architecture and operating questions. | User approved PAY-ARCH-003 but said those questions are relevant once core concepts are clear. Apply horizontal breadth to unresolved core semantics first. [Coverage checkpoint and rationale](core-coverage.md); prior approvals remain valid. |
-| PAY-PROCESS-009 | User direction; current editorial rule | Incorporate established material first; ask only where there is a material ambiguity or decision. Commit and push the existing work before incorporation. | User clarified the question standard, then requested incorporation and a visible account of what was incorporated. The existing snapshot was pushed as `6a30db5`. [Incorporation record](incorporation-record.md) separates agreements from code descriptions and retains pending decisions. |
+The subsequent pinned [123 Architecture storage rule](design/123-architecture.md#canonical-storage-model)
+is core canonical tables plus one canonical key/value table per domain/layer.
+It includes L1/L2/L3 storage ownership, canonical keys/indexes, the proposed
+availability column, domain/general wrappers and client/server enforcement.
 
-## Discussion questions
+The [software-design premise](design/123-architecture.md#software-design-premise)
+and employee payroll preferences/policy assignment as an L2 use case are also
+pinned. Exact employee-settings fields remain proposed. This records a coherent
+design direction, not a claim of implemented behavior or proven novelty.
 
-| ID | Status | Question | Dependency |
-|---|---|---|---|
-| PAY-Q-001 | Answered at handoff level | How does the payroll preparer receive that month's employee changes and payment inputs in the operation being examined? | The user described source information going to an HR/payroll manager, who consolidates inputs into payroll through APIs. Source-to-manager delivery details remain open. |
-| PAY-Q-002 | Withdrawn from current sequence by PAY-PROCESS-004 | For an attendance example, what exactly does the manager submit to payroll, and what does payroll then do with that input? | The question was premature. Core concept work proceeds from code; return to source payloads only if a later concept requires it. |
-| PAY-Q-003 | Approved | Should the draft hold proposed payroll entries, commit fix the recorded result, and later corrections add linked entries without rewriting the original result? | User answered "approved". PAY-CORE-001 is agreed; PAY-CORE-011 later settles subsequent-month correction timing and finality. Detailed enforcement remains open. |
-| PAY-Q-004 | Approved with expiry amendment | Does salary earning entitlement versus recurring payroll directions explain why salary earnings and monthly instructions are separate sources? | User required expiry for standing instructions, gave a loan repaid over five months as an example, and said "rest is approved". PAY-CORE-002 includes the amendment and rationale. |
-| PAY-Q-005 | Approved | Should one-time instructions be consumed only on commit, remain available after an abandoned draft, and be unavailable for another ordinary payroll once consumed? | User answered "approved" after the bonus example was explained again. Reversals, reservations, and partial application remain separate questions. |
-| PAY-Q-006 | Approved | Should a monthly standing instruction have one ordinary committed application per employee and applicable payroll month, while remaining available in later eligible months until expiry? | User answered "approved". PAY-CORE-004 separates period-specific application from overall lifetime; no implementation schema is adopted. |
-| PAY-Q-007 | Approved | Should expiry be evaluated against the payroll period being processed, allowing an eligible earlier period to be processed later subject to the other payroll controls? | User answered "approved". PAY-CORE-005 separates applicability from processing time without adopting reopening, catch-up, or automatic extension rules. |
-| PAY-Q-008 | Approved as PAY-CORE-006-B | How should sources and draft values remain stable through review and commit? | User answered "approved" to the source-freeze shape and explicit question freezing draft monetary entries from creation. Corrections require cancellation and rebuilding. PAY-CORE-006 is superseded; exact implementation and recovery mechanics remain open. |
-| PAY-Q-009 | Approved | Should complete draft creation include sealing, leaving approval and commit as the subsequent distinct operations? | User answered “agreed” after the horizontal pass. PAY-CORE-007 includes sealing in complete creation; [agreed lifecycle and rationale](payroll-lifecycle.md#pay-core-007--creation-includes-sealing). |
-| PAY-Q-010 | Approved | Should immutable source history and protected reconciliation at commit replace the long-lived source freeze? | User answered "approved". PAY-CORE-006-C replaces source freezing throughout review while retaining fixed draft monetary content. |
-| PAY-Q-011 | Approved | Should higher-order calculation logic produce business amounts while the payroll core governs source/ledger integrity, draft/approval lifecycle, reconciliation, and commit? | User answered "approved". PAY-ARCH-001 is agreed; interfaces and rule details remain parked. |
-| PAY-Q-012 | Approved | Should one employee’s draft for a payroll period be the unit of approval and protected commit, with batches coordinating those drafts and retaining individual outcomes? | User answered "approved". PAY-ARCH-002 is agreed; batch-wide all-or-nothing posting was not selected. |
-| PAY-Q-013 | Approved | Should input maintenance, preparation, draft approval, and commit be distinct scoped capabilities, with policy deciding which may be held by the same person or role? | User answered "approved", then required core clarity before further broader questions. PAY-ARCH-003 is agreed; exact roles and separation-of-duty policy remain open. |
-| PAY-Q-014 | Answered with ownership clarification | Where do employer-liability and accounting records belong relative to payroll? | User clarified that accounting is outside and the employer-liability register is inside payroll. PAY-ARCH-004 replaces the earlier grouping; the Form 16 connection is supported with the qualifications in the chapter. |
-| PAY-Q-015 | Answered with scope exclusion | Should an exited employee remain eligible for a subsequent-month adjustment payroll without reactivating employment? | User directed that this is out of payroll scope and should be corrected in accounting. PAY-CORE-013 excludes the proposed after-exit adjustment payroll. |
-| PAY-Q-016 | Answered by correcting the premise | How do employer contributions enter payroll and the employer-liability register? | User clarified that the offer-letter CTC contribution is a payroll earning plus matching deduction. Gross includes it; net is unchanged by the pair. Payroll entries precede the corresponding liability. |
-| PAY-Q-017 | Approved | Should an actual partial employer remittance reduce the corresponding liability by its recorded amount, with only the remaining balance outstanding until final settlement? | User: “yes, your proposal is right it remains as liablity”. PAY-CORE-016 records the unpaid remainder as an outstanding liability. [Example and rationale](gap-closure-work.md#pay-q-017--representing-a-partial-employer-remittance); allocation order remains unspecified. |
-| PAY-Q-018 | Approved | Should the annual chapter specify the payroll annual package and issuance handoff, or complete certificate issuance for a specified jurisdiction and financial year? | User answered “yes” to the payroll annual package and issuance handoff, with detailed statutory procedures in a separate jurisdiction/year chapter. PAY-ARCH-005 records the scope; [package specification](annual-payroll-package.md). |
-| PAY-Q-020 | Open; awaiting answer | When approval is withdrawn before commit but draft amounts are unchanged, should the same fixed draft require fresh approval instead of mandatory cancellation/rebuilding? | [Proposal, rationale, and alternative](gap-closure-work.md#pay-q-020--withdrawing-approval-without-changing-draft-amounts). Changed-basis rebuilding and committed finality remain in force. |
+The user subsequently directed SQLite-first proof before touching production
+code. The [proof plan](design/sqlite-proof-plan.md) records canonical storage,
+keys, state, wrappers, payroll commit/ELR, failure/retry and query-plan checkpoints.
+It distinguishes lab behavior from later PostgreSQL-specific acceptance. The
+plan is pinned; no prototype or completed proof is claimed.
 
-## Domain decisions
+The user requested the framing **123: a new software-design paradigm for AI-native
+applications**, now pinned in the architecture chapter. The established name
+123 Architecture remains, with 123 Software Design Paradigm as an alternative
+description of the proposed synthesis. The SQLite proof has not yet been executed.
 
-| ID | Status | Operating account | Evidence and boundaries |
-|---|---|---|---|
-| PAY-INTAKE-001 | User-confirmed operating account | Source information, potentially including attendance, goes to an HR/payroll manager, who consolidates it and submits inputs to payroll through APIs. A role will normally support this responsibility. | User: "it goes to payroll manager and the to payroll" and "it does not internally transition from service". See [the input-flow chapter](payroll-input-flow.md) for the full explanation. Exact permissions, input representation, and separate approvals remain open. API implementation and deployment conformance are unverified. |
-| PAY-CORE-001 | Agreed under PAY-Q-003 | Draft entries are proposed payroll money; commit establishes the recorded result; later corrections preserve it through linked additional entries. | User answered "approved". [Definition, rationale, example, and counterexample](core-concepts.md#pay-core-001--draft-and-posted-payroll-boundary). PAY-CORE-011 later settles subsequent-month correction timing and finality; detailed enforcement remains open. |
-| PAY-CORE-002 | Agreed with expiry amendment under PAY-Q-004 | Salary earnings record earning entitlement; monthly standing instructions record recurring payroll directions with an effective lifetime and expiry, producing earnings or deductions while applicable. | User's five-month loan example establishes finite applicability while loan business logic remains outside the payroll core. [Rationale, examples, counterexamples, and open mechanics](core-concepts.md#pay-core-002--salary-earnings-and-monthly-instructions). Expiry representation, skipped periods, overlap, and replacement remain open. Implementation gap PAY-GAP-001 is recorded. |
-| PAY-CORE-003 | Agreed under PAY-Q-005 | Consume one-time instructions at commit, retaining the committed reference; abandoned drafts do not consume them, and later ordinary payrolls cannot reuse consumed instructions. | User answered "approved" after clarification. [Rationale and example](core-concepts.md#pay-core-003--when-a-one-time-instruction-is-consumed): avoid losing an instruction through an abandoned draft or applying its effect twice. Partial application, reservations, and reversal effects remain open. PAY-GAP-002 records missing cross-draft enforcement. |
-| PAY-CORE-004 | Agreed under PAY-Q-006 | A monthly standing instruction has one ordinary committed application per employee and applicable payroll month, retaining eligibility in later months until expiry. | User answered "approved". [Rationale and example](core-concepts.md#pay-core-004--monthly-application-versus-instruction-lifetime): avoid duplicate monthly effects without exhausting the whole recurring instruction. Version changes, split applications, skipped months, and corrections remain open. PAY-GAP-003 records missing enforcement. |
-| PAY-CORE-005 | Agreed under PAY-Q-007 | Evaluate instruction expiry against the payroll period, separately from preparation/commit time. | User answered "approved". [Rationale and examples](core-concepts.md#pay-core-005--applicability-period-and-processing-time): a delay alone must not change an eligible period's source applicability. Other controls, expiry representation, catch-up, and correction rules remain separate. PAY-GAP-001 includes this requirement. |
-| PAY-CORE-006-B | Historical approval; superseded by PAY-CORE-006-C | Freeze relevant sources and draft monetary content from complete draft creation through commit or cancellation. | Earlier approval and [rationale](draft-source-freeze.md) are retained. PAY-Q-010 approved reconciliation in place of the long-lived source freeze; draft monetary immutability remains current. PAY-GAP-004 is historical. |
-| PAY-SOURCE-001 | User-confirmed model clarification | Source records are immutable; old records expire and new records are created instead of overwriting their monetary content. | User: "source ledgers are immuatble, meaning they are expired and new one is created". Preserve historical content and distinguish it from changing applicability. Physical expiry metadata and full implementation conformance are not established. |
-| PAY-CORE-006-C | Agreed under PAY-Q-010 | Fix the draft and retain sufficient basis for validation; reconcile the full target-period input set and instruction applications as part of a protected commit; block and rebuild when the basis changes. | User answered "approved". [Rationale, examples, and tradeoff](source-reconciliation.md). Immutable history preserves the basis; protected reconciliation validates applicability without a day-long source freeze. Relevant additions and competing applications must be detected. PAY-CORE-010 removes mandatory business source tracing; validation representation remains open. |
-| PAY-ARCH-001 | Agreed under PAY-Q-011 | Higher-order calculation logic produces business amounts; payroll core governs source/ledger integrity and the complete monetary lifecycle for every producer. | User answered "approved". [Rationale, example, and scope](calculation-boundary.md). Separate variable business formulas from stable ledger rules without granting calculation code a posting bypass. Deployment and interfaces are not selected. |
-| PAY-ARCH-002 | Agreed under PAY-Q-012 | Employee-owned payroll drafts remain individual approval/commit units; batches group exact drafts and expose individual outcomes. | User answered "approved". [Source evidence, rationale, example, and tradeoff](ledger-ownership.md). Identity representation and bulk-action mechanics remain open. |
-| PAY-ARCH-003 | Agreed under PAY-Q-013 | Distinguish scoped input-maintenance, preparation, draft-approval, and commit authority; role composition follows policy. | User answered "approved". [Evidence, rationale, examples, and alternatives](authority-and-review.md). Input acceptance is not payroll approval; commit authority cannot bypass approval or reconciliation. |
-| PAY-CORE-008 | User-confirmed boundary | Business overlap, replacement intent, and duplicate detection across sources belong to the producing layer, not payroll core. | User: "we cannot detect this, nor we should its a differnt layer problem". [Rationale and distinction from application guards](core-coverage.md). |
-| PAY-CORE-009 | User-confirmed principle | Payroll uses the applicable reality/facts when it runs. | User: "what matters is the reality/fact when your run payroll". [Scope and retained agreements](core-coverage.md). No new cross-version business-intent inference or automatic reuse policy is adopted. |
-| PAY-CORE-010 | User-confirmed simplification; amends earlier provenance requirements | Source tracing is not a mandatory payroll-core responsibility. | User: "we dont even need to trace the source". [Rationale and reconciliation distinction](core-coverage.md). Earlier mandatory monetary-entry-to-source lineage wording is superseded; demo reference fields remain source evidence. |
-| PAY-CORE-011 | User-confirmed clarification of PAY-CORE-001 | Generated/committed payroll is as good as paid for core finality; corrections are adjustments in a subsequent payroll month. | User: "we should adjust it in subsequent month, once payroll is generated its as good as paid". [Rationale, terminology, and example](core-coverage.md#pay-core-011--generated-payroll-is-final-adjust-a-subsequent-month). Preserve the earlier result; do not reopen it based on payment status. |
-| PAY-ARCH-004 | User-clarified ownership under PAY-Q-014 | Employer-liability register belongs inside payroll; general accounting is outside. | User explicitly corrected the earlier grouping. [Rationale, code evidence, and verified Form 16 relationship](payroll-outputs.md). The TDS register supports deduction/deposit reporting; complete Form 16 also needs annual salary/tax and official statement/certificate records. No complete issuance design is approved. |
-| PAY-ARCH-005 | Approved under PAY-Q-018 | This handbook specifies the payroll-side annual package and issuance handoff; detailed statutory issuance procedures are a separate chapter for the applicable jurisdiction and financial year | [Package contents, selection, balances, handoff, rationale, and acceptance](annual-payroll-package.md). Approval of this scope does not establish implemented aggregation or official issuance. |
-| PAY-CORE-012 | User-confirmed liability lifecycle | Track outstanding employer liability; record remittance to the government authority with proof such as the challan number; close the corresponding settled liability. | User explicitly described remittance and proof as the closure basis and subsequently confirmed "yes" on 2026-09-06. [Lifecycle, rationale, and example](payroll-outputs.md#pay-core-012--liability-remittance-proof-and-closure). Retain the liability/settlement history; allocation and proof interfaces remain later details. |
-| PAY-CORE-013 | User-confirmed scope under PAY-Q-015 | Corrections after employee exit are handled in external accounting, outside payroll; the generated payroll remains unchanged. | User: "this should be out of scope and should be currented in accounting". [Example, rationale, and withdrawn alternative](employee-and-annual-journeys.md#pay-core-013--a-correction-after-employment-has-ended). Narrows PAY-CORE-011 at the after-exit boundary; does not prescribe accounting mechanics. |
-| PAY-CORE-014 | User-confirmed contribution flow under PAY-Q-016 | Employer contribution in CTC enters payroll as an earning and matching deduction, then the employer-liability register; gross includes it while the pair leaves net unchanged. | [Rationale, worked amounts, code comparison, and withdrawn alternative](payroll-outputs.md#pay-core-014--employer-contributions-through-payroll). The earlier direct-to-liability/no-gross-effect proposal was incorrect. |
-| PAY-CORE-015 | User-confirmed employee-month association | All payroll for an employee and month is tied together; no canonical ID-generation method is established. | User explicitly described the association and absence of a canonical generator. [Rationale, example, and code comparison](ledger-ownership.md#pay-core-015--all-payroll-for-an-employee-and-month-is-tied-together). Draft/entry identities and batch coordination remain distinct; no identifier format or schema is selected. |
-| PAY-CORE-016 | Approved under PAY-Q-017 | A partial remittance with proof settles that amount; the unpaid balance remains a liability until settled. Full closure requires no remaining balance, with settlement history retained | User explicitly approved the proposal. [Worked balances and rationale](payroll-outputs.md#pay-core-016--partial-remittance-leaves-the-unpaid-liability-outstanding). |
-| PAY-CORE-007 | Approved under PAY-Q-009 | Complete draft creation includes sealing; visible operations are create, approve, and commit, with cancellation before commit. | User answered “agreed”. [Rationale and alternative](payroll-lifecycle.md#pay-core-007--creation-includes-sealing); fixed monetary content, exact approval, and protected reconciliation remain in force. |
+**Latest direction:** continue folding the 16 supporting roles into
+`payroll_l1_records`, using L2 only for auxiliary data. Software does not provide
+L3; consumers own its composition and persistence. This supersedes the earlier
+proposal for a software-provided L3 key/value table/API. The lab's SQLite
+implementation plan proceeds on that corrected basis; production code is untouched.
 
-The user identified the existing ledger and instruction concepts as the model
-to confirm and refine. The reconstruction in core-concepts.md preserves this
-starting point without treating every demo shortcut, lifecycle detail, or
-statutory example as an adopted rule.
+This chapter has moved to HRMS Core, the canonical payroll documentation source.
 
-## Proposals awaiting confirmation
+[Read the canonical chapter](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/decision-log.md). The original edition and its rationale are preserved in Git history and Core’s [migration record](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/migration-record.md).
 
-PAY-Q-017 is approved as PAY-CORE-016; PAY-Q-018 is approved as PAY-ARCH-005.
+Existing section links are forwarded below.
 
-| ID | Status | Proposal | Rationale |
-|---|---|---|---|
-| PAY-CORE-017 | Proposed under PAY-Q-020; awaiting answer | Withdraw approval from an unchanged uncommitted draft, retaining its fixed content and requiring fresh approval before commit | [Rationale and alternative](gap-closure-work.md#pay-q-020--withdrawing-approval-without-changing-draft-amounts); no change to committed payroll or changed-basis rebuild rules |
+<a id="hrms-payroll-handbook--decision-log"></a>
+- [HRMS Payroll Handbook — decision log](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/decision-log.md#hrms-payroll-handbook--decision-log)
 
-Deferred specifications and implementation gaps remain visible.
+<a id="discussion-questions"></a>
+- [Discussion questions](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/decision-log.md#discussion-questions)
 
-## Alternatives and history
+<a id="domain-decisions"></a>
+- [Domain decisions](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/decision-log.md#domain-decisions)
 
-An initial clarification offered a design foundation, an operator guide, or
-both as possible handbook orientations. The user redirected the work to
-understanding ground realities first. No orientation was selected through that
-question. Revisit audience and organization after the operating context is known.
+<a id="proposal-dispositions"></a>
+- [Proposal dispositions](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/decision-log.md#proposal-dispositions)
 
-The assistant's initial sequence was operating interview, then concepts,
-workflows, rules, and reconciliation. Its PAY-Q-002 attendance question treated
-operating payload details as a prerequisite. The user corrected this: the
-existing code concepts already formulate the flow and must be understood,
-confirmed, and refined first. PAY-PROCESS-004 supersedes that sequencing.
-PAY-INTAKE-001 remains valid supporting context; it does not determine the
-current discussion agenda.
+<a id="alternatives-and-history"></a>
+- [Alternatives and history](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/decision-log.md#alternatives-and-history)
 
-PAY-CORE-002 was initially proposed without an explicit expiry requirement.
-The user approved the distinction with an expiry amendment. The current chapter
-preserves why a finite loan-recovery instruction belongs in the model without
-making loan servicing a core payroll concept.
+## 2026-09-08 — Canonical storage vocabulary and key grammar pinned
 
-Under PAY-Q-008, the user challenged the earlier source-change/revision proposal
-with a draft-to-commit mutation freeze, then approved the explained shape and
-freezing draft monetary entries from creation. **PAY-CORE-006 is superseded by
-PAY-CORE-006-B.** The [earlier rationale](core-concepts.md#pay-core-006--source-changes-and-an-existing-draft)
-is preserved as history, not an active proposal. Exact implementation and
-recovery authority remained open. PAY-CORE-007 was subsequently proposed and,
-after the horizontal pass, approved under PAY-Q-009.
+The user approved dot-separated canonical type tokens, colon-separated identity
+segments, and backslash escaping of literal colon/backslash inside identities.
+This supersedes the provisional slash examples. Shared encoding/parsing must
+preserve opaque case and reject ambiguous spellings; numeric revisions sort
+numerically. Key syntax does not prescribe an ID-generation algorithm.
 
-The user then clarified immutable source records with expiry/replacement and
-asked whether reconciliation before commit would be simpler. PAY-Q-010 reopened
-the freeze decision, and the user approved PAY-CORE-006-C. It supersedes the
-long-lived source freeze while retaining draft immutability and cancel/rebuild
-on a changed basis. The user then directed horizontal high-impact coverage;
-sealing and other mechanics were parked at that point. PAY-Q-009 later returned
-and was approved; the original sequencing direction is retained as history.
+The user also requested an explicit distinction between canonical tables and
+canonical record types. The record chapter now calls out the nine designated L1
+ledger tables, target L1/L2 shared stores, six L1 supporting record types and L2
+employee settings. Detailed candidate contracts remain proposals. L3 storage
+belongs to consumers. Rationale: a minimal vocabulary must distinguish storage
+structure, domain meaning and individual identity without creating a table for
+every supporting concept. Production code and schemas are unchanged.
 
-After approving PAY-ARCH-003, the user asked whether the core concepts had
-actually been reviewed and made clear. The source review exists, but known
-composition, application-identity, monetary, and correction semantics remain
-open. PAY-PROCESS-008 corrects the move into broader responsibilities before
-closing those conceptual gaps; it does not withdraw earlier approvals.
+## 2026-09-08 — Exactly three canonical ledgers
 
-The user then rejected business overlap detection as a core task, emphasized
-applicable facts at payroll run time, and removed mandatory source tracing.
-PAY-CORE-008/009/010 narrow the earlier checklist and provenance assumptions.
-At that point, the fourth item required explanation and had no new decision.
-The user subsequently clarified that corrections belong in a subsequent month
-and generated payroll is as good as paid. PAY-CORE-011 records this finality
-rule and closes that question. No automatic instruction restoration is adopted.
+The user named `payroll_draft_ledger`, `payroll_ledger` and
+`payroll_employer_liability_ledger` as the complete canonical-ledger set and asked
+for extreme simplicity. This supersedes the nine-table target. Instructions,
+earnings and draft metadata can be canonical L1 records; obligation/remittance/
+allocation remain distinct monetary entry types within the employer ledger.
 
-PAY-Q-014 was answered by clarifying that accounting is external but the
-employer-liability register belongs in payroll. The user asked whether its Form
-16 role supports this shape. Official material supports a TDS deduction/deposit
-basis alongside annual salary/tax and processed statement/certificate records.
-The assistant’s earlier external-liability framing is superseded; detailed
-issuance and accounting interfaces remain open.
+Rationale: physical implementation tables should not inflate the consumer's
+canonical ledger vocabulary. Preserve exact references, indexes, immutable
+history and employee-atomic operations while reducing table count. The user then
+requested commit/push and a return to simulation with all canonical row examples
+and a complete mind map. The [design](design/three-ledger-simulation.md) defines this SQLite-only step.
+No production runtime/API/CLI/migration changes are authorized here.
 
-During incorporation of joining/exit scenarios, PAY-Q-015 asked whether a
-former employee could receive subsequent-month adjustment payroll without
-employment reactivation. The user placed this case outside payroll and in
-accounting. PAY-CORE-013 records that exclusion; the proposed payroll eligibility
-exception is withdrawn. Existing generated payroll remains final.
+## 2026-09-08 — Canonical browser alignment and component meaning
 
-PAY-Q-016 incorrectly assumed an employer-only contribution would bypass
-payroll earnings and leave gross unchanged. The user clarified the offer-letter
-CTC model: an employer-contribution earning and matching deduction enter the
-Payroll Ledger first; the corresponding obligation then enters the employer
-register. PAY-CORE-014 records that flow; the prior proposal is withdrawn.
+The user requested that the HTML demo reflect the three canonical ledgers and
+L1 records, and explicitly accepted JSON. The page now displays captured rows
+from actual SQLite operations. Rationale: a second browser payroll engine can
+drift from the executable model; a snapshot viewer keeps the examples inspectable
+without introducing another write API or business-rule implementation.
+
+The user then corrected the broad `SALARY` example: components should represent
+meanings such as Basic and HRA. Each has its own component definition; an employee
+earning supplies the employee, amount and effective dates and references one exact
+component version. A salary total does not become an additional component or
+ledger. This distinction is reflected in the current JSON, diagrams and row maps.
+
+The illustrative E101 fixture uses Basic ₹30,000 plus HRA ₹20,000. This split is
+example data, not an agreed organizational compensation policy. Employer
+contribution ₹3,000 and loan ₹2,000 preserve gross ₹53,000, deductions ₹5,000 and
+net ₹48,000. The three earning sources produce five draft/posted monetary lines
+because employer contribution has matching gross and deduction effects.
+
+The correction changes examples and their explanation, not the set of canonical
+tables or the opaque ID contract. Historical evidence and isolated tests may use
+other legal component IDs; they are not the current human-facing scenario.
+
+## 2026-09-08 — Employee ownership is part of canonical key identity
+
+The user rejected employee earning keys without an employee identity. Every
+employee-owned record must include that owner in its key; the complete key must
+uniquely identify the record within its tenant. The user explicitly required
+canonical definitions before implementation, so no employee-key/schema rewrite
+has started. The prior fixed key grammar must be reconciled, not patched ad hoc.
+
+The open earning-identity question is whether one employee/component pair has one
+earning stream with successive versions or may have multiple independent earnings.
+That determines whether an independent earning ID is needed. The shared definition
+register records meanings and owners while leaving this decision open.
+
+The user also requested a chronological HTML view that puts L1 records and ledger
+entries together at their creation step, and displays the canonical definitions.
+This presentation work uses the existing snapshots, with an explicit notice that
+their employee-owned key layout is not the final contract.
+
+## 2026-09-08 — Generic columns hold canonical key segments
+
+The user clarified that `payroll.component:BASIC` must map to `key1 = payroll`,
+`key2 = component`, `key3 = BASIC`, with generic slots up to `key10`. The user
+approved pinning this direction and proceeding. This replaces the proposed
+employee/type-specific column interpretation and the single physical key target.
+Canonical meanings and ordered identity definitions remain in the record contract;
+JSON values remain flexible. Employee identity is still part of employee-owned
+keys, and immutable revision identity is not removed by the short component example.
+
+Rationale: one reusable envelope can support many canonical record types while
+exposing queryable key segments. Matching indexes can narrow prefix lookups and
+group related keys; this is not physical partitioning. No runtime speedup has been
+measured. The [identity contract](design/canonical-identities.md) records pending slot mappings, unused-slot
+uniqueness, escaping, revision ordering and SQLite proof steps. These storage
+mechanics do not resolve the outstanding earning-stream identity decision.
+Production schemas, APIs and CLI remain unchanged.
+
+The user then explicitly clarified: keep canonical JSON unchanged and document
+that the key is decoded into columns. The columns are a storage/index projection
+of that key, not a new payload format or independently writable identity. This
+refinement does not itself settle the earlier employee-owned key correction.
+
+## 2026-09-08 — Correct employee earning keys in the actual simulation
+
+The user identified that the HTML still showed employee-less earning keys despite
+the agreed ownership rule. A prototype warning did not satisfy that requirement.
+Correct `payroll.earning:EARN-BASIC:1` to
+`payroll.earning:E101:EARN-BASIC:1` through the SQLite key contract, validation,
+employee-scoped history and source references, then regenerate the browser data.
+Retain existing earning IDs and revisions; no new employee/component cardinality
+rule is introduced. JSON value fields and payroll amounts remain unchanged.
+
+Rationale: employee ownership and the question of multiple earning streams are
+independent. Leaving the latter open must not delay the former. The generic
+key-column projection remains a display/storage design; this correction does not
+implement its physical schema. Other employee-owned record families remain
+explicitly pending and production code is unchanged.
+
+## 2026-09-09 — Execute the simulation fidelity corrections
+
+After reviewing the whole-flow study, the user said “fix them”. The authorized
+scope is the SQLite simulation and its HTML/documents: canonical employee-owned
+identities, period-effective sources, terminal draft controls, protected optional
+freshness, retained/fresh review selection, instruction retries, subsequent-month
+correction relations and complete employer-liability correspondence. Production
+HRMS APIs/schema/CLI and physical key-column performance work remain separate.
+
+The implementation preserves local IDs and adds employee scope to every
+employee-owned key family. Applicable source authority is the highest revision
+whose effective start is at or before the payroll month, followed by state/expiry
+checks without falling back through an eligible disabled or expired replacement.
+This permits a future salary revision without blocking prior-month payroll.
+
+A review caught that comparing selected sources alone would miss newly applicable
+inputs. The optional freshness guard therefore captures the full accepted
+employee-period source basis in existing draft metadata and compares it inside
+the commit transaction. Input selection and business meaning remain with the
+producer. This guard can conservatively require rebuilding when an accepted but
+unselected input changes; it does not infer overlap or trace external origins.
+
+The [implementation plan](superpowers/plans/2026-09-09-payroll-fidelity.md)
+records the canonical map, remaining implementation choices and finite checks.
+
+The user then clarified that this is demo work and asked not to get into
+regression work. Further validation is therefore limited to executing the actual
+walkthrough, checking canonical keys, amounts and meaningful transitions, and
+building the HTML. Completed checks are retained; no further regression expansion
+or prolonged review cycle is part of this demo task.
+
+## 2026-09-09 — Snowflake Base36 generated IDs
+
+The user selected lowercase Base36-encoded Snowflake as the canonical generated
+ID format. Rationale: compact lowercase identifiers with time-based generation.
+Employee ownership and revisions remain explicit; readable semantic component
+codes remain unchanged. Worker coordination, clock/restart handling and a fixed
+epoch are prerequisites to generator implementation. This records the decision;
+existing demo identifiers are not yet converted.
+
+The user additionally required a prefix to signify meaning. The format is
+`<canonical-type-prefix>_<snowflake-base36>`, e.g. `earning_9do1sj396nf9`.
+Prefixes describe stable entity types; the 13-character limit applies only to
+the numeric suffix. This preserves meaning when an ID is copied out of its key.
+
+## 2026-09-09 — Karnataka fixture and tax-regime layer
+
+The user requested meaningful PF, profession-tax and salary income-tax entries,
+then clarified that old/new regime selection is an L2 candidate. Keep it as
+optional validated employee-settings data; do not invent an L1 tax-regime type.
+L3 supplies the projection and monthly tax instruction. Component meaning,
+amount records and posted monetary invariants remain L1.
+
+The realistic fixture exposed a gap: employee PF/PT/TDS withholding must also
+create employer authority liabilities. Add an optional stable authority-payable
+component flag so those remain single deduction rows without inflated gross.
+Exact posted references and amount matching still govern ELR obligations. Keep
+ordinary loans out of authority liabilities and preserve the existing three
+ledgers. Default demo leaves liabilities unpaid; settlement is explicitly selected.
+See [Karnataka demonstration](design/karnataka-payroll-demo.md) for assumptions,
+canonical entries, source basis and the old/new projections.
+
+## 2026-09-09 — Natural CLI and reset
+
+The user named the executable `payroll-cli` and requested saved repetitive
+parameters, natural commands, and a single complete reset command. Database,
+tenant, actor and format live in local CLI configuration with explicit-option
+overrides. Noun/verb aliases map directly to the existing L1/L2 operations;
+canonical JSON inputs and the original operation names remain supported.
+`reset` is scoped to the configured known local payroll database, clears all
+its tenants' data, recreates the same five tables, and preserves configuration.
+It does not reset arbitrary databases or change production services.

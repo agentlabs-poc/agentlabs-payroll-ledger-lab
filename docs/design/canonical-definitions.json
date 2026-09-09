@@ -1,0 +1,196 @@
+{
+  "status": "Canonical employee-owned identity map pinned and demonstrated in the six-month SQLite flow.",
+  "identity_rule": "The complete key must uniquely identify a record within its tenant. Every employee-owned record must include the employee identity in its key. Key identity and JSON identity must agree. Generated opaque IDs use a canonical type prefix followed by underscore and Snowflake encoded in lowercase Base36; demo ID conversion is pending.",
+  "prototype_notice": "Employee-owned records require employee identity in their canonical key. The SQLite demonstration uses employee-scoped rows and exact references. Generic key1–key10 columns remain a storage preview, not an implemented physical schema.",
+  "open_decision": {
+    "id": "earning_cardinality",
+    "question": "Whether to restrict an employee/component to one earning stream is not settled. Existing earning IDs are retained; this does not block employee identity in earning keys."
+  },
+  "tables": [
+    {
+      "name": "payroll_draft_ledger",
+      "role": "L1 canonical ledger",
+      "meaning": "Immutable proposed monetary lines belonging to an exact employee draft."
+    },
+    {
+      "name": "payroll_ledger",
+      "role": "L1 canonical ledger",
+      "meaning": "Immutable committed monetary lines retaining their exact draft references."
+    },
+    {
+      "name": "payroll_employer_liability_ledger",
+      "role": "L1 canonical ledger",
+      "meaning": "Obligation, remittance and allocation facts. Outstanding is obligation minus allocations; remittance alone does not close it."
+    },
+    {
+      "name": "payroll_l1_records",
+      "role": "L1 canonical record store",
+      "meaning": "Component definitions, employee sources, draft metadata, controls and domain evidence. Record types are not additional tables."
+    },
+    {
+      "name": "payroll_l2_records",
+      "role": "L2 auxiliary record store",
+      "meaning": "Software-owned auxiliary records. Consumers own L3; this software supplies no L3 store."
+    }
+  ],
+  "record_types": [
+    {
+      "type": "payroll.component",
+      "layer": "L1",
+      "owner": "Tenant",
+      "meaning": "A reusable payroll component definition, such as Basic or HRA, with its earning, deduction or employer-contribution meaning. It does not hold an employee amount. An optional stable authority_payable flag marks deductions owed to an authority; it does not turn them into employer earnings.",
+      "identity": "payroll.component:<component_id>:<revision>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "component_id",
+        "revision"
+      ]
+    },
+    {
+      "type": "payroll.earning",
+      "layer": "L1",
+      "owner": "Employee",
+      "meaning": "An employee entitlement to an amount for one payroll component, valid over an effective period.",
+      "identity": "payroll.earning:<employee_id>:<earning_id>:<revision>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "earning_id",
+        "revision"
+      ]
+    },
+    {
+      "type": "payroll.instruction",
+      "layer": "L1",
+      "owner": "Employee",
+      "meaning": "An employee payroll instruction with an amount, component, monthly or one-time cadence, and applicability or expiry.",
+      "identity": "payroll.instruction:<employee_id>:<instruction_id>:<revision>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "instruction_id",
+        "revision"
+      ]
+    },
+    {
+      "type": "payroll.draft",
+      "layer": "L1",
+      "owner": "Employee",
+      "meaning": "The fixed identity and metadata of one employee draft: month, exact selected sources, content hash and totals. Monetary lines live in payroll_draft_ledger.",
+      "identity": "payroll.draft:<employee_id>:<draft_id>:<revision>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "draft_id",
+        "revision"
+      ]
+    },
+    {
+      "type": "payroll.draft.control",
+      "layer": "L1",
+      "owner": "Employee, through the draft",
+      "meaning": "An immutable revision of the hold or cancellation control for an exact draft. It does not change draft amounts.",
+      "identity": "payroll.draft.control:<employee_id>:<draft_id>:<revision>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "draft_id",
+        "revision"
+      ]
+    },
+    {
+      "type": "payroll.draft.review",
+      "layer": "L1",
+      "owner": "Employee, through the draft",
+      "meaning": "A recorded review bound to exact draft content and control context. Whether review is required is a consuming-layer policy.",
+      "identity": "payroll.draft.review:<employee_id>:<draft_id>:<review_id>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "draft_id",
+        "review_id"
+      ]
+    },
+    {
+      "type": "payroll.instruction.resolution",
+      "layer": "L1",
+      "owner": "Employee, through the draft",
+      "meaning": "Evidence of how an instruction was treated in a draft and the resulting draft effects. This does not consume the instruction.",
+      "identity": "payroll.instruction.resolution:<employee_id>:<draft_id>:<resolution_id>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "draft_id",
+        "resolution_id"
+      ]
+    },
+    {
+      "type": "payroll.instruction.application",
+      "layer": "L1",
+      "owner": "Employee",
+      "meaning": "Permanent evidence of an instruction applied by committed payroll, linking the instruction and posted effects.",
+      "identity": "payroll.instruction.application:<employee_id>:<instruction_id>:<application_id>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "instruction_id",
+        "application_id"
+      ]
+    },
+    {
+      "type": "payroll.operation.receipt",
+      "layer": "L1",
+      "owner": "Same owner as the operation",
+      "meaning": "Durable domain-operation evidence binding executor, retry identity, request and outcome. It is not proof of exact HTTP response bytes.",
+      "identity": "payroll.operation.receipt:<employee_id>:<subject_id>:<receipt_id>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner. This map covers the employee operations implemented in the simulation; other operation scopes need their own contract.",
+      "key_fields": [
+        "employee_id",
+        "subject_id",
+        "receipt_id"
+      ]
+    },
+    {
+      "type": "payroll.employee.settings",
+      "layer": "L2",
+      "owner": "Employee",
+      "meaning": "Auxiliary employee payroll preferences and an opaque policy reference. Settings do not authorize commit or define earnings. Optional India tax-regime selection is an L2 candidate; L3 supplies tax calculation and L1 receives the resulting instruction.",
+      "identity": "payroll.employee.settings:<employee_id>:<revision>. Tenant and owning store complete the scope. Identity must agree with the JSON or exact referenced owner.",
+      "key_fields": [
+        "employee_id",
+        "revision"
+      ]
+    }
+  ],
+  "storage_contract": {
+    "status": "Agreed direction: generic segment columns; SQLite conversion pending.",
+    "columns": [
+      "tenant",
+      "key1",
+      "key2",
+      "key3",
+      "key4",
+      "key5",
+      "key6",
+      "key7",
+      "key8",
+      "key9",
+      "key10",
+      "value JSON",
+      "ts",
+      "state"
+    ],
+    "example": {
+      "serialized": "payroll.component:BASIC",
+      "segments": [
+        "payroll",
+        "component",
+        "BASIC"
+      ]
+    },
+    "meaning_rule": "Canonical JSON remains the representation. Decode its serialized key into generic key1 through key10 columns for indexing. The registered contract defines segment meaning and order; key and columns must agree. Separately, earning keys are corrected to include the required employee identity; value fields remain unchanged.",
+    "indexing_rule": "Matching composite indexes support prefix filtering and fetching. This is index grouping, not physical table partitioning. Actual speed gains remain to be measured.",
+    "prototype_notice": "The timeline uses serialized-key SQLite rows. Decoded generic columns are a storage preview. Employee keys follow the canonical identity map; the physical column migration is separate."
+  },
+  "generated_id_contract": {
+    "name": "Prefixed Snowflake Base36",
+    "encoding": "<canonical-type-prefix>_<lowercase-base36>, no leading zeros in numeric suffix",
+    "range": "positive 63-bit Snowflake integer",
+    "example": "earning_9do1sj396nf9",
+    "scope": "Generated opaque IDs; semantic component codes and existing external employee IDs retain their identities.",
+    "status": "Accepted format; generator configuration and demo conversion pending.",
+    "definition": "canonical-generated-ids.md",
+    "max_suffix_characters": 13
+  }
+}

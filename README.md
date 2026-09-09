@@ -1,72 +1,115 @@
 # Payroll Ledger Lab
 
-Start with the [HRMS Payroll Handbook — pinned goal and outcome](docs/handbook.md#pinned-goal-and-intended-outcome).
-The working handbook begins with [the payroll concepts already expressed in code](docs/core-concepts.md);
-its opening page records the intended outcome, completion criteria, and current
-discussion point. See [what was incorporated](docs/incorporation-record.md) for
-the mapping from existing agreements and code descriptions into the handbook.
-The [conceptual edition checkpoint review](docs/handbook-review.md#edition-checkpoints)
-records the completed walkthrough and explicitly deferred work. The
-[gap-resolution audit](docs/gap-resolution-audit.md) distinguishes agreed concepts
-from unresolved specifications and code gaps. Future proposals require discussion
-and agreement.
+> **Current status:** 123 Architecture, canonical employee-owned keys, the HTML
+> walkthrough and Python/SQLite proof are published here. The Go/PostgreSQL
+> implementation is consolidated in [Core draft hub #191](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/191),
+> not yet merged into Core main. See the [Python/Core reconciliation](docs/design/python-core-reconciliation.md)
+> for prototype limits.
 
-## Existing browser lab
+The payroll handbook, contracts, decisions, and rationale now live in [HRMS Core](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/main/docs/payroll/handbook/handbook.md). Core is the canonical accepted handbook source. The lab retains the browser experiment, forwarding pages for migrated chapters, and the [current design pins](docs/design/README.md) requested by the user.
 
-The following describes the original demo. Compare it with the handbook and
-[implementation gaps](docs/implementation-gaps.md) for the agreed model; the
-documentation edition does not change the runtime.
+## Current design pins
 
-Throwaway, in-memory browser experiment for discovering the smallest useful
-Layer-1 payroll ledger primitives.
+- [SQLite-first proof before production implementation](docs/design/sqlite-proof-plan.md)
+- [123 Architecture and canonical vocabulary](docs/design/123-architecture.md)
+- [Canonical ledger tables and existing support-table inventory](docs/design/canonical-ledger-tables.md)
+- [Payroll key/value records by domain and layer, wrappers, JSON, state and indexes](docs/design/payroll-records.md)
 
-This repository is **not** a canonical HRMS design, production dependency,
-API commitment, release candidate, or source of changes to HRMS Design PR #44.
+The canonical shape is three monetary ledgers plus one record store per domain
+and layer: L1, L2 and L3. Records use `tenant`, `key1`–`key10`, JSON `value`,
+`ts` and availability `state`; their canonical serialized keys retain their meaning.
+Core provides L3 storage/access only; consumers own its workflow and payload meaning.
+The Python prototype currently implements five tables (the three ledgers and
+L1/L2 records); it does not yet implement the L3 store.
 
-```bash
-npm install
-npm run dev
+Approved follow-ups: payroll corrections use positive minor-unit amounts with
+explicit increase/decrease effect and an earlier posted-entry reference; L3
+records use immutable revisions. These decisions do not mean the Python
+prototype already implements those features.
+
+## Migrated handbook
+
+Historical handbook links target Core's accepted handbook location. The current
+123 replacement is tracked in [Core draft hub #191](https://github.com/agentlabs-poc/agentlabs-hrms-core/pull/191);
+its [canonical contract](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/refactor/payroll-123-from-v0.1.1/docs/payroll-123-canonical-records.md)
+is the implementation reference until that hub reaches main. Earlier hub #172
+is superseded. Publishing this Lab does not certify Core release readiness.
+
+## Python CLI and persistent SQLite
+
+The [CLI guide](docs/design/python-cli.md) lists all implemented L1 and L2
+primitives and runnable commands. L3 consumer Python scripts invoke the CLI;
+the CLI calls the existing primitives in process. Production HRMS core remains Go.
+
+```sh
+./payroll-cli --help
+python3 -m sqlite_lab.cli_demo --db /tmp/payroll-cli-walkthrough.sqlite
 ```
 
-Open the displayed URL, then play levels 1 through 7. Refreshing the page
-deletes all state. The green controls call ledger primitives; the amber
-external calculator deliberately represents higher-order code outside Layer 1.
+Use a fresh database path, or an empty database prepared by `payroll-cli reset`.
+The walkthrough retains it for subsequent CLI queries. Use `--tax-regime old`
+to compare the [Karnataka example](docs/design/karnataka-payroll-demo.md) with
+the default new regime; obligations stay unpaid unless `--settle` is selected.
+Generated IDs follow the [prefixed Snowflake Base36 direction](docs/design/canonical-generated-ids.md);
+current demo IDs are supplied fixtures and generator wiring remains separate.
 
-The terminal is a simulator, not a production CLI. Each normal command maps
-to one in-memory primitive. `demo-prepare` is intentionally higher order and
-exists only to prove that an external player can query and compose the primitives.
+## Canonical HTML simulation
 
-Every salary, payroll-input, draft, and posted row carries an explicit ledger owner
-and ledger date. Committing a payroll reference creates an immutable logical
-payslip snapshot; PDF is only an optional rendering of that snapshot. A later
-correction never rewrites a paid month: it is appended under a linked reference
-as an earning or deduction in the next month's ledger.
+The browser shows a guided playback of **actual SQLite simulation rows**. It uses
+three canonical ledger tables and one L1 record table; L2 settings are separate.
+Salary earnings and monthly/one-time instructions are canonical records, not
+additional ledgers. The [HTML walkthrough](docs/design/canonical-html-demo.md)
+explains every stage and record family.
 
-Each snapshot can be downloaded as a PDF payslip. The PDF embeds the ledger
-reference, owner, date, entry IDs and snapshot hash; it is a disposable rendering
-whose contents remain traceable to the logical snapshot.
+```sh
+npm ci
+npm run dev -- --port 5174
+```
 
-The game now follows the business journey from employee joining through payroll
-creation, calculation, approval, posting and payslip generation. Committed
-statutory deductions become credits in the tag-routed Statutory Liability
-Ledger; authority payments become debits, while immutable match records
-prove that employee deductions were paid and reduce the liability to zero.
+Open the displayed URL. Select a stage or use the next/previous controls to
+inspect the rows present at that point. Expand a row to see its complete JSON,
+including its canonical key, references, state and integer minor-unit amounts.
+The browser reads a checked-in fixture; it does not write to a live database.
 
-Form 16 is handled as a higher-order annual issuance package. The application
-must import the non-editable Part A generated by TRACES from processed Form 24Q
-statements; it must not fabricate Part A from payroll or challan rows. The lab
-therefore generates an issuance-readiness PDF and official Part B (Annexure-I)
-field inventory, explicitly blocking issuance because the demo has only one
-month and lacks PAN/TAN, quarterly receipts, Q4 Annexure II, TRACES Part A and
-authorised authentication.
+Regenerate the browser fixture from the executable Python simulation:
 
-Payroll inputs are held in two distinct logical ledgers: monthly standing
-instructions and one-time inputs. Employee proofs are ordinary file attachments,
-not monetary ledger entries. HR review can create or supersede a monthly
-deduction instruction that references an accepted attachment.
+```sh
+python3 -m sqlite_lab.demo --output public/canonical-flow.json
+```
 
-The payroll preparation report is a non-canonical query projection for the
-payroll manager. It has no business reference and creates no monetary state.
-After review, its displayed rows can be materialised into the draft payroll
-ledger, which is the first canonical monetary object. Committing marks consumed
-one-time inputs while monthly standing inputs remain effective for future periods.
+The connected example covers E101 and E102 over October 2026–March 2027 in
+18 stages, including a five-month loan, future-effective earnings, draft policy
+choices and subsequent-month corrections. Employer obligations total ₹36,000;
+explicit remittance allocations demonstrate partial and complete settlement.
+All three monetary ledgers appear as tables, with original JSON expandable.
+
+Only these are canonical ledgers:
+
+- `payroll_draft_ledger`: fixed draft monetary lines.
+- `payroll_ledger`: committed monetary lines.
+- `payroll_employer_liability_ledger`: obligations, remittances and allocations.
+
+`payroll_l1_records` holds component definitions, earnings, instructions, draft
+metadata, controls, reviews, resolutions, applications and operation receipts.
+`payroll_l2_records` holds auxiliary employee settings. Consumers own L3.
+
+The original browser's salary/input ledgers, mutable draft objects and mandatory
+approval sequence have been superseded. The current page focuses on canonical
+storage; HR intake, organizational policy and document rendering belong to the
+consuming application. This remains a prototype, not a production API or a
+claim of PostgreSQL compatibility.
+
+## SQLite proof and diagrams
+
+- [Three-ledger design](docs/design/three-ledger-simulation.md)
+- [Complete canonical row map](docs/design/canonical-row-map.md)
+- [Canonical storage SVG](docs/diagrams/payroll-canonical-storage.svg)
+- [Employee journey SVG](docs/diagrams/payroll-employee-journey.svg)
+- [SQLite commands and scope](sqlite_lab/README.md)
+- [Historical nine-table proof](docs/evidence/sqlite-record-fold/README.md)
+
+The earlier evidence remains source-bound historical material; it does not prove
+the new three-ledger implementation.
+
+Current [three-ledger evidence](docs/evidence/three-ledger-simulation/README.md) retains
+the complete row catalogue and the verified browser journey.
