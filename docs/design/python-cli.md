@@ -1,5 +1,8 @@
 # Python CLI reference demonstration
 
+Current Core alignment, key-column storage, ELR reversals and remaining contract gaps
+are tracked in the [Python/Core reconciliation](python-core-reconciliation.md).
+
 Python supplies the executable lab reference. Production HRMS core remains Go.
 
 ```text

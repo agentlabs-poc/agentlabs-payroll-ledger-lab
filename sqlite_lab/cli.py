@@ -26,6 +26,8 @@ PAYROLL_OPS = {
     "record_obligation": Payroll.record_obligation,
     "record_remittance": Payroll.record_remittance,
     "allocate_remittance": Payroll.allocate_remittance,
+    "record_reversal": Payroll.record_reversal,
+    "post_elr": Payroll.post_elr,
     "elr_outstanding": Payroll.elr_outstanding,
 }
 L1_READS = {
@@ -45,12 +47,13 @@ LEDGERS = (
     "payroll_employer_liability_ledger",
 )
 LEDGER_ALIASES = {"draft": "payroll_draft_ledger", "payroll": "payroll_ledger", "liability": "payroll_employer_liability_ledger"}
+LEDGER_POSTS = {"payroll_draft_ledger": "create_draft", "payroll_ledger": "commit", "payroll_employer_liability_ledger": "post_elr"}
 NATURAL_OPS = {
     "component": {"define": ("l1", "define_component"), "disable": ("l1", "disable_component")},
     "earning": {"define": ("l1", "define_earning")},
     "instruction": {"add": ("l1", "add_instruction"), "revise": ("l1", "add_instruction_version"), "application": ("l1", "instruction_application")},
     "draft": {"create": ("l1", "create_draft"), "control": ("l1", "set_draft_control"), "review": ("l1", "review_draft"), "commit": ("l1", "commit")},
-    "liability": {"obligation": ("l1", "record_obligation"), "remittance": ("l1", "record_remittance"), "allocate": ("l1", "allocate_remittance"), "outstanding": ("l1", "elr_outstanding")},
+    "liability": {"post": ("l1", "post_elr"), "reverse": ("l1", "record_reversal"), "obligation": ("l1", "record_obligation"), "remittance": ("l1", "record_remittance"), "allocate": ("l1", "allocate_remittance"), "outstanding": ("l1", "elr_outstanding")},
     "settings": {"set": ("l2", "put_l2_settings"), "get": ("l2", "get_l2"), "current": ("l2", "current_l2_settings"), "effective": ("l2", "effective_l2_settings")},
     "record": {"get": ("l1", "get_l1"), "history": ("l1", "history_l1"), "current": ("l1", "current_l1"), "effective": ("l1", "effective_l1_source")},
 }
@@ -91,6 +94,10 @@ def _parser():
     ledger.add_argument("name", choices=(*LEDGERS, *LEDGER_ALIASES))
     ledger.add_argument("--employee")
     ledger.add_argument("--month")
+    ledger.add_argument("--view", choices=("entries", "outstanding"), default="entries")
+    ledger_post = commands.add_parser("ledger-post", help="invoke one canonical ledger append operation")
+    ledger_post.add_argument("name", choices=(*LEDGERS, *LEDGER_ALIASES))
+    ledger_post.add_argument("--input", required=True, help="JSON object file, or - for stdin")
     return parser
 
 
@@ -196,22 +203,27 @@ def _record_rows(db, tenant, layer):
     return rows
 
 
-def _ledger_rows(db, tenant, name, employee, month):
+def _ledger_rows(db, tenant, name, employee, month, view):
     name = LEDGER_ALIASES.get(name, name)
     if name not in LEDGERS:
         raise ValueError("ledger is not allowlisted")
-    clauses = ["tenant=?"]
-    values = [tenant]
-    if employee:
-        if name == "payroll_employer_liability_ledger":
-            raise ValueError("employee filter is unavailable for the employer liability ledger")
-        clauses.append("employee_id=?"); values.append(employee)
-    if month:
-        clauses.append(("reporting_period" if name == "payroll_employer_liability_ledger" else "payroll_month") + "=?")
-        values.append(month)
-    return [dict(row) for row in db.execute(
-        f"SELECT * FROM {name} WHERE {' AND '.join(clauses)} ORDER BY rowid", values
-    )]
+    if view == "outstanding" and name != "payroll_employer_liability_ledger":
+        raise ValueError("outstanding view is available only for the employer liability ledger")
+    if name != "payroll_employer_liability_ledger":
+        clauses,values=["tenant=?"],[tenant]
+        if employee: clauses.append("employee_id=?"); values.append(employee)
+        if month: clauses.append("payroll_month=?"); values.append(month)
+        return [dict(row) for row in db.execute(f"SELECT * FROM {name} WHERE {' AND '.join(clauses)} ORDER BY rowid",values)]
+    period=" AND e.reporting_period=?" if month else ""
+    if view=="outstanding":
+        owner=" AND p.employee_id=?" if employee else ""
+        sql=f"""SELECT e.*,e.amount_minor-COALESCE((SELECT SUM(a.amount_minor) FROM payroll_employer_liability_ledger a WHERE a.tenant=e.tenant AND a.row_kind='allocation' AND a.obligation_entry_id=e.entry_id AND NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger av WHERE av.tenant=a.tenant AND av.row_kind='reversal' AND av.reversal_of_entry_id=a.entry_id)),0) AS outstanding_minor FROM payroll_employer_liability_ledger e JOIN payroll_ledger p ON p.tenant=e.tenant AND p.ledger_entry_id=e.posted_liability_entry_id{owner} WHERE e.tenant=? AND e.row_kind='obligation' AND NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger v WHERE v.tenant=e.tenant AND v.row_kind='reversal' AND v.reversal_of_entry_id=e.entry_id){period} ORDER BY e.rowid"""
+        values=([employee] if employee else [])+[tenant]+([month] if month else [])
+        return [dict(row) for row in db.execute(sql,values)]
+    if not employee:
+        return [dict(row) for row in db.execute(f"SELECT e.* FROM payroll_employer_liability_ledger e WHERE e.tenant=?{period} ORDER BY e.rowid",[tenant]+([month] if month else []))]
+    sql=f"""SELECT e.* FROM payroll_employer_liability_ledger e LEFT JOIN payroll_employer_liability_ledger target ON target.tenant=e.tenant AND e.row_kind='reversal' AND target.entry_id=e.reversal_of_entry_id LEFT JOIN payroll_employer_liability_ledger obligation ON obligation.tenant=e.tenant AND obligation.entry_id=CASE WHEN e.row_kind='allocation' THEN e.obligation_entry_id WHEN e.row_kind='reversal' AND target.row_kind='allocation' THEN target.obligation_entry_id END JOIN payroll_ledger p ON p.tenant=e.tenant AND p.ledger_entry_id=CASE WHEN e.row_kind='obligation' THEN e.posted_liability_entry_id WHEN e.row_kind='reversal' AND target.row_kind='obligation' THEN target.posted_liability_entry_id ELSE obligation.posted_liability_entry_id END AND p.employee_id=? WHERE e.tenant=?{period} ORDER BY e.rowid"""
+    return [dict(row) for row in db.execute(sql,[employee,tenant]+([month] if month else []))]
 
 
 def _rows(value):
@@ -283,8 +295,11 @@ def run(args):
         if args.command == "records":
             return _record_rows(db, args.tenant, args.layer)
         if args.command == "ledger":
-            return _ledger_rows(db, args.tenant, args.name, args.employee, args.month)
+            return _ledger_rows(db, args.tenant, args.name, args.employee, args.month, args.view)
         payload = _input(args.input)
+        if args.command == "ledger-post":
+            name=LEDGER_ALIASES.get(args.name,args.name)
+            return PAYROLL_OPS[LEDGER_POSTS[name]](Payroll(db,args.tenant,args.actor),**payload)
         if args.command in NATURAL_OPS:
             args.command, args.operation = NATURAL_OPS[args.command][args.verb]
         store = RecordStore(db)

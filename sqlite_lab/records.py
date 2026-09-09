@@ -136,6 +136,39 @@ def parse_key(key: str):
     return record_type, *parsed
 
 
+def _key_slots(key):
+    record_type, *identity = parse_key(key)
+    used = (*record_type.split("."), *(str(value) for value in identity))
+    if len(used) > 10:
+        raise RecordError("canonical key exceeds ten segments")
+    return used + ("",) * (10 - len(used))
+
+
+def _canonical_key_from_slots(*slots):
+    if len(slots) != 10 or any(not isinstance(slot, str) for slot in slots):
+        raise RecordError("canonical key slots must be text")
+    try:
+        end = slots.index("")
+    except ValueError:
+        end = len(slots)
+    if end == 0 or any(slots[end:]):
+        raise RecordError("canonical key slots must use a nonempty contiguous prefix")
+    for record_type, schema in SCHEMAS.items():
+        namespace = tuple(record_type.split("."))
+        if (slots[:len(namespace)] == namespace
+                and end == len(namespace) + len(schema["identity"])):
+            key = canonical_key(record_type, *slots[len(namespace):end])
+            if _key_slots(key) == slots:
+                return key
+    raise RecordError("canonical key slots do not match a registered type")
+
+
+def _register_key_function(connection):
+    connection.create_function(
+        "canonical_record_key", 10, _canonical_key_from_slots, deterministic=True
+    )
+
+
 def _schema_signature(connection):
     return tuple(
         (row[0], row[1], row[2], " ".join((row[3] or "").split()))
@@ -150,6 +183,7 @@ def _schema_signature(connection):
 def _expected_schema_signature(schema):
     authority = sqlite3.connect(":memory:")
     try:
+        _register_key_function(authority)
         authority.executescript(schema)
         return _schema_signature(authority)
     finally:
@@ -159,10 +193,15 @@ def _expected_schema_signature(schema):
 def connect(path: str | Path) -> sqlite3.Connection:
     connection = sqlite3.connect(path, timeout=1, isolation_level=None)
     connection.row_factory = sqlite3.Row
+    _register_key_function(connection)
     connection.execute("PRAGMA foreign_keys = ON")
+    connection.execute("PRAGMA recursive_triggers = ON")
     if connection.execute("PRAGMA foreign_keys").fetchone()[0] != 1:
         connection.close()
         raise RuntimeError("SQLite foreign keys could not be enabled")
+    if connection.execute("PRAGMA recursive_triggers").fetchone()[0] != 1:
+        connection.close()
+        raise RuntimeError("SQLite recursive triggers could not be enabled")
     names = {row[0] for row in connection.execute(
         "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
     )}
@@ -297,9 +336,12 @@ class RecordStore:
         parsed = parse_key(key)
         record_type, identity = parsed[0], parsed[1:]
         _validate(record_type, identity, value)
+        slots = _key_slots(key)
+        columns = ",".join(f"key{index}" for index in range(1, 11))
         self.connection.execute(
-            f"INSERT INTO {table}(tenant,key,value,ts,state) VALUES(?,?,?,?,?)",
-            (tenant, key, json.dumps(value, sort_keys=True, separators=(",", ":")),
+            f"INSERT INTO {table}(tenant,{columns},value,ts,state) "
+            f"VALUES({','.join('?' for _ in range(14))})",
+            (tenant, *slots, json.dumps(value, sort_keys=True, separators=(",", ":")),
              datetime.now(timezone.utc).isoformat(), state),
         )
         return self.get_l1(tenant, key) if table == "payroll_l1_records" else self.get_l2(tenant, key)

@@ -227,16 +227,16 @@ class ProofRunnerTest(unittest.TestCase):
     def test_proof_exports_all_rows_and_complete_typed_catalogue(self):
         with tempfile.TemporaryDirectory() as directory:
             result=run_proof(Path(directory)); root=Path(directory)
-            self.assertEqual(result["catalogue_coverage"],{"covered":15,"required":15})
+            self.assertEqual(result["catalogue_coverage"],{"covered":16,"required":16})
             rows=json.loads((root/"canonical-rows.json").read_text()); catalog=json.loads((root/"canonical-catalog.json").read_text())
             self.assertEqual(set(rows),{"payroll_draft_ledger","payroll_ledger","payroll_employer_liability_ledger","payroll_l1_records","payroll_l2_records"})
-            self.assertEqual(len(catalog["entries"]),15)
+            self.assertEqual(len(catalog["entries"]),16)
             self.assertTrue(all(entry["example"] for entry in catalog["entries"]))
             self.assertEqual({entry["kind"] for entry in catalog["entries"]},{
                 "payroll.component","payroll.earning","payroll.instruction","payroll.draft",
                 "payroll.draft.control","payroll.draft.review","payroll.instruction.resolution",
                 "payroll.instruction.application","payroll.operation.receipt",
-                "payroll.employee.settings","draft","posted","obligation","remittance","allocation"})
+                "payroll.employee.settings","draft","posted","obligation","remittance","allocation","reversal"})
             l1_keys={row["key"] for row in rows["payroll_l1_records"]}
             for row in rows["payroll_draft_ledger"]:
                 self.assertTrue({row["draft_key"],row["source_key"],row["component_key"]} <= l1_keys)

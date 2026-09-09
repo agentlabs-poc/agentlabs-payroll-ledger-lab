@@ -283,8 +283,7 @@ class Payroll:
             posted=self.connection.execute("SELECT p.payroll_month,p.currency FROM payroll_ledger p JOIN payroll_l1_records c ON c.tenant=p.tenant AND c.key=p.component_key WHERE p.tenant=? AND p.ledger_entry_id=? AND (p.direction='employer_liability' OR (p.direction='deduction' AND json_extract(c.value,'$.authority_payable')=1))",(self.tenant,posted_liability_entry_id)).fetchone()
             period=reporting_period or (posted["payroll_month"] if posted else None)
             if not posted or posted["currency"]!=currency or not MONTH.fullmatch(period): raise PayrollError("obligation scope does not match posted payable")
-            try: self.connection.execute("INSERT INTO payroll_employer_liability_ledger(tenant,entry_id,row_kind,amount_minor,employer_id,authority_id,currency,reporting_period,posted_liability_entry_id) VALUES(?,?,'obligation',?,?,?,?,?,?)",(self.tenant,entry_id,amount_minor,employer_id,authority_id,currency,period,posted_liability_entry_id))
-            except sqlite3.IntegrityError as exc: raise Conflict("invalid or duplicate liability obligation") from exc
+            return self._insert_elr({"entry_id":entry_id,"row_kind":"obligation","amount_minor":amount_minor,"employer_id":employer_id,"authority_id":authority_id,"currency":currency,"reporting_period":period,"posted_liability_entry_id":posted_liability_entry_id})
     def record_remittance(self,entry_id,amount_minor,proof_ref,*,employer_id,authority_id,currency="INR",reporting_period=None):
         _identifier(entry_id, "remittance entry", True)
         _identifier(employer_id, "employer", True)
@@ -293,24 +292,81 @@ class Payroll:
         _money(amount_minor)
         if not isinstance(proof_ref,str) or not proof_ref.strip(): raise PayrollError("remittance proof required")
         if reporting_period is not None and not MONTH.fullmatch(reporting_period): raise PayrollError("invalid reporting period")
-        with _write(self.connection): self.connection.execute("INSERT INTO payroll_employer_liability_ledger(tenant,entry_id,row_kind,amount_minor,employer_id,authority_id,currency,reporting_period,proof_ref) VALUES(?,?,'remittance',?,?,?,?,?,?)",(self.tenant,entry_id,amount_minor,employer_id,authority_id,currency,reporting_period,proof_ref))
+        with _write(self.connection):
+            return self._insert_elr({"entry_id":entry_id,"row_kind":"remittance","amount_minor":amount_minor,"employer_id":employer_id,"authority_id":authority_id,"currency":currency,"reporting_period":reporting_period,"proof_ref":proof_ref})
     def allocate_remittance(self,entry_id,obligation_id,remittance_id,amount_minor):
         _identifier(entry_id, "allocation entry", True)
         _identifier(obligation_id, "obligation entry", True)
         _identifier(remittance_id, "remittance entry", True)
         _money(amount_minor)
         with _write(self.connection):
-            o = self.connection.execute("SELECT amount_minor,employer_id,authority_id,currency FROM payroll_employer_liability_ledger WHERE tenant=? AND entry_id=? AND row_kind='obligation'",(self.tenant,obligation_id)).fetchone()
-            r = self.connection.execute("SELECT amount_minor,employer_id,authority_id,currency FROM payroll_employer_liability_ledger WHERE tenant=? AND entry_id=? AND row_kind='remittance'",(self.tenant,remittance_id)).fetchone()
-            oa = self.connection.execute("SELECT COALESCE(SUM(amount_minor),0) FROM payroll_employer_liability_ledger WHERE tenant=? AND row_kind='allocation' AND obligation_entry_id=?",(self.tenant,obligation_id)).fetchone()[0]
-            ra = self.connection.execute("SELECT COALESCE(SUM(amount_minor),0) FROM payroll_employer_liability_ledger WHERE tenant=? AND row_kind='allocation' AND remittance_entry_id=?",(self.tenant,remittance_id)).fetchone()[0]
+            existing=self.connection.execute("SELECT * FROM payroll_employer_liability_ledger WHERE tenant=? AND entry_id=?",(self.tenant,entry_id)).fetchone()
+            if existing:
+                if existing["row_kind"]=="allocation" and existing["obligation_entry_id"]==obligation_id and existing["remittance_entry_id"]==remittance_id and existing["amount_minor"]==amount_minor: return dict(existing)
+                raise Conflict("ELR entry retry changed input")
+            o = self._effective_elr(obligation_id,"obligation")
+            r = self._effective_elr(remittance_id,"remittance")
+            oa = self._effective_allocated("obligation_entry_id",obligation_id)
+            ra = self._effective_allocated("remittance_entry_id",remittance_id)
             if not o or not r or tuple(o[1:])!=tuple(r[1:]): raise PayrollError("allocation scope mismatch")
             if oa+amount_minor>o[0] or ra+amount_minor>r[0]: raise PayrollError("allocation exceeds obligation or remittance")
-            self.connection.execute("INSERT INTO payroll_employer_liability_ledger(tenant,entry_id,row_kind,amount_minor,employer_id,authority_id,currency,obligation_entry_id,remittance_entry_id) VALUES(?,?,'allocation',?,?,?,?,?,?)",(self.tenant,entry_id,amount_minor,o["employer_id"],o["authority_id"],o["currency"],obligation_id,remittance_id))
+            return self._insert_elr({"entry_id":entry_id,"row_kind":"allocation","amount_minor":amount_minor,"employer_id":o["employer_id"],"authority_id":o["authority_id"],"currency":o["currency"],"obligation_entry_id":obligation_id,"remittance_entry_id":remittance_id})
+
+    def record_reversal(self,entry_id,reversal_of_entry_id,reason):
+        _identifier(entry_id, "reversal entry", True)
+        _identifier(reversal_of_entry_id, "reversal target", True)
+        if not isinstance(reason,str) or not reason.strip(): raise PayrollError("reversal reason required")
+        with _write(self.connection):
+            target=self.connection.execute("SELECT * FROM payroll_employer_liability_ledger WHERE tenant=? AND entry_id=?",(self.tenant,reversal_of_entry_id)).fetchone()
+            if not target or target["row_kind"]=="reversal": raise PayrollError("reversal target must be an obligation, remittance or allocation")
+            values={"entry_id":entry_id,"row_kind":"reversal","amount_minor":target["amount_minor"],"employer_id":target["employer_id"],"authority_id":target["authority_id"],"currency":target["currency"],"reporting_period":target["reporting_period"],"reversal_of_entry_id":reversal_of_entry_id,"reason":reason,"actor":self.actor}
+            existing=self.connection.execute("SELECT entry_id FROM payroll_employer_liability_ledger WHERE tenant=? AND row_kind='reversal' AND reversal_of_entry_id=?",(self.tenant,reversal_of_entry_id)).fetchone()
+            if existing and existing["entry_id"]!=entry_id: raise Conflict("liability entry already reversed")
+            dependency=self.connection.execute("SELECT 1 FROM payroll_employer_liability_ledger a WHERE a.tenant=? AND a.row_kind='allocation' AND (a.obligation_entry_id=? OR a.remittance_entry_id=?) AND NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger v WHERE v.tenant=a.tenant AND v.row_kind='reversal' AND v.reversal_of_entry_id=a.entry_id)",(self.tenant,reversal_of_entry_id,reversal_of_entry_id)).fetchone()
+            if dependency: raise PayrollError("reverse effective allocations first")
+            return self._insert_elr(values)
+
+    def post_elr(self,row_kind,**payload):
+        shapes={
+            "obligation":({"entry_id","posted_liability_entry_id","amount_minor","employer_id","authority_id","currency"},{"reporting_period"}),
+            "remittance":({"entry_id","amount_minor","proof_ref","employer_id","authority_id","currency"},{"reporting_period"}),
+            "allocation":({"entry_id","obligation_entry_id","remittance_entry_id","amount_minor"},set()),
+            "reversal":({"entry_id","reversal_of_entry_id","reason"},set()),
+        }
+        if not isinstance(row_kind,str) or row_kind not in shapes: raise PayrollError("unknown ELR row kind")
+        required,optional=shapes[row_kind]
+        if not required <= payload.keys() or payload.keys() - required - optional: raise PayrollError("invalid ELR body fields")
+        if row_kind=="obligation": return self.record_obligation(**payload)
+        if row_kind=="remittance": return self.record_remittance(**payload)
+        if row_kind=="allocation":
+            return self.allocate_remittance(payload["entry_id"],payload["obligation_entry_id"],payload["remittance_entry_id"],payload["amount_minor"])
+        return self.record_reversal(**payload)
+
     def elr_outstanding(self,obligation_id):
-        row=self.connection.execute("SELECT o.amount_minor-COALESCE(SUM(a.amount_minor),0) FROM payroll_employer_liability_ledger o LEFT JOIN payroll_employer_liability_ledger a ON a.tenant=o.tenant AND a.row_kind='allocation' AND a.obligation_entry_id=o.entry_id WHERE o.tenant=? AND o.entry_id=? AND o.row_kind='obligation' GROUP BY o.amount_minor",(self.tenant,obligation_id)).fetchone()
+        row=self.connection.execute("SELECT amount_minor FROM payroll_employer_liability_ledger WHERE tenant=? AND entry_id=? AND row_kind='obligation'",(self.tenant,obligation_id)).fetchone()
         if not row: raise PayrollError("unknown obligation")
-        return row[0]
+        if not self._effective_elr(obligation_id,"obligation"): return 0
+        return row[0]-self._effective_allocated("obligation_entry_id",obligation_id)
+
+    def _effective_elr(self,entry_id,row_kind):
+        return self.connection.execute("SELECT amount_minor,employer_id,authority_id,currency FROM payroll_employer_liability_ledger e WHERE tenant=? AND entry_id=? AND row_kind=? AND NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger v WHERE v.tenant=e.tenant AND v.row_kind='reversal' AND v.reversal_of_entry_id=e.entry_id)",(self.tenant,entry_id,row_kind)).fetchone()
+
+    def _effective_allocated(self,parent_field,parent_id):
+        if parent_field not in {"obligation_entry_id","remittance_entry_id"}: raise ValueError("invalid ELR parent field")
+        return self.connection.execute(f"SELECT COALESCE(SUM(a.amount_minor),0) FROM payroll_employer_liability_ledger a WHERE a.tenant=? AND a.row_kind='allocation' AND a.{parent_field}=? AND NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger v WHERE v.tenant=a.tenant AND v.row_kind='reversal' AND v.reversal_of_entry_id=a.entry_id)",(self.tenant,parent_id)).fetchone()[0]
+
+    def _insert_elr(self,values):
+        columns=("entry_id","row_kind","amount_minor","employer_id","authority_id","currency","reporting_period","posted_liability_entry_id","obligation_entry_id","remittance_entry_id","proof_ref","reversal_of_entry_id","reason","actor")
+        expected={column:values.get(column) for column in columns}
+        existing=self.connection.execute("SELECT * FROM payroll_employer_liability_ledger WHERE tenant=? AND entry_id=?",(self.tenant,values["entry_id"])).fetchone()
+        if existing:
+            if all(existing[column]==expected[column] for column in columns): return dict(existing)
+            raise Conflict("ELR entry retry changed input")
+        try:
+            self.connection.execute(f"INSERT INTO payroll_employer_liability_ledger(tenant,{','.join(columns)}) VALUES({','.join('?' for _ in range(len(columns)+1))})",(self.tenant,*(expected[column] for column in columns)))
+        except sqlite3.IntegrityError as exc:
+            raise Conflict("invalid or duplicate employer liability entry") from exc
+        return dict(self.connection.execute("SELECT * FROM payroll_employer_liability_ledger WHERE tenant=? AND entry_id=?",(self.tenant,values["entry_id"])).fetchone())
 
     def _component(self,key,require_available=False):
         if parse_key(key)[0]!="payroll.component": raise PayrollError("wrong component reference type")

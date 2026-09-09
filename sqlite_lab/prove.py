@@ -36,6 +36,7 @@ LEDGER_KINDS = (
     ("obligation", "payroll_employer_liability_ledger"),
     ("remittance", "payroll_employer_liability_ledger"),
     ("allocation", "payroll_employer_liability_ledger"),
+    ("reversal", "payroll_employer_liability_ledger"),
 )
 
 def _stage(timings, name, fn):
@@ -99,9 +100,10 @@ def _catalogue(rows):
         ),
         "draft": "immutable proposed monetary line",
         "posted": "immutable committed monetary line",
-        "obligation": "posted employer-liability obligation",
+        "obligation": "posted statutory-payable obligation",
         "remittance": "authority payment with proof",
         "allocation": "amount linking obligation and remittance",
+        "reversal": "immutable full correction of one ELR entry",
     }
     notes = {
         "payroll.component": ("tenant + component_id + numeric revision", "no internal references", "stable code/kind/country identity and tenant/country code uniqueness", "l1_component_revision"),
@@ -116,9 +118,10 @@ def _catalogue(rows):
         "payroll.employee.settings": ("tenant + employee_id + numeric revision", "policy_ref is external", "effective month, opaque policy identity/revision and locale", "l2_settings_effective"),
         "draft": ("tenant + draft_key + entry_id", "draft_key, selected source_key and its component_key; employee_id is external", "exact draft/source employee, month, component, direction and amount agreement", "draft_employee_month"),
         "posted": ("tenant + ledger_entry_id", "exact draft_key + draft_entry_id row, source_key and component_key", "all copied monetary fields exactly match the referenced draft row", "posted_employee_month"),
-        "obligation": ("tenant + entry_id", "posted_liability_entry_id", "amount exactly matches one posted employer_liability entry", "one_obligation_per_liability"),
+        "obligation": ("tenant + entry_id", "posted_liability_entry_id", "amount exactly matches one posted employer liability or authority-payable deduction", "one_effective_obligation_per_liability"),
         "remittance": ("tenant + entry_id", "proof_ref is external authority evidence", "positive minor units and nonblank proof_ref", "primary-key identity lookup"),
         "allocation": ("tenant + entry_id", "obligation_entry_id and remittance_entry_id", "typed references, positive amount and obligation/remittance caps", "liability_allocations"),
+        "reversal": ("tenant + entry_id", "reversal_of_entry_id", "exact target amount/scope, nonblank reason, authenticated actor and once-only correction", "one_reversal_per_entry"),
     }
     _validate_reference_closure(rows)
     entries = []
@@ -163,7 +166,8 @@ def _catalogue(rows):
                 "indexed_queries": notes[kind][3],
             }
         )
-    return {"coverage": {"covered": len(entries), "required": 15}, "entries": entries}
+    required=len(L1_TYPES)+1+len(LEDGER_KINDS)
+    return {"coverage": {"covered": len(entries), "required": required}, "entries": entries}
 
 
 def _validate_reference_closure(rows):
@@ -245,6 +249,8 @@ def _validate_reference_closure(rows):
         elif row["row_kind"]=="allocation":
             require(liability.get((tenant,row["obligation_entry_id"]),{}).get("row_kind")=="obligation","allocation obligation")
             require(liability.get((tenant,row["remittance_entry_id"]),{}).get("row_kind")=="remittance","allocation remittance")
+        elif row["row_kind"]=="reversal":
+            require(liability.get((tenant,row["reversal_of_entry_id"]),{}).get("row_kind") in {"obligation","remittance","allocation"},"reversal target")
 
 def _run(database):
     timings = {}
@@ -387,6 +393,8 @@ def _run(database):
         )
         before = payroll.elr_outstanding("OB1")
         payroll.allocate_remittance("ALLOC1", "OB1", "REM1", 200_000)
+        payroll.record_reversal("REV1", "ALLOC1", "wrong allocation")
+        payroll.allocate_remittance("ALLOC2", "OB1", "REM1", 200_000)
         return {
             "before_allocation_minor": before,
             "outstanding_minor": payroll.elr_outstanding("OB1"),

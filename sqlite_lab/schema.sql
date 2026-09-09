@@ -1,16 +1,26 @@
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE payroll_l1_records (
- tenant TEXT NOT NULL, key TEXT NOT NULL,
+ tenant TEXT NOT NULL,
+ key1 TEXT NOT NULL, key2 TEXT NOT NULL, key3 TEXT NOT NULL, key4 TEXT NOT NULL,
+ key5 TEXT NOT NULL, key6 TEXT NOT NULL, key7 TEXT NOT NULL, key8 TEXT NOT NULL,
+ key9 TEXT NOT NULL, key10 TEXT NOT NULL,
+ key TEXT GENERATED ALWAYS AS (canonical_record_key(key1,key2,key3,key4,key5,key6,key7,key8,key9,key10)) VIRTUAL,
  value TEXT NOT NULL CHECK(json_valid(value) AND json_type(value)='object'),
  ts TEXT NOT NULL, state TEXT NOT NULL CHECK(state IN ('enabled','disabled','deleted')),
- PRIMARY KEY(tenant,key)
+ UNIQUE(tenant,key),
+ UNIQUE(tenant,key1,key2,key3,key4,key5,key6,key7,key8,key9,key10)
 );
 CREATE TABLE payroll_l2_records (
- tenant TEXT NOT NULL, key TEXT NOT NULL,
+ tenant TEXT NOT NULL,
+ key1 TEXT NOT NULL, key2 TEXT NOT NULL, key3 TEXT NOT NULL, key4 TEXT NOT NULL,
+ key5 TEXT NOT NULL, key6 TEXT NOT NULL, key7 TEXT NOT NULL, key8 TEXT NOT NULL,
+ key9 TEXT NOT NULL, key10 TEXT NOT NULL,
+ key TEXT GENERATED ALWAYS AS (canonical_record_key(key1,key2,key3,key4,key5,key6,key7,key8,key9,key10)) VIRTUAL,
  value TEXT NOT NULL CHECK(json_valid(value) AND json_type(value)='object'),
  ts TEXT NOT NULL, state TEXT NOT NULL CHECK(state IN ('enabled','disabled','deleted')),
- PRIMARY KEY(tenant,key)
+ UNIQUE(tenant,key),
+ UNIQUE(tenant,key1,key2,key3,key4,key5,key6,key7,key8,key9,key10)
 );
 
 CREATE INDEX l1_component_revision ON payroll_l1_records(tenant,json_extract(value,'$.component_id'),CAST(json_extract(value,'$.revision') AS INTEGER) DESC) WHERE key LIKE 'payroll.component:%';
@@ -93,24 +103,57 @@ CREATE TRIGGER posted_immutable_update BEFORE UPDATE ON payroll_ledger BEGIN SEL
 CREATE TRIGGER posted_immutable_delete BEFORE DELETE ON payroll_ledger BEGIN SELECT RAISE(ABORT,'payroll ledger is immutable'); END;
 
 CREATE TABLE payroll_employer_liability_ledger (
- tenant TEXT NOT NULL, entry_id TEXT NOT NULL, row_kind TEXT NOT NULL CHECK(row_kind IN ('obligation','remittance','allocation')),
+ tenant TEXT NOT NULL, entry_id TEXT NOT NULL, row_kind TEXT NOT NULL CHECK(row_kind IN ('obligation','remittance','allocation','reversal')),
  amount_minor INTEGER NOT NULL CHECK(typeof(amount_minor)='integer' AND amount_minor>0),
  employer_id TEXT NOT NULL, authority_id TEXT NOT NULL, currency TEXT NOT NULL,
  reporting_period TEXT, posted_liability_entry_id TEXT, obligation_entry_id TEXT, remittance_entry_id TEXT, proof_ref TEXT,
+ reversal_of_entry_id TEXT, reason TEXT, actor TEXT,
  PRIMARY KEY(tenant,entry_id), FOREIGN KEY(tenant,posted_liability_entry_id) REFERENCES payroll_ledger(tenant,ledger_entry_id),
  FOREIGN KEY(tenant,obligation_entry_id) REFERENCES payroll_employer_liability_ledger(tenant,entry_id),
  FOREIGN KEY(tenant,remittance_entry_id) REFERENCES payroll_employer_liability_ledger(tenant,entry_id),
- CHECK((row_kind='obligation' AND posted_liability_entry_id IS NOT NULL AND obligation_entry_id IS NULL AND remittance_entry_id IS NULL AND proof_ref IS NULL)
- OR (row_kind='remittance' AND posted_liability_entry_id IS NULL AND obligation_entry_id IS NULL AND remittance_entry_id IS NULL AND typeof(proof_ref)='text' AND length(trim(proof_ref))>0)
- OR (row_kind='allocation' AND posted_liability_entry_id IS NULL AND obligation_entry_id IS NOT NULL AND remittance_entry_id IS NOT NULL AND proof_ref IS NULL))
+ FOREIGN KEY(tenant,reversal_of_entry_id) REFERENCES payroll_employer_liability_ledger(tenant,entry_id),
+ CHECK((row_kind='obligation' AND posted_liability_entry_id IS NOT NULL AND obligation_entry_id IS NULL AND remittance_entry_id IS NULL AND proof_ref IS NULL AND reversal_of_entry_id IS NULL AND reason IS NULL AND actor IS NULL)
+ OR (row_kind='remittance' AND posted_liability_entry_id IS NULL AND obligation_entry_id IS NULL AND remittance_entry_id IS NULL AND typeof(proof_ref)='text' AND length(trim(proof_ref))>0 AND reversal_of_entry_id IS NULL AND reason IS NULL AND actor IS NULL)
+ OR (row_kind='allocation' AND posted_liability_entry_id IS NULL AND obligation_entry_id IS NOT NULL AND remittance_entry_id IS NOT NULL AND proof_ref IS NULL AND reversal_of_entry_id IS NULL AND reason IS NULL AND actor IS NULL)
+ OR (row_kind='reversal' AND posted_liability_entry_id IS NULL AND obligation_entry_id IS NULL AND remittance_entry_id IS NULL AND proof_ref IS NULL AND reversal_of_entry_id IS NOT NULL AND typeof(reason)='text' AND length(trim(reason))>0 AND typeof(actor)='text' AND length(trim(actor))>0))
 );
-CREATE UNIQUE INDEX one_obligation_per_liability ON payroll_employer_liability_ledger(tenant,posted_liability_entry_id) WHERE row_kind='obligation';
+CREATE INDEX obligations_by_payable ON payroll_employer_liability_ledger(tenant,posted_liability_entry_id) WHERE row_kind='obligation';
 CREATE INDEX liability_allocations ON payroll_employer_liability_ledger(tenant,obligation_entry_id) WHERE row_kind='allocation';
+CREATE INDEX remittance_allocations ON payroll_employer_liability_ledger(tenant,remittance_entry_id) WHERE row_kind='allocation';
+CREATE UNIQUE INDEX one_reversal_per_entry ON payroll_employer_liability_ledger(tenant,reversal_of_entry_id) WHERE row_kind='reversal';
 CREATE TRIGGER obligation_matches_posted BEFORE INSERT ON payroll_employer_liability_ledger
 WHEN NEW.row_kind='obligation' AND NOT EXISTS(SELECT 1 FROM payroll_ledger p JOIN payroll_l1_records c ON c.tenant=p.tenant AND c.key=p.component_key WHERE p.tenant=NEW.tenant AND p.ledger_entry_id=NEW.posted_liability_entry_id AND (p.direction='employer_liability' OR (p.direction='deduction' AND json_extract(c.value,'$.authority_payable')=1)) AND p.amount_minor=NEW.amount_minor)
 BEGIN SELECT RAISE(ABORT,'obligation must match posted payable'); END;
+CREATE TRIGGER one_effective_obligation_per_liability BEFORE INSERT ON payroll_employer_liability_ledger
+WHEN NEW.row_kind='obligation' AND EXISTS(
+ SELECT 1 FROM payroll_employer_liability_ledger o
+ WHERE o.tenant=NEW.tenant AND o.row_kind='obligation' AND o.posted_liability_entry_id=NEW.posted_liability_entry_id
+ AND NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger v WHERE v.tenant=o.tenant AND v.row_kind='reversal' AND v.reversal_of_entry_id=o.entry_id)
+)
+BEGIN SELECT RAISE(ABORT,'posted payable already has an effective obligation'); END;
 CREATE TRIGGER allocation_refs_typed BEFORE INSERT ON payroll_employer_liability_ledger
-WHEN NEW.row_kind='allocation' AND (NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger o WHERE o.tenant=NEW.tenant AND o.entry_id=NEW.obligation_entry_id AND o.row_kind='obligation') OR NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger r WHERE r.tenant=NEW.tenant AND r.entry_id=NEW.remittance_entry_id AND r.row_kind='remittance'))
+WHEN NEW.row_kind='allocation' AND (
+ NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger o WHERE o.tenant=NEW.tenant AND o.entry_id=NEW.obligation_entry_id AND o.row_kind='obligation' AND NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger v WHERE v.tenant=o.tenant AND v.row_kind='reversal' AND v.reversal_of_entry_id=o.entry_id))
+ OR NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger r WHERE r.tenant=NEW.tenant AND r.entry_id=NEW.remittance_entry_id AND r.row_kind='remittance' AND NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger v WHERE v.tenant=r.tenant AND v.row_kind='reversal' AND v.reversal_of_entry_id=r.entry_id))
+)
 BEGIN SELECT RAISE(ABORT,'allocation reference type mismatch'); END;
+CREATE TRIGGER reversal_matches_target BEFORE INSERT ON payroll_employer_liability_ledger
+WHEN NEW.row_kind='reversal' AND NOT EXISTS(
+ SELECT 1 FROM payroll_employer_liability_ledger target
+ WHERE target.tenant=NEW.tenant AND target.entry_id=NEW.reversal_of_entry_id
+ AND target.row_kind IN ('obligation','remittance','allocation')
+ AND target.amount_minor=NEW.amount_minor AND target.employer_id=NEW.employer_id
+ AND target.authority_id=NEW.authority_id AND target.currency=NEW.currency
+ AND target.reporting_period IS NEW.reporting_period
+)
+BEGIN SELECT RAISE(ABORT,'reversal must exactly match its target'); END;
+CREATE TRIGGER reversal_requires_clear_dependencies BEFORE INSERT ON payroll_employer_liability_ledger
+WHEN NEW.row_kind='reversal' AND EXISTS(
+ SELECT 1 FROM payroll_employer_liability_ledger allocation
+ WHERE allocation.tenant=NEW.tenant AND allocation.row_kind='allocation'
+ AND (allocation.obligation_entry_id=NEW.reversal_of_entry_id OR allocation.remittance_entry_id=NEW.reversal_of_entry_id)
+ AND NOT EXISTS(SELECT 1 FROM payroll_employer_liability_ledger v WHERE v.tenant=allocation.tenant AND v.row_kind='reversal' AND v.reversal_of_entry_id=allocation.entry_id)
+)
+BEGIN SELECT RAISE(ABORT,'reverse effective allocations first'); END;
 CREATE TRIGGER liability_immutable_update BEFORE UPDATE ON payroll_employer_liability_ledger BEGIN SELECT RAISE(ABORT,'employer liability ledger is immutable'); END;
 CREATE TRIGGER liability_immutable_delete BEFORE DELETE ON payroll_employer_liability_ledger BEGIN SELECT RAISE(ABORT,'employer liability ledger is immutable'); END;

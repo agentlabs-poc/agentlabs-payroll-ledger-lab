@@ -17,6 +17,7 @@ import time
 from pathlib import Path
 
 from . import cli
+from .records import connect
 
 
 MONTH = "2026-11"
@@ -189,7 +190,7 @@ def _database_metrics(database):
 
 
 def _verify(database, employees):
-    connection = sqlite3.connect(database)
+    connection = connect(database)
     try:
         tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")}
         expected_tables = {"payroll_l1_records", "payroll_l2_records", "payroll_draft_ledger", "payroll_ledger", "payroll_employer_liability_ledger"}

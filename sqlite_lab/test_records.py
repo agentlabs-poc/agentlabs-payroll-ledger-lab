@@ -1,3 +1,4 @@
+import json
 import sqlite3
 import tempfile
 import unittest
@@ -55,6 +56,69 @@ class RecordStoreTest(unittest.TestCase):
         self.assertEqual(parse_key(review_key),
                          ("payroll.draft.review", "E:1", "D:1", "R\\2:west"))
 
+    def test_record_key_is_reconstructed_from_stored_segments(self):
+        component_id = "C:East\\Legacy.1"
+        key = canonical_key("payroll.component", component_id, 10)
+        value = self.component(component_id, 10)
+
+        stored = self.store._put_l1("T1", key, value)
+        row = self.connection.execute(
+            "SELECT key1,key2,key3,key4,key5,key10,key,value FROM payroll_l1_records"
+        ).fetchone()
+
+        self.assertEqual(tuple(row[:7]),
+                         ("payroll", "component", component_id, "10", "", "", key))
+        self.assertEqual(stored["value"], value)
+        self.assertNotIn("key", stored["value"])
+
+    def test_generated_key_cannot_disagree_with_stored_segments(self):
+        columns = ",".join(f"key{index}" for index in range(1, 11))
+        slots = ("payroll", "component", "C1", "1", "", "", "", "", "", "")
+        with self.assertRaisesRegex(sqlite3.OperationalError, "generated column"):
+            self.connection.execute(
+                f"INSERT INTO payroll_l1_records(tenant,{columns},key,value,ts,state) "
+                f"VALUES({','.join('?' for _ in range(15))})",
+                ("T1", *slots, "payroll.component:WRONG:1",
+                 '{}', "2026-09-09T00:00:00+00:00", "enabled"),
+            )
+
+    def test_storage_rejects_gapped_segments_and_duplicate_full_identity(self):
+        columns = ",".join(f"key{index}" for index in range(1, 11))
+        insert = (f"INSERT INTO payroll_l1_records(tenant,{columns},value,ts,state) "
+                  f"VALUES({','.join('?' for _ in range(14))})")
+        with self.assertRaises(sqlite3.OperationalError):
+            self.connection.execute(
+                insert,
+                ("T1", "payroll", "component", "", "1", "", "", "", "", "", "",
+                 '{}', "2026-09-09T00:00:00+00:00", "enabled"),
+            )
+
+        key = canonical_key("payroll.component", "C1", 1)
+        value = self.component("C1", 1)
+        self.store._put_l1("T1", key, value)
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.store._put_l1("T1", key, value)
+
+    def test_component_prefix_lookup_uses_full_identity_index(self):
+        key = canonical_key("payroll.component", "C1", 1)
+        self.store._put_l1("T1", key, self.component("C1", 1))
+        query = ("SELECT key FROM payroll_l1_records "
+                 "WHERE tenant=? AND key1=? AND key2=? AND key3=?")
+
+        self.assertEqual(
+            self.connection.execute(query, ("T1", "payroll", "component", "C1")).fetchone()[0],
+            key,
+        )
+        plan = self.connection.execute(
+            "EXPLAIN QUERY PLAN " + query,
+            ("T1", "payroll", "component", "C1"),
+        ).fetchall()
+        self.assertTrue(any(
+            "USING INDEX" in row[3]
+            and "tenant=? AND key1=? AND key2=? AND key3=?" in row[3]
+            for row in plan
+        ), plan)
+
     def test_employee_owned_keys_require_the_registered_owner_arity(self):
         expected = {
             "payroll.earning": ("E101", "EARN", 2),
@@ -107,6 +171,18 @@ class RecordStoreTest(unittest.TestCase):
         self.store.put_l2_settings("T1", settings)
         self.assertEqual(self.store.get_l1("T1", key)["value"]["component_id"], "E101")
         self.assertIsNone(self.store.get_l2("T1", key))
+        self.assertEqual(
+            tuple(self.connection.execute(
+                "SELECT key1,key2,key3,key4,key5 FROM payroll_l1_records"
+            ).fetchone()),
+            ("payroll", "component", "E101", "1", ""),
+        )
+        self.assertEqual(
+            tuple(self.connection.execute(
+                "SELECT key1,key2,key3,key4,key5 FROM payroll_l2_records"
+            ).fetchone()),
+            ("payroll", "employee", "settings", "E101", "1"),
+        )
         self.assertFalse(hasattr(self.store, "put_l1"))
 
     def test_payload_must_be_object_with_exact_schema_and_key_identity(self):
@@ -174,6 +250,23 @@ class RecordStoreTest(unittest.TestCase):
         self.store._put_l1("T1", key, value)
         with self.assertRaises(sqlite3.IntegrityError):
             self.store._put_l1("T1", key, value)
+
+    def test_insert_or_replace_cannot_rewrite_l1_history(self):
+        key = canonical_key("payroll.component", "C1", 1)
+        self.store._put_l1("T1", key, self.component("C1", 1))
+        slots = ("payroll", "component", "C1", "1", "", "", "", "", "", "")
+        columns = ",".join(f"key{index}" for index in range(1, 11))
+        replacement = self.component("C1", 1, label="rewritten")
+
+        with self.assertRaisesRegex(sqlite3.IntegrityError, "immutable"):
+            self.connection.execute(
+                f"INSERT OR REPLACE INTO payroll_l1_records(tenant,{columns},value,ts,state) "
+                f"VALUES({','.join('?' for _ in range(14))})",
+                ("T1", *slots, json.dumps(replacement),
+                 "2026-09-09T00:00:00+00:00", "enabled"),
+            )
+
+        self.assertEqual(self.store.get_l1("T1", key)["value"]["label"], "C1")
 
     def test_disabled_latest_component_does_not_revive_older_enabled_revision(self):
         self.store._put_l1("T1", canonical_key("payroll.component", "C1", 1),

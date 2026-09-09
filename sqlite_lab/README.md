@@ -1,5 +1,8 @@
 # Three-ledger SQLite payroll simulation
 
+Current Core alignment, key-column storage, ELR reversals and remaining contract gaps
+are tracked in the [Python/Core reconciliation](../docs/design/python-core-reconciliation.md).
+
 This disposable simulation implements exactly three canonical ledgers:
 `payroll_draft_ledger`, `payroll_ledger`, and
 `payroll_employer_liability_ledger`. Canonical definitions, sources, draft
