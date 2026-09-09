@@ -1,5 +1,12 @@
 # Payroll design pins
 
+> **Current authority — Core, confirmed 2026-09-09:** software supplies
+> `payroll_l3_records` as generic storage with access controls. Consumers own
+> L3 record meanings and all application/AI logic. The target is six tables;
+> the existing five-table SQLite prototype does not implement L3 storage.
+> Earlier statements below excluding supplied L3 storage are superseded.
+> See the [canonical Core contract](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/refactor/payroll-123-from-v0.1.1/docs/payroll-123-canonical-records.md).
+
 The umbrella model is **123 Architecture — a new software-design paradigm for
 AI-native applications**. SQLite is the first proving ground for its concrete
 payroll contracts, before production implementation.
@@ -25,7 +32,8 @@ indexes, state, wrappers and client/server responsibilities, is in
 [123 Architecture](123-architecture.md#canonical-storage-model).
 
 **Latest ownership correction:** the supplied software provides L1 and L2.
-Consumers own L3 composition and persistence; we do not supply an L3 table or API.
+Core also provides generic L3 storage/access; consumers own L3 composition
+and record meanings. L3 workflow logic stays outside Core.
 
 Each domain can own a table for each software-owned layer's data:
 
@@ -36,6 +44,7 @@ Payroll domain
   payroll_employer_liability_ledger  Obligations, remittances, allocations
   payroll_l1_records               Core supporting records
   payroll_l2_records               Reusable software-owned auxiliary data
+  payroll_l3_records               Generic storage for consumer-owned data
     Target record stores: tenant | key1 ... key10 | value(JSON) | ts | state
     Current SQLite prototype still uses one serialized key column
 

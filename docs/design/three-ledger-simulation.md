@@ -1,5 +1,12 @@
 # Three-ledger payroll simulation and canonical row map
 
+> **Current authority — Core, confirmed 2026-09-09:** software supplies
+> `payroll_l3_records` as generic storage with access controls. Consumers own
+> L3 record meanings and all application/AI logic. The target is six tables;
+> the existing five-table SQLite prototype does not implement L3 storage.
+> Earlier statements below excluding supplied L3 storage are superseded.
+> See the [canonical Core contract](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/refactor/payroll-123-from-v0.1.1/docs/payroll-123-canonical-records.md).
+
 > **Current storage direction:** canonical segments occupy generic `key1`–`key10`
 > columns. `payroll.component:BASIC` becomes `payroll`, `component`, `BASIC`.
 > Single-key rows below describe the existing prototype. See the
@@ -26,7 +33,8 @@ Production migration/API implementation is outside this change.
 | L1 records | `payroll_l1_records` | Canonical versioned definitions, draft metadata, controls and evidence |
 | L2 records | `payroll_l2_records` | Reusable auxiliary employee payroll settings |
 
-Only the first three are canonical ledgers. There is no supplied L3 store/API.
+Only the first three are canonical ledgers. This existing prototype has no L3
+store/API; the target additionally supplies `payroll_l3_records` as generic storage.
 L1 therefore uses four physical tables, with one separate L2 table. No renamed
 copies or compatibility views recreate the nine former prototype tables.
 

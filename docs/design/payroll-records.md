@@ -1,5 +1,12 @@
 # Canonical payroll records and shared JSON storage
 
+> **Current authority — Core, confirmed 2026-09-09:** software supplies
+> `payroll_l3_records` as generic storage with access controls. Consumers own
+> L3 record meanings and all application/AI logic. The target is six tables;
+> the existing five-table SQLite prototype does not implement L3 storage.
+> Earlier statements below excluding supplied L3 storage are superseded.
+> See the [canonical Core contract](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/refactor/payroll-123-from-v0.1.1/docs/payroll-123-canonical-records.md).
+
 > **Current storage direction:** canonical segments occupy generic `key1`–`key10`
 > columns. `payroll.component:BASIC` becomes `payroll`, `component`, `BASIC`.
 > Single-key rows below describe the existing prototype. See the
@@ -10,7 +17,7 @@
 > they are not the final key contract. See [canonical identity definitions](canonical-identities.md).
 
 > **Superseding user decision:** the target is three canonical ledgers plus
-> `payroll_l1_records`, with `payroll_l2_records` separate and no supplied L3.
+> `payroll_l1_records`, with separate L2 records and generic L3 storage.
 > Read the [current three-ledger design and record catalogue](three-ledger-simulation.md).
 > This chapter uses the current target; the table register retains the old
 > physical mapping as historical evidence.
@@ -71,7 +78,7 @@ ledger tables. The production schema has not been migrated.
 |---|---|---|
 | L1 | `payroll_l1_records` | Canonical source definitions, draft metadata, controls and integrity evidence |
 | L2 | `payroll_l2_records` | Reusable software-owned auxiliary payroll records |
-| L3 | None supplied | Consumers own composition and persistence |
+| L3 | `payroll_l3_records` | Core supplies storage/access; consumers own composition and data meaning |
 
 L1 has four physical tables; L2 has one separate table. KV rows use `tenant`,
 `key`, `value`, `ts`, plus the prototype availability extension `state`.
@@ -114,7 +121,7 @@ information on the owning ledger when that is its natural home.
 
 Target one key/value record table **per domain and owning layer**, with a reusable
 storage shape for software-owned L1/L2. L1 consolidates core supporting records;
-L2 stores auxiliary data. Consumers own L3 persistence; no L3 store is supplied.
+L2 stores auxiliary data. Core supplies generic L3 storage; consumers own its data meaning and logic.
 The four-column baseline is:
 
 | Column | Contract |
@@ -130,8 +137,8 @@ The four-column baseline is:
 have its own key value table”, then required storage for L1, L2 and L3 and
 suggested domain-specific or general wrappers to operate it. The refined target
 was one key/value table per domain and owning layer where storage is needed.
-The latest user correction limits supplied storage to L1/L2: “software does not
-provide l3, it for people who consume it”. L3 persistence belongs to consumers.
+The earlier exclusion of L3 storage is superseded by the Core clarification:
+software supplies generic L3 storage/access; consumers own its data and logic.
 Share the envelope and tools; each domain/layer owns its terms, schemas,
 permissions, lifecycle and indexes. Do not create one table per canonical key.
 
@@ -139,12 +146,13 @@ permissions, lifecycle and indexes. Do not create one table per canonical key.
 |---|---|---|
 | L1 | `payroll_l1_records` | Core supporting records and evidence, governed by canonical domain operations; target for justified consolidation of the 16 existing supporting tables. |
 | L2 | `payroll_l2_records` | Reusable software-owned auxiliary data, such as a reviewed compensation-package definition. Exact keys/contracts remain to be specified. |
-| L3 | Not supplied | Consumers own composition and any persistence they need. Their progress records are not proof that payroll committed. |
+| L3 | `payroll_l3_records` | Core supplies generic storage/access. Consumers own composition and record meanings; progress records are not proof that payroll committed. |
 
 These are pinned target names; detailed production schemas remain unapproved.
 They refine the earlier single working name `payroll_records`. No other domain's tables are prescribed.
 L2 data storage belongs with its software-owned capability; this design does not
-require both stores in hrms-core or separate services. No L3 table is provisioned.
+require separate services. The target includes generic L3 storage; the current
+SQLite prototype does not provision it.
 Tenant, domain, layer and key jointly determine a record's scope. Equal tenant/key
 values in different layer stores do not refer to the same record.
 
@@ -171,7 +179,7 @@ Domain APIs and general wrappers cannot be separate ways to bypass each other.
 For L2, generic record operations may be appropriate within authorized
 namespaces and their schema/lifecycle contracts. The permitted key space, payload
 flexibility, mutation operations and retention rules need definition. Consumers
-own L3 composition and persistence; no L3 generic API is supplied by this design.
+own L3 composition and record meanings; Core supplies generic storage/access.
 They use L1/L2 APIs to interact with software-owned data. No public route or API
 list is approved by these examples.
 

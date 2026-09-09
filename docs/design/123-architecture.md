@@ -1,7 +1,14 @@
 # 123 Architecture
 
+> **Current authority — Core, confirmed 2026-09-09:** software supplies
+> `payroll_l3_records` as generic storage with access controls. Consumers own
+> L3 record meanings and all application/AI logic. The target is six tables;
+> the existing five-table SQLite prototype does not implement L3 storage.
+> Earlier statements below excluding supplied L3 storage are superseded.
+> See the [canonical Core contract](https://github.com/agentlabs-poc/agentlabs-hrms-core/blob/refactor/payroll-123-from-v0.1.1/docs/payroll-123-canonical-records.md).
+
 > **Superseding user decision:** the target is three canonical ledgers plus
-> `payroll_l1_records`, with `payroll_l2_records` separate and no supplied L3.
+> `payroll_l1_records`, with separate `payroll_l2_records` and generic `payroll_l3_records` storage.
 > Read the [current three-ledger design and record catalogue](three-ledger-simulation.md).
 > This chapter uses the current target; the table register retains the old
 > physical mapping as historical evidence.
@@ -145,7 +152,7 @@ separates **three canonical L1 ledger tables**, the shared record tables
 **`payroll_l1_records` / `payroll_l2_records`**, and **nine L1 record types plus
 L2 `payroll.employee.settings`**. Canonical tables define storage roles; canonical
 record types define meanings within shared storage; keys locate individual
-records. No L3 table is supplied. Detailed candidate schemas remain marked as
+records. Core also supplies `payroll_l3_records` for consumer-owned data. Detailed candidate schemas remain marked as
 proposals even when their vocabulary is pinned.
 
 ## Canonical storage model
@@ -157,10 +164,9 @@ canonical keys/indexing and API-wrapper principles be part of 123 Architecture.
 **Domain storage = core canonical tables + one canonical key/value table per
 domain/layer.**
 
-**Current ownership clarification:** software supplies L1 and L2; L3 belongs
-to the people/applications consuming them. No L3 table or L3 persistence API is
-provided by this software. The per-domain/layer storage rule applies to the
-software-owned layers; consumers choose their own L3 persistence.
+**Current ownership clarification:** software supplies L1/L2 primitives and
+generic L3 storage/access. Consumers own L3 data meanings and composition.
+Core does not supply or interpret L3 workflow logic.
 
 Core canonical tables retain the domain's first-class facts and guarantees.
 For payroll, the three ledgers own draft entries, committed payroll and employer
@@ -172,9 +178,10 @@ and evidence. Their production implementation remains subject to separate proof.
 | Core canonical tables | First-class domain facts, relationships and authoritative lifecycle | Canonical ledger tables; committed money remains here. |
 | Domain/L1 key/value table | Canonical supporting records required by core operations | Component definitions, reviewed draft controls and instruction/operation evidence, subject to their individual contracts. |
 | Domain/L2 key/value table | Reusable software-owned auxiliary data | Reviewed reusable compensation-package definitions; employee payroll preferences/policy assignment is a candidate with fields still to be defined. |
-| L3 consumer-owned persistence | Outside the supplied software; consumers choose their storage and composition | Employee selections, pending work and returned operation references may live in consumer-owned state. |
+| Domain/L3 key/value table | Core supplies generic storage/access; consumers own data meaning and composition | Employee selections, pending work and returned operation references may live in consumer-owned state. |
 
-Payroll shared-table names are `payroll_l1_records` and `payroll_l2_records`.
+Payroll shared-table names are `payroll_l1_records`, `payroll_l2_records` and
+`payroll_l3_records`.
 Detailed physical implementation remains a prototype contract. The
 shape does not require separate services or force all layer stores into Core's
 database. Other domains can adopt the same shape while owning their own terms,
@@ -357,7 +364,7 @@ pinning this sequence.
 The subsequent [canonical supporting-record direction](payroll-records.md)
 targets one reusable four-column JSON table for the current supporting roles.
 The user refined its scope to one such table per domain and software-owned
-layer: L1 and L2. Consumers own L3 storage/composition. Shared shape does not imply
+layer: L1, L2 and L3. Core supplies L3 storage; consumers own its data and composition. Shared shape does not imply
 shared domain/layer authority. Domain APIs or general wrappers must preserve
 the owning contract; a generic transport cannot bypass L1 domain operations.
 Canonical key construction, payload paths and query/index rules are defined
